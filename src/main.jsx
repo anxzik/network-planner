@@ -5,12 +5,16 @@ import App from './App.jsx'
 import {NetworkProvider} from './context/NetworkContext'
 import {SettingsProvider} from './context/SettingsContext'
 
+import {AuthProvider} from './context/AuthContext'
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <SettingsProvider>
-      <NetworkProvider>
-        <App />
-      </NetworkProvider>
-    </SettingsProvider>
+    <AuthProvider>
+      <SettingsProvider>
+        <NetworkProvider>
+          <App />
+        </NetworkProvider>
+      </SettingsProvider>
+    </AuthProvider>
   </StrictMode>,
 )

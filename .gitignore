@@ -62,3 +62,6 @@ Thumbs.db
 
 # Misc
 *.local
+project_summary.txt
+backend/node_modules
+backend/.env
