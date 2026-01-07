@@ -10,7 +10,7 @@ pnpm-debug.log*
 versions/
 alias/
 node_installer
-
+versions/node/v25.2.1/
 # Build outputs
 dist/
 build/
