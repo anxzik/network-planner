@@ -1,10 +1,12 @@
-import {deviceCategories, devices, getDevicesByCategory} from '../../data/devices';
+import {deviceCategories, devices, getDevicesByCategoryAndViewType} from '../../data/devices';
 import {useSettings} from '../../context/SettingsContext';
+import {useNetwork} from '../../context/NetworkContext';
 import DeviceCategory from './DeviceCategory';
 import {Package} from 'lucide-react';
 
 function DeviceLibrary() {
   const { settings, currentTheme } = useSettings();
+  const { viewMode } = useNetwork();
   const { visibleCategories } = settings.deviceLibrary;
 
   // Filter categories based on settings
@@ -12,9 +14,9 @@ function DeviceLibrary() {
     (categoryKey) => visibleCategories[categoryKey]
   );
 
-  // Count visible devices
+  // Count visible devices based on current view mode
   const visibleDeviceCount = categories.reduce((count, categoryKey) => {
-    return count + getDevicesByCategory(categoryKey).length;
+    return count + getDevicesByCategoryAndViewType(categoryKey, viewMode).length;
   }, 0);
 
   return (
@@ -48,8 +50,12 @@ function DeviceLibrary() {
       <div className="flex-1 overflow-y-auto p-2">
         {categories.length > 0 ? (
           categories.map((categoryKey) => {
-            const categoryDevices = getDevicesByCategory(categoryKey);
+            // Filter devices by current view mode (physical/logical)
+            const categoryDevices = getDevicesByCategoryAndViewType(categoryKey, viewMode);
             const categoryInfo = deviceCategories[categoryKey];
+
+            // Skip empty categories
+            if (categoryDevices.length === 0) return null;
 
             return (
               <DeviceCategory

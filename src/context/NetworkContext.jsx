@@ -1,6 +1,7 @@
 import {createContext, useCallback, useContext, useState} from 'react';
 import {addEdge as reactFlowAddEdge, useEdgesState, useNodesState} from 'reactflow';
 import {createDeviceNode, createEdge} from '../utils/nodeFactory';
+import {validateConnection} from '../utils/connectionValidation';
 
 // Create the context
 const NetworkContext = createContext(null);
@@ -14,6 +15,16 @@ export function NetworkProvider({ children }) {
   // Selection state
   const [selectedNode, setSelectedNode] = useState(null);
   const [selectedDeviceType, setSelectedDeviceType] = useState(null);
+
+  // Network objects state (for list view)
+  const [networkObjects, setNetworkObjects] = useState([]);
+
+  // Connection validation state
+  const [connectionError, setConnectionError] = useState(null);
+  const [connectionWarning, setConnectionWarning] = useState(null);
+
+  // View mode state (physical or logical)
+  const [viewMode, setViewMode] = useState('physical'); // 'physical' or 'logical'
 
   // Add a new device node to the canvas
   const addNode = useCallback((deviceData, position, label = null) => {
@@ -51,10 +62,37 @@ export function NetworkProvider({ children }) {
     }
   }, [setNodes, setEdges, selectedNode]);
 
-  // Handle edge connection
+  // Handle edge connection with validation
   const onConnect = useCallback((connection) => {
+    // Find source and target nodes
+    const sourceNode = nodes.find((n) => n.id === connection.source);
+    const targetNode = nodes.find((n) => n.id === connection.target);
+
+    if (!sourceNode || !targetNode) {
+      setConnectionError('Cannot connect: nodes not found');
+      setTimeout(() => setConnectionError(null), 5000);
+      return;
+    }
+
+    // Validate connection based on IP addressing
+    const validation = validateConnection(sourceNode, targetNode);
+
+    if (!validation.valid) {
+      // Show error and prevent connection
+      setConnectionError(validation.error);
+      setTimeout(() => setConnectionError(null), 7000);
+      return;
+    }
+
+    // Show warning if present
+    if (validation.warning) {
+      setConnectionWarning(validation.warning);
+      setTimeout(() => setConnectionWarning(null), 5000);
+    }
+
+    // Connection is valid, add the edge
     setEdges((eds) => reactFlowAddEdge(connection, eds));
-  }, [setEdges]);
+  }, [nodes, setEdges]);
 
   // Add a new edge
   const addEdgeManual = useCallback((sourceId, targetId) => {
@@ -112,6 +150,42 @@ export function NetworkProvider({ children }) {
     }
   }, [selectedNode, deleteNode]);
 
+  // Network Objects Management
+  // Add a new network object
+  const addNetworkObject = useCallback((networkObject) => {
+    setNetworkObjects((objs) => [...objs, networkObject]);
+  }, []);
+
+  // Update an existing network object
+  const updateNetworkObject = useCallback((objectId, updates) => {
+    setNetworkObjects((objs) =>
+      objs.map((obj) =>
+        obj.id === objectId
+          ? { ...obj, ...updates, updatedAt: new Date().toISOString() }
+          : obj
+      )
+    );
+  }, []);
+
+  // Delete a network object
+  const deleteNetworkObject = useCallback((objectId) => {
+    setNetworkObjects((objs) => objs.filter((obj) => obj.id !== objectId));
+  }, []);
+
+  // Get network object by ID
+  const getNetworkObjectById = useCallback(
+    (objectId) => {
+      return networkObjects.find((obj) => obj.id === objectId);
+    },
+    [networkObjects]
+  );
+
+  // Clear connection messages
+  const clearConnectionMessages = useCallback(() => {
+    setConnectionError(null);
+    setConnectionWarning(null);
+  }, []);
+
   // Context value
   const value = {
     // State
@@ -119,6 +193,10 @@ export function NetworkProvider({ children }) {
     edges,
     selectedNode,
     selectedDeviceType,
+    networkObjects,
+    connectionError,
+    connectionWarning,
+    viewMode,
 
     // ReactFlow handlers
     onNodesChange,
@@ -142,6 +220,16 @@ export function NetworkProvider({ children }) {
 
     // Canvas actions
     clearCanvas,
+    clearConnectionMessages,
+
+    // View mode actions
+    setViewMode,
+
+    // Network Object actions
+    addNetworkObject,
+    updateNetworkObject,
+    deleteNetworkObject,
+    getNetworkObjectById,
 
     // Utility getters
     getNodeById: (nodeId) => nodes.find((n) => n.id === nodeId),

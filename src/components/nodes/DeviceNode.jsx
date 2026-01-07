@@ -1,8 +1,10 @@
 import {Handle, Position} from 'reactflow';
 import {getDeviceIcon} from '../../utils/deviceHelpers';
+import {useNetwork} from '../../context/NetworkContext';
 
 function DeviceNode({ data, selected }) {
-  const { device, label, isSelected } = data;
+  const { device, label, isSelected, ipv4, subnet } = data;
+  const { viewMode } = useNetwork();
   const IconComponent = getDeviceIcon(device.icon);
 
   return (
@@ -67,16 +69,40 @@ function DeviceNode({ data, selected }) {
           </div>
         </div>
 
-        {/* Device Type Badge */}
-        <div
-          className="text-[9px] font-medium px-2 py-0.5 rounded-full"
-          style={{
-            backgroundColor: `${device.color}15`,
-            color: device.color,
-          }}
-        >
-          {device.category}
-        </div>
+        {/* IP Information (Logical View Only) */}
+        {viewMode === 'logical' && (
+          <div className="text-center w-full border-t border-gray-200 pt-1.5 mt-0.5">
+            {ipv4 ? (
+              <>
+                <div className="text-[10px] font-mono font-medium text-blue-600">
+                  {ipv4}
+                </div>
+                {subnet && (
+                  <div className="text-[9px] font-mono text-gray-500">
+                    {subnet}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-[9px] text-gray-400 italic">
+                No IP configured
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Device Type Badge (Physical View Only) */}
+        {viewMode === 'physical' && (
+          <div
+            className="text-[9px] font-medium px-2 py-0.5 rounded-full"
+            style={{
+              backgroundColor: `${device.color}15`,
+              color: device.color,
+            }}
+          >
+            {device.category}
+          </div>
+        )}
       </div>
     </div>
   );

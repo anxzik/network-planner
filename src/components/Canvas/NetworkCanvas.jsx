@@ -4,6 +4,8 @@ import 'reactflow/dist/style.css';
 import {useNetwork} from '../../context/NetworkContext';
 import {useSettings} from '../../context/SettingsContext';
 import {nodeTypes} from '../nodes';
+import ConnectionNotification from './ConnectionNotification';
+import NodeConfigPanel from '../NodeConfig/NodeConfigPanel';
 
 function NetworkCanvasInner() {
   const {
@@ -84,10 +86,13 @@ function NetworkCanvasInner() {
   return (
     <div
       ref={reactFlowWrapper}
-      className="w-full h-full"
+      className="w-full h-full relative"
       onDrop={onDrop}
       onDragOver={onDragOver}
     >
+      {/* Connection Error/Warning Notifications */}
+      <ConnectionNotification />
+
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -135,6 +140,9 @@ function NetworkCanvasInner() {
           />
         )}
       </ReactFlow>
+
+      {/* Node Configuration Panel */}
+      <NodeConfigPanel />
     </div>
   );
 }

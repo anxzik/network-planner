@@ -76,6 +76,12 @@ const defaultSettings = {
   // Device Library Settings
   deviceLibrary: {
     visibleCategories: {
+      Generic: true,
+      GenericLogical: true,
+      Cisco: true,
+      Ubiquiti: true,
+      PaloAlto: true,
+      Dell: true,
       SOHO: true,
       Enterprise: true,
       SDN: true,

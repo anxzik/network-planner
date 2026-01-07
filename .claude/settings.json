@@ -1,0 +1,8 @@
+{
+  "enabledPlugins": {
+    "skills-search@daymade-skills": true,
+    "docs-cleaner@daymade-skills": true,
+    "ppt-creator@daymade-skills": true,
+    "ui-designer@daymade-skills": true
+  }
+}

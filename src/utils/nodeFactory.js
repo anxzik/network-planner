@@ -17,14 +17,15 @@ export function createDeviceNode(device, position, label = null) {
       device: device, // Full device object from catalog
       label: label || device.name, // User-editable name
       isSelected: false,
-      // Future Phase 2 fields:
-      // ipv4: '',
-      // ipv6: '',
-      // gateway: '',
-      // dns1: '',
-      // dns2: '',
-      // fqdn: '',
-      // notes: ''
+      // IP Configuration fields
+      ipv4: '',
+      subnet: '',
+      ipv6: '',
+      gateway: '',
+      dns1: '',
+      dns2: '',
+      fqdn: '',
+      notes: ''
     },
     // ReactFlow node properties
     draggable: true,

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "skill-seeker": {
+      "command": "python3",
+      "args": [
+
+        "/home/arch/Dev/Skill_Seekers/src/skill_seekers/mcp/server_fastmcp.py"
+      ],
+      "cwd": "/home/arch/Dev/Skill_Seekers"
+    }
+  }
+}
