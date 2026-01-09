@@ -62,3 +62,9 @@ Thumbs.db
 
 # Misc
 *.local
+project_summary.txt
+backend/node_modules
+backend/.env
+backend/package-lock.json
+package-lock.json
+package-lock.json

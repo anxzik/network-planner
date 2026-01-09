@@ -1,16 +1,20 @@
-import {useState} from 'react';
-import {Calculator, Cpu, GitBranch, List, Network, Settings, Share2} from 'lucide-react';
+import React, { useState } from 'react';
+import { Network, Settings, LogOut, Calculator, Cpu, GitBranch, List, Share2 } from 'lucide-react';
 import DeviceLibrary from './components/DeviceLibrary/DeviceLibrary';
 import NetworkCanvas from './components/Canvas/NetworkCanvas';
 import SettingsModal from './components/Settings/SettingsModal';
 import ListView from './components/ListView/ListView';
 import SubnetCalculator from './components/SubnetCalculator/SubnetCalculator';
-import {useNetwork} from './context/NetworkContext';
-import {useSettings} from './context/SettingsContext';
+import { useNetwork } from './context/NetworkContext';
+import { useSettings } from './context/SettingsContext';
+import { useAuth } from './context/AuthContext';
+import Login from './components/Auth/Login';
+import Register from './components/Auth/Register';
 
-function App() {
+const Dashboard = () => {
   const { getNodeCount, getEdgeCount, viewMode, setViewMode } = useNetwork();
   const { openSettings, currentTheme } = useSettings();
+  const { logout, user } = useAuth();
   const [activeView, setActiveView] = useState('topology'); // 'topology', 'list', or 'calculator'
 
   return (
@@ -121,6 +125,10 @@ function App() {
               </div>
             )}
 
+             <div className="text-sm font-medium" style={{ color: currentTheme.text }}>
+                Welcome, {user?.username}
+            </div>
+
             <div className="text-center">
               <div
                 className="text-lg font-bold leading-tight"
@@ -167,6 +175,24 @@ function App() {
             >
               <Settings size={18} />
             </button>
+            
+            {/* Logout Button */}
+             <button
+              onClick={logout}
+              className="p-1.5 rounded transition-colors"
+              style={{
+                color: currentTheme.text,
+              }}
+               onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = currentTheme.border;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+              title="Logout"
+            >
+              <LogOut size={18} />
+            </button>
           </div>
         </div>
       </header>
@@ -200,6 +226,23 @@ function App() {
       <SettingsModal />
     </div>
   );
+};
+
+function App() {
+  const { user, loading } = useAuth();
+  const [isLogin, setIsLogin] = useState(true);
+
+  if (loading) return <div className="flex items-center justify-center h-screen">Loading...</div>;
+
+  if (!user) {
+    return isLogin ? (
+      <Login onSwitch={() => setIsLogin(false)} />
+    ) : (
+      <Register onSwitch={() => setIsLogin(true)} />
+    );
+  }
+
+  return <Dashboard />;
 }
 
 export default App;
