@@ -9,8 +9,8 @@ dotenv.config();
 const seedData = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
+        //     useNewUrlParser: false,
+        //     useUnifiedTopology: false,
         });
         console.log('MongoDB connected for seeding');
 
