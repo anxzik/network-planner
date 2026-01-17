@@ -1,5 +1,5 @@
-import {useCallback, useState} from 'react';
-import {AlertCircle, Check, ChevronDown, Copy, Zap} from 'lucide-react';
+import {useCallback, useEffect, useState} from 'react';
+import {AlertCircle, Check, ChevronDown, ClipboardList, Copy, Zap} from 'lucide-react';
 import {
     calculateSubnetInfo,
     calculateSubnetting,
@@ -7,44 +7,58 @@ import {
     calculateVLSM,
 } from '../../utils/subnetCalculator';
 import {isValidIPv4, isValidSubnetMask} from '../../utils/ipValidation';
+import {loadData, saveData} from '../../utils/storage';
+import {useScratchpad} from '../../context/ScratchpadContext';
 
 function SubnetCalculator() {
+  const { addCalculation } = useScratchpad();
+
   // Main calculator state
-  const [ip, setIP] = useState('192.168.1.0');
-  const [mask, setMask] = useState('255.255.255.0');
-  const [usesCIDR, setUsesCIDR] = useState(false);
-  const [cidrValue, setCIDRValue] = useState('24');
+  const [ip, setIP] = useState(() => loadData('calc_ip', '192.168.1.0'));
+  const [mask, setMask] = useState(() => loadData('calc_mask', '255.255.255.0'));
+  const [usesCIDR, setUsesCIDR] = useState(() => loadData('calc_usesCIDR', false));
+  const [cidrValue, setCIDRValue] = useState(() => loadData('calc_cidrValue', '24'));
 
   // Results
   const [subnetInfo, setSubnetInfo] = useState(null);
   const [error, setError] = useState(null);
 
   // Expanded sections
-  const [expandedSections, setExpandedSections] = useState({
+  const [expandedSections, setExpandedSections] = useState(() => loadData('calc_expanded', {
     basicInfo: true,
     supernetting: false,
     subnetting: false,
     vlsm: false,
-  });
+  }));
 
   // Supernetting state
-  const [supernettingInputs, setSupernettingInputs] = useState(['192.168.0.0/24', '192.168.1.0/24']);
+  const [supernettingInputs, setSupernettingInputs] = useState(() => loadData('calc_supernet_inputs', ['192.168.0.0/24', '192.168.1.0/24']));
   const [supernettingResult, setSupernettingResult] = useState(null);
 
   // Subnetting state
-  const [subnettingCIDR, setSubnettingCIDR] = useState('26');
+  const [subnettingCIDR, setSubnettingCIDR] = useState(() => loadData('calc_subnetting_cidr', '26'));
   const [subnettingResult, setSubnettingResult] = useState(null);
 
   // VLSM state
-  const [vlsmRequirements, setVlsmRequirements] = useState([
+  const [vlsmRequirements, setVlsmRequirements] = useState(() => loadData('calc_vlsm_reqs', [
     { hosts: 50, name: 'Department A' },
     { hosts: 30, name: 'Department B' },
     { hosts: 10, name: 'Department C' },
-  ]);
+  ]));
   const [vlsmResult, setVlsmResult] = useState(null);
 
   // Copy to clipboard
   const [copiedText, setCopiedText] = useState(null);
+
+  // Persist inputs on change
+  useEffect(() => { saveData('calc_ip', ip); }, [ip]);
+  useEffect(() => { saveData('calc_mask', mask); }, [mask]);
+  useEffect(() => { saveData('calc_usesCIDR', usesCIDR); }, [usesCIDR]);
+  useEffect(() => { saveData('calc_cidrValue', cidrValue); }, [cidrValue]);
+  useEffect(() => { saveData('calc_expanded', expandedSections); }, [expandedSections]);
+  useEffect(() => { saveData('calc_supernet_inputs', supernettingInputs); }, [supernettingInputs]);
+  useEffect(() => { saveData('calc_subnetting_cidr', subnettingCIDR); }, [subnettingCIDR]);
+  useEffect(() => { saveData('calc_vlsm_reqs', vlsmRequirements); }, [vlsmRequirements]);
 
   const copyToClipboard = useCallback((text) => {
     navigator.clipboard.writeText(text);
@@ -155,6 +169,69 @@ function SubnetCalculator() {
     setVlsmRequirements(vlsmRequirements.filter((_, i) => i !== index));
   };
 
+  // Save to Scratchpad handlers
+  const saveSubnetToScratchpad = useCallback(() => {
+    if (!subnetInfo) return;
+    addCalculation({
+      type: 'subnet',
+      title: subnetInfo.cidrNotation,
+      input: { ip, mask: usesCIDR ? cidrValue : mask, cidr: subnetInfo.cidr },
+      output: {
+        cidrNotation: subnetInfo.cidrNotation,
+        mask: subnetInfo.mask,
+        networkAddress: subnetInfo.networkAddress,
+        broadcastAddress: subnetInfo.broadcastAddress,
+        firstUsable: subnetInfo.firstUsable,
+        lastUsable: subnetInfo.lastUsable,
+        usableHosts: subnetInfo.usableHosts,
+        totalHosts: subnetInfo.totalHosts,
+        ipClass: subnetInfo.ipClass,
+        ipRange: subnetInfo.ipRange,
+      },
+    });
+  }, [addCalculation, ip, mask, usesCIDR, cidrValue, subnetInfo]);
+
+  const saveSubnettingToScratchpad = useCallback(() => {
+    if (!subnettingResult || subnettingResult.error) return;
+    addCalculation({
+      type: 'subnetting',
+      title: `${subnetInfo?.cidrNotation} → /${subnettingCIDR}`,
+      input: { parentNetwork: subnetInfo?.cidrNotation, newCidr: subnettingCIDR },
+      output: {
+        numberOfSubnets: subnettingResult.numberOfSubnets,
+        subnets: subnettingResult.subnets,
+      },
+    });
+  }, [addCalculation, subnetInfo, subnettingCIDR, subnettingResult]);
+
+  const saveSupernettingToScratchpad = useCallback(() => {
+    if (!supernettingResult || supernettingResult.error) return;
+    addCalculation({
+      type: 'supernetting',
+      title: supernettingResult.result,
+      input: { subnets: supernettingInputs.filter(s => s.trim()) },
+      output: {
+        result: supernettingResult.result,
+        cidr: supernettingResult.cidr,
+        mask: supernettingResult.mask,
+        count: supernettingResult.count,
+      },
+    });
+  }, [addCalculation, supernettingInputs, supernettingResult]);
+
+  const saveVLSMToScratchpad = useCallback(() => {
+    if (!vlsmResult || vlsmResult.error) return;
+    addCalculation({
+      type: 'vlsm',
+      title: `VLSM: ${vlsmResult.parentNetwork}`,
+      input: { parentNetwork: subnetInfo?.cidrNotation, requirements: vlsmRequirements },
+      output: {
+        parentNetwork: vlsmResult.parentNetwork,
+        allocations: vlsmResult.allocations,
+      },
+    });
+  }, [addCalculation, subnetInfo, vlsmRequirements, vlsmResult]);
+
   return (
     <div className="p-4 space-y-4 max-w-4xl mx-auto">
       {/* Header */}
@@ -249,6 +326,16 @@ function SubnetCalculator() {
             {/* Results */}
             {subnetInfo && (
               <div className="mt-6 space-y-3 pt-4 border-t border-gray-200">
+                {/* Save to Scratchpad button */}
+                <div className="flex justify-end">
+                  <button
+                    onClick={saveSubnetToScratchpad}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded text-sm font-medium text-blue-600 hover:bg-blue-50 transition"
+                  >
+                    <ClipboardList size={16} />
+                    Save to Scratchpad
+                  </button>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Info Item */}
                   {[
@@ -361,6 +448,15 @@ function SubnetCalculator() {
                     <p className="text-sm text-gray-600">
                       <span className="font-medium">Summarized Subnets:</span> {supernettingResult.count}
                     </p>
+                    <div className="pt-2 border-t border-purple-200">
+                      <button
+                        onClick={saveSupernettingToScratchpad}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded text-sm font-medium text-purple-600 hover:bg-purple-100 transition"
+                      >
+                        <ClipboardList size={16} />
+                        Save to Scratchpad
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -424,9 +520,18 @@ function SubnetCalculator() {
                     <p className="text-red-600 text-sm">{subnettingResult.error}</p>
                   ) : (
                     <>
-                      <p className="text-sm font-medium text-gray-700">
-                        {subnettingResult.numberOfSubnets} Subnets
-                      </p>
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-sm font-medium text-gray-700">
+                          {subnettingResult.numberOfSubnets} Subnets
+                        </p>
+                        <button
+                          onClick={saveSubnettingToScratchpad}
+                          className="flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium text-green-600 hover:bg-green-50 transition"
+                        >
+                          <ClipboardList size={14} />
+                          Save to Scratchpad
+                        </button>
+                      </div>
                       {subnettingResult.subnets.map((subnet, idx) => (
                         <div key={idx} className="bg-gray-50 rounded p-2 text-sm">
                           <p className="font-mono font-semibold text-gray-900">{subnet.cidrNotation}</p>
@@ -512,9 +617,18 @@ function SubnetCalculator() {
                       <p className="text-red-600 text-sm">{vlsmResult.error}</p>
                     ) : (
                       <>
-                        <p className="text-sm text-gray-600">
-                          <span className="font-medium">Parent Network:</span> {vlsmResult.parentNetwork}
-                        </p>
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="text-sm text-gray-600">
+                            <span className="font-medium">Parent Network:</span> {vlsmResult.parentNetwork}
+                          </p>
+                          <button
+                            onClick={saveVLSMToScratchpad}
+                            className="flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium text-orange-600 hover:bg-orange-50 transition"
+                          >
+                            <ClipboardList size={14} />
+                            Save to Scratchpad
+                          </button>
+                        </div>
                         <div className="space-y-2">
                           {vlsmResult.allocations.map((alloc, idx) => (
                             <div key={idx} className="bg-gray-50 rounded p-3">

@@ -1,17 +1,20 @@
 import {useState} from 'react';
-import {Calculator, Cpu, GitBranch, Layers, List, Network, Settings, Share2} from 'lucide-react';
+import {Calculator, ClipboardList, Cpu, GitBranch, Layers, List, Network, Settings, Share2} from 'lucide-react';
 import DeviceLibrary from './components/DeviceLibrary/DeviceLibrary';
 import NetworkCanvas from './components/Canvas/NetworkCanvas';
 import SettingsModal from './components/Settings/SettingsModal';
 import ListView from './components/ListView/ListView';
 import SubnetCalculator from './components/SubnetCalculator/SubnetCalculator';
 import VlanConfigPanel from './components/VlanConfig/VlanConfigPanel';
+import {Scratchpad} from './components/Scratchpad';
 import {useNetwork} from './context/NetworkContext';
 import {useSettings} from './context/SettingsContext';
+import {useScratchpad} from './context/ScratchpadContext';
 
 function App() {
   const { getNodeCount, getEdgeCount, viewMode, setViewMode, vlans } = useNetwork();
   const { openSettings, currentTheme } = useSettings();
+  const { isOpen: scratchpadOpen, toggleScratchpad, calculationCount } = useScratchpad();
   const [activeView, setActiveView] = useState('topology'); // 'topology', 'list', or 'calculator'
   const [vlanPanelOpen, setVlanPanelOpen] = useState(false);
 
@@ -196,6 +199,38 @@ function App() {
               </button>
             )}
 
+            {/* Scratchpad Toggle Button */}
+            <button
+              onClick={toggleScratchpad}
+              className={`p-1.5 rounded transition-colors relative ${scratchpadOpen ? 'ring-2' : ''}`}
+              style={{
+                color: scratchpadOpen ? currentTheme.primary : currentTheme.text,
+                backgroundColor: scratchpadOpen ? currentTheme.primary + '10' : 'transparent',
+                borderColor: scratchpadOpen ? currentTheme.primary : 'transparent'
+              }}
+              onMouseEnter={(e) => {
+                if (!scratchpadOpen) {
+                  e.currentTarget.style.backgroundColor = currentTheme.border;
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!scratchpadOpen) {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }
+              }}
+              title="Scratchpad"
+            >
+              <ClipboardList size={18} />
+              {calculationCount > 0 && (
+                <span
+                  className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[10px] font-bold flex items-center justify-center text-white"
+                  style={{ backgroundColor: currentTheme.primary }}
+                >
+                  {calculationCount > 9 ? '9+' : calculationCount}
+                </span>
+              )}
+            </button>
+
             {/* Settings Button */}
             <button
               onClick={openSettings}
@@ -218,34 +253,39 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <main className="flex flex-1 overflow-hidden">
-        {activeView === 'topology' ? (
-          <>
-            {/* VLAN Config Panel (left side) */}
-            <VlanConfigPanel
-              isOpen={vlanPanelOpen}
-              onClose={() => setVlanPanelOpen(false)}
-            />
+      <main className="flex flex-col flex-1 overflow-hidden">
+        <div className="flex flex-1 overflow-hidden">
+          {activeView === 'topology' ? (
+            <>
+              {/* VLAN Config Panel (left side) */}
+              <VlanConfigPanel
+                isOpen={vlanPanelOpen}
+                onClose={() => setVlanPanelOpen(false)}
+              />
 
-            {/* Device Library Sidebar */}
-            <DeviceLibrary />
+              {/* Device Library Sidebar */}
+              <DeviceLibrary />
 
-            {/* Network Canvas */}
+              {/* Network Canvas */}
+              <div className="flex-1 relative">
+                <NetworkCanvas />
+              </div>
+            </>
+          ) : activeView === 'list' ? (
+            /* List View */
             <div className="flex-1 relative">
-              <NetworkCanvas />
+              <ListView />
             </div>
-          </>
-        ) : activeView === 'list' ? (
-          /* List View */
-          <div className="flex-1 relative">
-            <ListView />
-          </div>
-        ) : (
-          /* Calculator View */
-          <div className="flex-1 relative overflow-y-auto">
-            <SubnetCalculator />
-          </div>
-        )}
+          ) : (
+            /* Calculator View */
+            <div className="flex-1 relative overflow-y-auto">
+              <SubnetCalculator />
+            </div>
+          )}
+        </div>
+
+        {/* Scratchpad (bottom panel) */}
+        <Scratchpad />
       </main>
 
       {/* Settings Modal */}

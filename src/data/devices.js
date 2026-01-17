@@ -95,6 +95,24 @@ export const deviceCategories = {
     label: 'HPE Aruba',
     color: '#FF8300',
     subcategories: ['Aruba CX', 'Aruba Instant On', 'ProCurve']
+  },
+  Endpoints: {
+    name: 'Endpoints',
+    label: 'Endpoints',
+    color: '#10B981',
+    subcategories: ['Servers', 'Workstations', 'Single Board', 'Storage']
+  },
+  Hypervisors: {
+    name: 'Hypervisors',
+    label: 'Hypervisors',
+    color: '#6366F1',
+    subcategories: ['VMware', 'Open Source', 'Microsoft', 'Citrix']
+  },
+  VirtualInfra: {
+    name: 'VirtualInfra',
+    label: 'Virtual Infrastructure',
+    color: '#EC4899',
+    subcategories: ['Virtual Machines', 'Containers', 'Cloud Instances']
   }
 };
 
@@ -1934,6 +1952,609 @@ export const devices = [
     },
     icon: 'hard-drive',
     color: '#4F46E5',
+  },
+
+  // ==================== ENDPOINTS (Physical Compute) ====================
+  // Linux Servers
+  {
+    id: 'endpoint-linux-001',
+    category: 'Endpoints',
+    type: 'server',
+    name: 'Linux Server',
+    manufacturer: 'Generic',
+    model: 'Linux Server',
+    description: 'Generic Linux server for network services',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 2, speed: '1Gbps' } },
+      features: ['Linux OS', 'SSH', 'Network Services'],
+      layer: 3
+    },
+    icon: 'server',
+    color: '#10B981',
+  },
+  {
+    id: 'endpoint-linux-002',
+    category: 'Endpoints',
+    type: 'server',
+    name: 'Linux Server (10G)',
+    manufacturer: 'Generic',
+    model: 'Linux Server 10G',
+    description: 'High-performance Linux server with 10G networking',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 2, speed: '1Gbps' }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['Linux OS', 'SSH', 'High Performance', 'Network Services'],
+      layer: 3
+    },
+    icon: 'server',
+    color: '#10B981',
+  },
+
+  // Raspberry Pi
+  {
+    id: 'endpoint-rpi4',
+    category: 'Endpoints',
+    type: 'sbc',
+    name: 'Raspberry Pi 4',
+    manufacturer: 'Raspberry Pi Foundation',
+    model: 'Pi 4 Model B',
+    description: 'Single-board computer with Gigabit Ethernet',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '1Gbps' } },
+      features: ['ARM Cortex-A72', 'WiFi', 'Bluetooth', 'GPIO'],
+      layer: 3
+    },
+    icon: 'cpu',
+    color: '#10B981',
+  },
+  {
+    id: 'endpoint-rpi5',
+    category: 'Endpoints',
+    type: 'sbc',
+    name: 'Raspberry Pi 5',
+    manufacturer: 'Raspberry Pi Foundation',
+    model: 'Pi 5',
+    description: 'Latest single-board computer with improved performance',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '1Gbps' } },
+      features: ['ARM Cortex-A76', 'WiFi 5', 'Bluetooth 5.0', 'PCIe', 'GPIO'],
+      layer: 3
+    },
+    icon: 'cpu',
+    color: '#10B981',
+  },
+  {
+    id: 'endpoint-rpizero',
+    category: 'Endpoints',
+    type: 'sbc',
+    name: 'Raspberry Pi Zero 2 W',
+    manufacturer: 'Raspberry Pi Foundation',
+    model: 'Pi Zero 2 W',
+    description: 'Compact single-board computer with WiFi',
+    viewType: 'physical',
+    specifications: {
+      ports: { usb: { count: 1 } },
+      features: ['ARM Cortex-A53', 'WiFi', 'Bluetooth', 'GPIO', 'Compact'],
+      layer: 3
+    },
+    icon: 'cpu',
+    color: '#10B981',
+  },
+
+  // Dell PowerEdge Servers
+  {
+    id: 'endpoint-dell-r430',
+    category: 'Endpoints',
+    type: 'server',
+    name: 'Dell PowerEdge R430',
+    manufacturer: 'Dell',
+    model: 'PowerEdge R430',
+    description: '1U rack server with dual Intel Xeon E5-2600 v3/v4',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 4, speed: '1Gbps' } },
+      features: ['Dual Xeon', 'iDRAC', 'RAID', 'Hot-swap Drives'],
+      layer: 3
+    },
+    icon: 'server',
+    color: '#10B981',
+  },
+  {
+    id: 'endpoint-dell-r630',
+    category: 'Endpoints',
+    type: 'server',
+    name: 'Dell PowerEdge R630',
+    manufacturer: 'Dell',
+    model: 'PowerEdge R630',
+    description: '1U rack server with dual Intel Xeon E5-2600 v3/v4, 10GbE options',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 4, speed: '1Gbps' }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['Dual Xeon', 'iDRAC', 'RAID', 'NVMe Support', 'Hot-swap'],
+      layer: 3
+    },
+    icon: 'server',
+    color: '#10B981',
+  },
+  {
+    id: 'endpoint-dell-r730',
+    category: 'Endpoints',
+    type: 'server',
+    name: 'Dell PowerEdge R730',
+    manufacturer: 'Dell',
+    model: 'PowerEdge R730',
+    description: '2U rack server with dual Intel Xeon E5-2600 v3/v4, high storage',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 4, speed: '1Gbps' }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['Dual Xeon', 'iDRAC', 'RAID', 'GPU Support', '16 Drive Bays'],
+      layer: 3
+    },
+    icon: 'server',
+    color: '#10B981',
+  },
+
+  // HP ProLiant Servers
+  {
+    id: 'endpoint-hp-dl360',
+    category: 'Endpoints',
+    type: 'server',
+    name: 'HP ProLiant DL360',
+    manufacturer: 'HP',
+    model: 'ProLiant DL360 Gen10',
+    description: '1U rack server optimized for density and performance',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 4, speed: '1Gbps' } },
+      features: ['Dual Xeon Scalable', 'iLO', 'Smart Array', 'Hot-swap'],
+      layer: 3
+    },
+    icon: 'server',
+    color: '#10B981',
+  },
+  {
+    id: 'endpoint-hp-dl380',
+    category: 'Endpoints',
+    type: 'server',
+    name: 'HP ProLiant DL380',
+    manufacturer: 'HP',
+    model: 'ProLiant DL380 Gen10',
+    description: '2U rack server with industry-leading expandability',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 4, speed: '1Gbps' }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['Dual Xeon Scalable', 'iLO', 'Smart Array', 'GPU Support'],
+      layer: 3
+    },
+    icon: 'server',
+    color: '#10B981',
+  },
+
+  // Supermicro Servers
+  {
+    id: 'endpoint-supermicro-1u',
+    category: 'Endpoints',
+    type: 'server',
+    name: 'Supermicro 1U Server',
+    manufacturer: 'Supermicro',
+    model: 'SYS-1029P',
+    description: '1U dual socket server with high memory capacity',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 2, speed: '1Gbps' }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['Dual Xeon', 'IPMI', 'RAID', 'Hot-swap', '24 DIMM Slots'],
+      layer: 3
+    },
+    icon: 'server',
+    color: '#10B981',
+  },
+  {
+    id: 'endpoint-supermicro-2u',
+    category: 'Endpoints',
+    type: 'server',
+    name: 'Supermicro 2U Server',
+    manufacturer: 'Supermicro',
+    model: 'SYS-2029P',
+    description: '2U dual socket server with GPU and storage options',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 2, speed: '1Gbps' }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['Dual Xeon', 'IPMI', 'RAID', 'GPU Support', '8 PCIe Slots'],
+      layer: 3
+    },
+    icon: 'server',
+    color: '#10B981',
+  },
+
+  // Generic Workstation
+  {
+    id: 'endpoint-workstation-001',
+    category: 'Endpoints',
+    type: 'workstation',
+    name: 'Workstation',
+    manufacturer: 'Generic',
+    model: 'Desktop Workstation',
+    description: 'Desktop workstation with network connectivity',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '1Gbps' } },
+      features: ['Desktop', 'Network Client'],
+      layer: 3
+    },
+    icon: 'monitor',
+    color: '#10B981',
+  },
+  {
+    id: 'endpoint-workstation-002',
+    category: 'Endpoints',
+    type: 'workstation',
+    name: 'High-End Workstation',
+    manufacturer: 'Generic',
+    model: 'Pro Workstation',
+    description: 'Professional workstation with 10G networking',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '1Gbps' }, sfpPlus: { count: 1, speed: '10Gbps' } },
+      features: ['Workstation', 'High Performance', '10GbE'],
+      layer: 3
+    },
+    icon: 'monitor',
+    color: '#10B981',
+  },
+
+  // ==================== HYPERVISORS ====================
+  // VMware
+  {
+    id: 'hypervisor-vmware-esxi',
+    category: 'Hypervisors',
+    type: 'hypervisor',
+    name: 'VMware ESXi',
+    manufacturer: 'VMware',
+    model: 'ESXi 8.0',
+    description: 'Type-1 bare-metal hypervisor for enterprise virtualization',
+    viewType: 'logical',
+    specifications: {
+      features: ['Bare-metal', 'vMotion', 'HA', 'DRS', 'vSAN'],
+      layer: 1,
+      virtual: true,
+      vmCapacity: 'Unlimited',
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'layers',
+    color: '#6366F1',
+  },
+  {
+    id: 'hypervisor-vmware-vcenter',
+    category: 'Hypervisors',
+    type: 'management',
+    name: 'VMware vCenter',
+    manufacturer: 'VMware',
+    model: 'vCenter Server 8.0',
+    description: 'Centralized management for VMware vSphere environments',
+    viewType: 'logical',
+    specifications: {
+      features: ['Centralized Management', 'vMotion', 'HA', 'DRS', 'vSAN', 'NSX Integration'],
+      layer: 7,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'database',
+    color: '#6366F1',
+  },
+
+  // Proxmox VE
+  {
+    id: 'hypervisor-proxmox',
+    category: 'Hypervisors',
+    type: 'hypervisor',
+    name: 'Proxmox VE',
+    manufacturer: 'Proxmox',
+    model: 'Proxmox VE 8.x',
+    description: 'Open-source virtualization platform with KVM and LXC',
+    viewType: 'logical',
+    specifications: {
+      features: ['KVM', 'LXC Containers', 'Web UI', 'Clustering', 'Ceph Storage', 'ZFS'],
+      layer: 1,
+      virtual: true,
+      vmCapacity: 'Unlimited',
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'layers',
+    color: '#6366F1',
+  },
+
+  // XCP-NG
+  {
+    id: 'hypervisor-xcpng',
+    category: 'Hypervisors',
+    type: 'hypervisor',
+    name: 'XCP-ng',
+    manufacturer: 'XCP-ng',
+    model: 'XCP-ng 8.x',
+    description: 'Open-source Xen-based virtualization platform',
+    viewType: 'logical',
+    specifications: {
+      features: ['Xen Hypervisor', 'XOA Management', 'Live Migration', 'HA', 'Storage Repository'],
+      layer: 1,
+      virtual: true,
+      vmCapacity: 'Unlimited',
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'layers',
+    color: '#6366F1',
+  },
+
+  // Microsoft Hyper-V
+  {
+    id: 'hypervisor-hyperv',
+    category: 'Hypervisors',
+    type: 'hypervisor',
+    name: 'Microsoft Hyper-V',
+    manufacturer: 'Microsoft',
+    model: 'Hyper-V Server 2022',
+    description: 'Microsoft virtualization platform for Windows environments',
+    viewType: 'logical',
+    specifications: {
+      features: ['Windows Integration', 'Live Migration', 'Replica', 'Failover Clustering', 'SCVMM'],
+      layer: 1,
+      virtual: true,
+      vmCapacity: 'Unlimited',
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'layers',
+    color: '#6366F1',
+  },
+
+  // KVM/QEMU
+  {
+    id: 'hypervisor-kvm',
+    category: 'Hypervisors',
+    type: 'hypervisor',
+    name: 'KVM/QEMU',
+    manufacturer: 'Open Source',
+    model: 'KVM/QEMU',
+    description: 'Linux kernel-based virtualization with QEMU emulation',
+    viewType: 'logical',
+    specifications: {
+      features: ['Linux Kernel', 'libvirt', 'QEMU', 'virt-manager', 'Cockpit'],
+      layer: 1,
+      virtual: true,
+      vmCapacity: 'Unlimited',
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'layers',
+    color: '#6366F1',
+  },
+
+  // Citrix Hypervisor
+  {
+    id: 'hypervisor-citrix',
+    category: 'Hypervisors',
+    type: 'hypervisor',
+    name: 'Citrix Hypervisor',
+    manufacturer: 'Citrix',
+    model: 'Citrix Hypervisor 8.x',
+    description: 'Enterprise Xen-based virtualization (formerly XenServer)',
+    viewType: 'logical',
+    specifications: {
+      features: ['Xen Hypervisor', 'XenCenter', 'Live Migration', 'HA', 'IntelliCache'],
+      layer: 1,
+      virtual: true,
+      vmCapacity: 'Unlimited',
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'layers',
+    color: '#6366F1',
+  },
+
+  // ==================== VIRTUAL INFRASTRUCTURE ====================
+  // Generic VMs
+  {
+    id: 'vm-linux',
+    category: 'VirtualInfra',
+    type: 'vm',
+    name: 'Linux VM',
+    manufacturer: 'Virtual',
+    model: 'Linux Virtual Machine',
+    description: 'Generic Linux virtual machine',
+    viewType: 'logical',
+    specifications: {
+      features: ['Linux OS', 'SSH', 'Virtual NIC'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'box',
+    color: '#EC4899',
+  },
+  {
+    id: 'vm-windows',
+    category: 'VirtualInfra',
+    type: 'vm',
+    name: 'Windows VM',
+    manufacturer: 'Virtual',
+    model: 'Windows Virtual Machine',
+    description: 'Generic Windows virtual machine',
+    viewType: 'logical',
+    specifications: {
+      features: ['Windows OS', 'RDP', 'Virtual NIC'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'box',
+    color: '#EC4899',
+  },
+
+  // Container Host
+  {
+    id: 'vm-container-host',
+    category: 'VirtualInfra',
+    type: 'container',
+    name: 'Container Host',
+    manufacturer: 'Virtual',
+    model: 'Docker/Podman Host',
+    description: 'Host for running Docker or Podman containers',
+    viewType: 'logical',
+    specifications: {
+      features: ['Docker', 'Podman', 'Container Runtime', 'Overlay Networks'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'package',
+    color: '#EC4899',
+  },
+
+  // Kubernetes Node
+  {
+    id: 'vm-k8s-node',
+    category: 'VirtualInfra',
+    type: 'container',
+    name: 'Kubernetes Node',
+    manufacturer: 'Virtual',
+    model: 'K8s Worker Node',
+    description: 'Kubernetes worker node for container orchestration',
+    viewType: 'logical',
+    specifications: {
+      features: ['Kubernetes', 'kubelet', 'Container Runtime', 'CNI Networking'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'boxes',
+    color: '#EC4899',
+  },
+  {
+    id: 'vm-k8s-master',
+    category: 'VirtualInfra',
+    type: 'container',
+    name: 'Kubernetes Control Plane',
+    manufacturer: 'Virtual',
+    model: 'K8s Control Plane',
+    description: 'Kubernetes control plane node',
+    viewType: 'logical',
+    specifications: {
+      features: ['Kubernetes', 'API Server', 'etcd', 'Scheduler', 'Controller Manager'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'boxes',
+    color: '#EC4899',
+  },
+
+  // Cloud Instances
+  {
+    id: 'cloud-instance-aws',
+    category: 'VirtualInfra',
+    type: 'cloudinstance',
+    name: 'AWS EC2 Instance',
+    manufacturer: 'AWS',
+    model: 'EC2',
+    description: 'Amazon Web Services EC2 compute instance',
+    viewType: 'logical',
+    specifications: {
+      features: ['EC2', 'EBS', 'VPC Networking', 'Security Groups', 'IAM'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'cloud',
+    color: '#EC4899',
+  },
+  {
+    id: 'cloud-instance-azure',
+    category: 'VirtualInfra',
+    type: 'cloudinstance',
+    name: 'Azure VM',
+    manufacturer: 'Microsoft',
+    model: 'Azure Virtual Machine',
+    description: 'Microsoft Azure virtual machine instance',
+    viewType: 'logical',
+    specifications: {
+      features: ['Azure VM', 'Managed Disks', 'VNet', 'NSG', 'Azure AD'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'cloud',
+    color: '#EC4899',
+  },
+  {
+    id: 'cloud-instance-gcp',
+    category: 'VirtualInfra',
+    type: 'cloudinstance',
+    name: 'GCP Compute Engine',
+    manufacturer: 'Google',
+    model: 'Compute Engine',
+    description: 'Google Cloud Platform compute instance',
+    viewType: 'logical',
+    specifications: {
+      features: ['Compute Engine', 'Persistent Disk', 'VPC', 'Firewall Rules', 'IAM'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'cloud',
+    color: '#EC4899',
+  },
+  {
+    id: 'cloud-instance-oracle',
+    category: 'VirtualInfra',
+    type: 'cloudinstance',
+    name: 'Oracle Cloud Instance',
+    manufacturer: 'Oracle',
+    model: 'OCI Compute',
+    description: 'Oracle Cloud Infrastructure compute instance',
+    viewType: 'logical',
+    specifications: {
+      features: ['OCI Compute', 'Block Volume', 'VCN', 'Security Lists', 'IAM'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'cloud',
+    color: '#EC4899',
+  },
+  {
+    id: 'cloud-instance-vultr',
+    category: 'VirtualInfra',
+    type: 'cloudinstance',
+    name: 'Vultr Instance',
+    manufacturer: 'Vultr',
+    model: 'Cloud Compute',
+    description: 'Vultr cloud compute instance',
+    viewType: 'logical',
+    specifications: {
+      features: ['Cloud Compute', 'Block Storage', 'VPC', 'Firewall'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'cloud',
+    color: '#EC4899',
+  },
+  {
+    id: 'cloud-instance-generic',
+    category: 'VirtualInfra',
+    type: 'cloudinstance',
+    name: 'Cloud Instance',
+    manufacturer: 'Cloud Provider',
+    model: 'Generic Cloud Instance',
+    description: 'Generic cloud compute instance',
+    viewType: 'logical',
+    specifications: {
+      features: ['Cloud Compute', 'Virtual Networking', 'Cloud Storage'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'cloud',
+    color: '#EC4899',
   },
 ];
 

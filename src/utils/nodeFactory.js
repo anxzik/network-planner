@@ -30,11 +30,19 @@ export function createDeviceNode(device, position, label = null) {
       dns2: '',
       fqdn: '',
       notes: '',
-      // NEW: Port-level tracking
+      // Port-level tracking
       ports: ports,
-      // NEW: VLAN membership
+      // VLAN membership
       managementVlan: 1,           // Management VLAN for device itself
-      participatingVlans: []        // Calculated from ports
+      participatingVlans: [],       // Calculated from ports
+
+      // Cloud/Logical device fields
+      provider: '',                 // AWS, Azure, GCP, Oracle Cloud, Vultr, On-Premise
+      region: '',                   // e.g., us-east-1, eastus, etc.
+      instanceType: '',             // e.g., t3.medium, Standard_D2s_v3, etc.
+      cloudAssetLink: '',           // Console URL, ARN, or resource ID
+      connectionPathway: '',        // VPN, Direct Connect, Peering, Public Internet
+      vmHost: '',                   // Parent hypervisor node ID (for linking VMs to hypervisors)
     },
     // ReactFlow node properties
     draggable: true,

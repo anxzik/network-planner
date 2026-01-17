@@ -1,12 +1,14 @@
 import {useState} from 'react';
-import {Edit2, Plus, Search, Trash2} from 'lucide-react';
+import {Edit2, Network, Plus, Search, Server, Trash2} from 'lucide-react';
 import {useSettings} from '../../context/SettingsContext';
 import {useNetwork} from '../../context/NetworkContext';
 import NetworkObjectForm from './NetworkObjectForm';
+import TopologyDeviceList from './TopologyDeviceList';
 
 function ListView() {
   const {currentTheme} = useSettings();
-  const {networkObjects, addNetworkObject, updateNetworkObject, deleteNetworkObject} = useNetwork();
+  const {networkObjects, addNetworkObject, updateNetworkObject, deleteNetworkObject, topologyDevices} = useNetwork();
+  const [activeTab, setActiveTab] = useState('topology'); // 'topology' or 'manual'
   const [showForm, setShowForm] = useState(false);
   const [editingObject, setEditingObject] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -59,9 +61,9 @@ function ListView() {
 
   return (
     <div className="flex flex-col h-full" style={{backgroundColor: currentTheme.background}}>
-      {/* Toolbar */}
+      {/* Tab Header */}
       <div
-        className="flex items-center justify-between px-6 py-4 border-b"
+        className="flex items-center justify-between px-6 py-3 border-b"
         style={{
           backgroundColor: currentTheme.surface,
           borderColor: currentTheme.border,
@@ -69,61 +71,89 @@ function ListView() {
       >
         <div className="flex items-center gap-4">
           <h2 className="text-lg font-semibold" style={{color: currentTheme.text}}>
-            Network Objects
+            Device List
           </h2>
+
+          {/* Tabs */}
           <div
-            className="px-2 py-1 rounded text-xs font-medium"
-            style={{
-              backgroundColor: currentTheme.border,
-              color: currentTheme.textSecondary,
-            }}
+            className="flex rounded-md p-0.5"
+            style={{ backgroundColor: currentTheme.border }}
           >
-            {filteredObjects.length} {filteredObjects.length === 1 ? 'item' : 'items'}
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          {/* Search */}
-          <div className="relative">
-            <Search
-              size={16}
-              className="absolute left-3 top-1/2 transform -translate-y-1/2"
-              style={{color: currentTheme.textSecondary}}
-            />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search..."
-              className="pl-9 pr-3 py-2 rounded border outline-none text-sm"
+            <button
+              onClick={() => setActiveTab('topology')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded text-sm font-medium transition-colors"
               style={{
-                backgroundColor: currentTheme.background,
-                color: currentTheme.text,
-                borderColor: currentTheme.border,
-                width: '250px',
+                backgroundColor: activeTab === 'topology' ? currentTheme.surface : 'transparent',
+                color: activeTab === 'topology' ? currentTheme.primary : currentTheme.textSecondary,
               }}
-            />
+            >
+              <Network size={14} />
+              Topology ({topologyDevices.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('manual')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded text-sm font-medium transition-colors"
+              style={{
+                backgroundColor: activeTab === 'manual' ? currentTheme.surface : 'transparent',
+                color: activeTab === 'manual' ? currentTheme.primary : currentTheme.textSecondary,
+              }}
+            >
+              <Server size={14} />
+              Manual ({networkObjects.length})
+            </button>
           </div>
-
-          {/* Create Button */}
-          <button
-            onClick={handleCreate}
-            className="flex items-center gap-2 px-4 py-2 rounded text-sm font-medium text-white transition-colors"
-            style={{backgroundColor: currentTheme.primary}}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.opacity = '1';
-            }}
-          >
-            <Plus size={16} />
-            Create
-          </button>
         </div>
+
+        {/* Only show controls for Manual tab */}
+        {activeTab === 'manual' && (
+          <div className="flex items-center gap-3">
+            {/* Search */}
+            <div className="relative">
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 transform -translate-y-1/2"
+                style={{color: currentTheme.textSecondary}}
+              />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search..."
+                className="pl-9 pr-3 py-2 rounded border outline-none text-sm"
+                style={{
+                  backgroundColor: currentTheme.background,
+                  color: currentTheme.text,
+                  borderColor: currentTheme.border,
+                  width: '200px',
+                }}
+              />
+            </div>
+
+            {/* Create Button */}
+            <button
+              onClick={handleCreate}
+              className="flex items-center gap-2 px-4 py-2 rounded text-sm font-medium text-white transition-colors"
+              style={{backgroundColor: currentTheme.primary}}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.opacity = '0.8';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = '1';
+              }}
+            >
+              <Plus size={16} />
+              Create
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Table */}
+      {/* Content based on active tab */}
+      {activeTab === 'topology' ? (
+        <TopologyDeviceList />
+      ) : (
+        <>
+      {/* Manual List Table */}
       <div className="flex-1 overflow-auto">
         {filteredObjects.length === 0 ? (
           <div className="flex items-center justify-center h-full">
@@ -326,6 +356,8 @@ function ListView() {
           onSave={handleSave}
           onCancel={handleCancel}
         />
+      )}
+        </>
       )}
     </div>
   );

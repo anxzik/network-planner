@@ -1,8 +1,9 @@
-import {createContext, useCallback, useContext, useState} from 'react';
+import {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
 import {useEdgesState, useNodesState} from 'reactflow';
 import {createDeviceNode, createEdge, createPortEdge} from '../utils/nodeFactory';
 import {getDefaultVlan} from '../utils/vlanFactory';
 import {determineVlanTransport, getNodeVlans, getPortById} from '../utils/portFactory';
+import {debounce, exportAll, importAll, loadData, saveData} from '../utils/storage';
 
 // Create the context
 const NetworkContext = createContext(null);
@@ -10,29 +11,45 @@ const NetworkContext = createContext(null);
 // Provider component
 export function NetworkProvider({ children }) {
   // ReactFlow state management
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  // Initialize from storage
+  const initialNodes = loadData('nodes', []);
+  const initialEdges = loadData('edges', []);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   // Selection state
   const [selectedNode, setSelectedNode] = useState(null);
   const [selectedDeviceType, setSelectedDeviceType] = useState(null);
 
   // Network objects state (for list view)
-  const [networkObjects, setNetworkObjects] = useState([]);
+  const [networkObjects, setNetworkObjects] = useState(() => loadData('networkObjects', []));
 
   // Connection validation state
   const [connectionError, setConnectionError] = useState(null);
   const [connectionWarning, setConnectionWarning] = useState(null);
 
   // View mode state (physical or logical)
-  const [viewMode, setViewMode] = useState('physical'); // 'physical' or 'logical'
+  const [viewMode, setViewMode] = useState(() => loadData('viewMode', 'physical'));
 
-  // NEW: VLAN state management
-  const [vlans, setVlans] = useState([getDefaultVlan()]); // Start with default VLAN 1
+  // VLAN state management
+  const [vlans, setVlans] = useState(() => loadData('vlans', [getDefaultVlan()]));
 
-  // NEW: Port selector modal state
+  // Port selector modal state
   const [portSelectorOpen, setPortSelectorOpen] = useState(false);
   const [pendingConnection, setPendingConnection] = useState(null);
+
+  // Persistors (debounced)
+  const persistNodes = useMemo(() => debounce((value) => saveData('nodes', value), 300), []);
+  const persistEdges = useMemo(() => debounce((value) => saveData('edges', value), 300), []);
+  const persistObjects = useMemo(() => debounce((value) => saveData('networkObjects', value), 300), []);
+  const persistVlans = useMemo(() => debounce((value) => saveData('vlans', value), 300), []);
+  const persistViewMode = useMemo(() => debounce((value) => saveData('viewMode', value), 300), []);
+
+  useEffect(() => { persistNodes(nodes); }, [nodes, persistNodes]);
+  useEffect(() => { persistEdges(edges); }, [edges, persistEdges]);
+  useEffect(() => { persistObjects(networkObjects); }, [networkObjects, persistObjects]);
+  useEffect(() => { persistVlans(vlans); }, [vlans, persistVlans]);
+  useEffect(() => { persistViewMode(viewMode); }, [viewMode, persistViewMode]);
 
   // Add a new device node to the canvas
   const addNode = useCallback((deviceData, position, label = null) => {
@@ -186,6 +203,9 @@ export function NetworkProvider({ children }) {
     setEdges([]);
     setSelectedNode(null);
     setSelectedDeviceType(null);
+    // also persist cleared state
+    saveData('nodes', []);
+    saveData('edges', []);
   }, [setNodes, setEdges]);
 
   // Delete selected node (keyboard shortcut helper)
@@ -327,6 +347,56 @@ export function NetworkProvider({ children }) {
     setPortSelectorOpen(false);
   }, []);
 
+  // Derived state: auto-populated topology devices list
+  const topologyDevices = useMemo(() => {
+    return nodes.map(node => ({
+      id: node.id,
+      name: node.data.label || node.data.device?.name,
+      type: node.data.device?.type,
+      category: node.data.device?.category,
+      viewType: node.data.device?.viewType || 'physical',
+      manufacturer: node.data.device?.manufacturer,
+      model: node.data.device?.model,
+      // IP Configuration
+      ipv4: node.data.ipv4,
+      subnet: node.data.subnet,
+      ipv6: node.data.ipv6,
+      gateway: node.data.gateway,
+      dns1: node.data.dns1,
+      dns2: node.data.dns2,
+      fqdn: node.data.fqdn,
+      // Cloud/Logical fields
+      provider: node.data.provider,
+      region: node.data.region,
+      instanceType: node.data.instanceType,
+      cloudAssetLink: node.data.cloudAssetLink,
+      connectionPathway: node.data.connectionPathway,
+      vmHost: node.data.vmHost,
+      // Port info
+      portCount: node.data.ports?.length || 0,
+      connectedPorts: node.data.ports?.filter(p => p.connectedTo)?.length || 0,
+      // Metadata
+      notes: node.data.notes,
+      position: node.position,
+    }));
+  }, [nodes]);
+
+  // Project export/import helpers
+  const exportProject = useCallback(() => {
+    // Return entire namespaced snapshot
+    return exportAll();
+  }, []);
+
+  const importProject = useCallback((snapshot) => {
+    importAll(snapshot);
+    // Reload from imported snapshot
+    setNodes(loadData('nodes', []));
+    setEdges(loadData('edges', []));
+    setVlans(loadData('vlans', [getDefaultVlan()]));
+    setNetworkObjects(loadData('networkObjects', []));
+    setViewMode(loadData('viewMode', 'physical'));
+    }, [setNodes, setEdges]);
+
   // Context value
   const value = {
     // State
@@ -338,9 +408,10 @@ export function NetworkProvider({ children }) {
     connectionError,
     connectionWarning,
     viewMode,
-    vlans,  // NEW
-    portSelectorOpen,  // NEW
-    pendingConnection,  // NEW
+    vlans,
+    portSelectorOpen,
+    pendingConnection,
+    topologyDevices, // Derived state from nodes
 
     // ReactFlow handlers
     onNodesChange,
@@ -392,6 +463,10 @@ export function NetworkProvider({ children }) {
     // NEW: Port selector actions
     handlePortConnectionConfirm,
     handlePortSelectorClose,
+
+    // Persistence helpers
+    exportProject,
+    importProject,
 
     // Utility getters
     getNodeById: (nodeId) => nodes.find((n) => n.id === nodeId),

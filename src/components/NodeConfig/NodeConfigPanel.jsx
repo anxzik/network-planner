@@ -1,14 +1,35 @@
-import {useEffect, useState} from 'react';
-import {AlertCircle, Cable, Network as NetworkIcon, Save, Settings, X} from 'lucide-react';
+import {useEffect, useMemo, useState} from 'react';
+import {AlertCircle, Cable, Cloud, Network as NetworkIcon, Save, Settings, X} from 'lucide-react';
 import {useSettings} from '../../context/SettingsContext';
 import {useNetwork} from '../../context/NetworkContext';
 import {getHostnameValidationError, getIPValidationError, getSubnetValidationError,} from '../../utils/ipValidation';
 import PortConfigRow from './PortConfigRow';
 
+// Provider options for cloud/logical devices
+const PROVIDER_OPTIONS = [
+  { value: '', label: 'Select Provider...' },
+  { value: 'AWS', label: 'AWS' },
+  { value: 'Azure', label: 'Microsoft Azure' },
+  { value: 'GCP', label: 'Google Cloud Platform' },
+  { value: 'OracleCloud', label: 'Oracle Cloud' },
+  { value: 'Vultr', label: 'Vultr' },
+  { value: 'OnPremise', label: 'On-Premise' },
+];
+
+// Connection pathway options
+const CONNECTION_PATHWAY_OPTIONS = [
+  { value: '', label: 'Select Pathway...' },
+  { value: 'VPN', label: 'VPN Tunnel' },
+  { value: 'DirectConnect', label: 'Direct Connect / ExpressRoute' },
+  { value: 'Peering', label: 'VPC/VNet Peering' },
+  { value: 'PublicInternet', label: 'Public Internet' },
+  { value: 'PrivateLink', label: 'Private Link / Endpoint' },
+];
+
 function NodeConfigPanel() {
   const {currentTheme} = useSettings();
-  const {selectedNode, getNodeById, updateNode, clearSelection, updatePortConfig} = useNetwork();
-  const [activeTab, setActiveTab] = useState('general'); // 'general' or 'ports'
+  const {selectedNode, getNodeById, updateNode, clearSelection, updatePortConfig, nodes} = useNetwork();
+  const [activeTab, setActiveTab] = useState('general'); // 'general', 'ports', or 'cloud'
   const [formData, setFormData] = useState({
     label: '',
     ipv4: '',
@@ -19,11 +40,33 @@ function NodeConfigPanel() {
     dns2: '',
     fqdn: '',
     notes: '',
+    // Cloud/Logical device fields
+    provider: '',
+    region: '',
+    instanceType: '',
+    cloudAssetLink: '',
+    connectionPathway: '',
+    vmHost: '',
   });
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
   const node = selectedNode ? getNodeById(selectedNode) : null;
+
+  // Check if device is logical/cloud type
+  const isLogicalDevice = useMemo(() => {
+    if (!node?.data?.device) return false;
+    const viewType = node.data.device.viewType;
+    const hasCloudFields = node.data.device.specifications?.cloudProviderFields;
+    return viewType === 'logical' || hasCloudFields;
+  }, [node]);
+
+  // Get list of hypervisor nodes for VM host dropdown
+  const hypervisorNodes = useMemo(() => {
+    return nodes.filter(n =>
+      n.data?.device?.category === 'Hypervisors' && n.id !== node?.id
+    );
+  }, [nodes, node?.id]);
 
   // Update form when node changes
   useEffect(() => {
@@ -38,6 +81,13 @@ function NodeConfigPanel() {
         dns2: node.data.dns2 || '',
         fqdn: node.data.fqdn || '',
         notes: node.data.notes || '',
+        // Cloud/Logical device fields
+        provider: node.data.provider || '',
+        region: node.data.region || '',
+        instanceType: node.data.instanceType || '',
+        cloudAssetLink: node.data.cloudAssetLink || '',
+        connectionPathway: node.data.connectionPathway || '',
+        vmHost: node.data.vmHost || '',
       });
       setErrors({});
       setTouched({});
@@ -223,6 +273,22 @@ function NodeConfigPanel() {
           <Settings size={16} />
           General
         </button>
+        {isLogicalDevice && (
+          <button
+            onClick={() => setActiveTab('cloud')}
+            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
+              activeTab === 'cloud' ? 'border-b-2' : ''
+            }`}
+            style={{
+              color: activeTab === 'cloud' ? currentTheme.primary : currentTheme.textSecondary,
+              borderColor: activeTab === 'cloud' ? currentTheme.primary : 'transparent',
+              backgroundColor: activeTab === 'cloud' ? currentTheme.background : 'transparent'
+            }}
+          >
+            <Cloud size={16} />
+            Cloud
+          </button>
+        )}
         <button
           onClick={() => setActiveTab('ports')}
           className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
@@ -493,6 +559,158 @@ function NodeConfigPanel() {
           />
         </div>
       </div>
+      ) : activeTab === 'cloud' ? (
+        /* Cloud Tab - Logical device fields */
+        <div className="px-4 py-4 space-y-4">
+          {/* Provider */}
+          <div>
+            <label className="block text-xs font-medium mb-1.5" style={{color: currentTheme.text}}>
+              Cloud Provider
+            </label>
+            <select
+              name="provider"
+              value={formData.provider}
+              onChange={handleChange}
+              className="w-full px-2.5 py-1.5 rounded border outline-none text-sm"
+              style={{
+                backgroundColor: currentTheme.background,
+                color: currentTheme.text,
+                borderColor: currentTheme.border,
+              }}
+            >
+              {PROVIDER_OPTIONS.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Region */}
+          <div>
+            <label className="block text-xs font-medium mb-1.5" style={{color: currentTheme.text}}>
+              Region / Zone
+            </label>
+            <input
+              type="text"
+              name="region"
+              value={formData.region}
+              onChange={handleChange}
+              className="w-full px-2.5 py-1.5 rounded border outline-none text-sm"
+              style={{
+                backgroundColor: currentTheme.background,
+                color: currentTheme.text,
+                borderColor: currentTheme.border,
+              }}
+              placeholder="e.g., us-east-1, eastus, us-central1"
+            />
+          </div>
+
+          {/* Instance Type */}
+          <div>
+            <label className="block text-xs font-medium mb-1.5" style={{color: currentTheme.text}}>
+              Instance Type / Size
+            </label>
+            <input
+              type="text"
+              name="instanceType"
+              value={formData.instanceType}
+              onChange={handleChange}
+              className="w-full px-2.5 py-1.5 rounded border outline-none text-sm"
+              style={{
+                backgroundColor: currentTheme.background,
+                color: currentTheme.text,
+                borderColor: currentTheme.border,
+              }}
+              placeholder="e.g., t3.medium, Standard_D2s_v3"
+            />
+          </div>
+
+          {/* Cloud Asset Link */}
+          <div>
+            <label className="block text-xs font-medium mb-1.5" style={{color: currentTheme.text}}>
+              Asset Link / ARN
+            </label>
+            <input
+              type="text"
+              name="cloudAssetLink"
+              value={formData.cloudAssetLink}
+              onChange={handleChange}
+              className="w-full px-2.5 py-1.5 rounded border outline-none text-sm"
+              style={{
+                backgroundColor: currentTheme.background,
+                color: currentTheme.text,
+                borderColor: currentTheme.border,
+              }}
+              placeholder="Console URL or resource ARN"
+            />
+            {formData.cloudAssetLink && (
+              <a
+                href={formData.cloudAssetLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs mt-1 inline-block"
+                style={{color: currentTheme.primary}}
+              >
+                Open in new tab →
+              </a>
+            )}
+          </div>
+
+          {/* Connection Pathway */}
+          <div>
+            <label className="block text-xs font-medium mb-1.5" style={{color: currentTheme.text}}>
+              Connection Pathway
+            </label>
+            <select
+              name="connectionPathway"
+              value={formData.connectionPathway}
+              onChange={handleChange}
+              className="w-full px-2.5 py-1.5 rounded border outline-none text-sm"
+              style={{
+                backgroundColor: currentTheme.background,
+                color: currentTheme.text,
+                borderColor: currentTheme.border,
+              }}
+            >
+              {CONNECTION_PATHWAY_OPTIONS.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* VM Host - only show for VMs and cloud instances */}
+          {(node?.data?.device?.type === 'vm' ||
+            node?.data?.device?.type === 'container' ||
+            node?.data?.device?.type === 'cloudinstance') && (
+            <div>
+              <label className="block text-xs font-medium mb-1.5" style={{color: currentTheme.text}}>
+                Parent Hypervisor
+              </label>
+              <select
+                name="vmHost"
+                value={formData.vmHost}
+                onChange={handleChange}
+                className="w-full px-2.5 py-1.5 rounded border outline-none text-sm"
+                style={{
+                  backgroundColor: currentTheme.background,
+                  color: currentTheme.text,
+                  borderColor: currentTheme.border,
+                }}
+              >
+                <option value="">None (standalone)</option>
+                {hypervisorNodes.map(hypervisor => (
+                  <option key={hypervisor.id} value={hypervisor.id}>
+                    {hypervisor.data.label || hypervisor.data.device?.name}
+                  </option>
+                ))}
+              </select>
+              {hypervisorNodes.length === 0 && (
+                <p className="text-xs mt-1" style={{color: currentTheme.textSecondary}}>
+                  Add a hypervisor to the canvas to link VMs
+                </p>
+              )}
+            </div>
+          )}
+        </div>
       ) : (
         /* Ports Tab */
         <div className="flex flex-col h-full">
@@ -543,8 +761,8 @@ function NodeConfigPanel() {
         </div>
       )}
 
-      {/* Footer - Only show for General tab */}
-      {activeTab === 'general' && (
+      {/* Footer - Show save for General and Cloud tabs */}
+      {(activeTab === 'general' || activeTab === 'cloud') && (
         <div
           className="sticky bottom-0 flex items-center justify-end gap-2 px-4 py-3 border-t"
           style={{

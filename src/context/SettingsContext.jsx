@@ -1,4 +1,5 @@
 import {createContext, useContext, useEffect, useState} from 'react';
+import {exportAll, loadData, saveData} from '../utils/storage';
 
 // Theme color palettes
 // eslint-disable-next-line react-refresh/only-export-components
@@ -106,11 +107,11 @@ const SettingsContext = createContext(null);
 
 export function SettingsProvider({ children }) {
   const [settings, setSettings] = useState(() => {
-    // Load settings from localStorage on init
-    const saved = localStorage.getItem('networkPlannerSettings');
+    // Load settings from storage on init
+    const saved = loadData('settings');
     if (saved) {
       try {
-        return { ...defaultSettings, ...JSON.parse(saved) };
+        return { ...defaultSettings, ...saved };
       } catch (e) {
         console.error('Failed to parse saved settings:', e);
         return defaultSettings;
@@ -118,12 +119,11 @@ export function SettingsProvider({ children }) {
     }
     return defaultSettings;
   });
-
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-  // Save settings to localStorage whenever they change
+  // Save settings to storage whenever they change
   useEffect(() => {
-    localStorage.setItem('networkPlannerSettings', JSON.stringify(settings));
+    saveData('settings', settings);
   }, [settings]);
 
   // Update a specific setting
@@ -154,7 +154,7 @@ export function SettingsProvider({ children }) {
   // Reset to defaults
   const resetSettings = () => {
     setSettings(defaultSettings);
-    localStorage.removeItem('networkPlannerSettings');
+    // no need to manually clear; next effect will overwrite
   };
 
   // Reset specific category
@@ -179,6 +179,8 @@ export function SettingsProvider({ children }) {
     openSettings: () => setIsSettingsOpen(true),
     closeSettings: () => setIsSettingsOpen(false),
     currentTheme,
+    // Optional: export settings only
+    exportSettings: () => exportAll()?.settings ?? null,
   };
 
   return (
