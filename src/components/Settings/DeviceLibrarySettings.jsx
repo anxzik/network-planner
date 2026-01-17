@@ -35,7 +35,6 @@ function DeviceLibrarySettings() {
                       <p className="text-xs text-gray-500">{category.name}</p>
                     </div>
                   </div>
-
                   <label className="relative inline-block w-12 h-6">
                     <input
                       type="checkbox"
@@ -53,7 +52,6 @@ function DeviceLibrarySettings() {
             })}
           </div>
         </div>
-
         {/* Sort By */}
         <div className="py-3 border-b border-gray-200">
           <label className="font-medium text-gray-700 block mb-2">Sort Devices By</label>

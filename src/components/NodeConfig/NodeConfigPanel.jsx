@@ -1,12 +1,14 @@
 import {useEffect, useState} from 'react';
-import {AlertCircle, Network as NetworkIcon, Save, X} from 'lucide-react';
+import {AlertCircle, Cable, Network as NetworkIcon, Save, Settings, X} from 'lucide-react';
 import {useSettings} from '../../context/SettingsContext';
 import {useNetwork} from '../../context/NetworkContext';
 import {getHostnameValidationError, getIPValidationError, getSubnetValidationError,} from '../../utils/ipValidation';
+import PortConfigRow from './PortConfigRow';
 
 function NodeConfigPanel() {
   const {currentTheme} = useSettings();
-  const {selectedNode, getNodeById, updateNode, clearSelection} = useNetwork();
+  const {selectedNode, getNodeById, updateNode, clearSelection, updatePortConfig} = useNetwork();
+  const [activeTab, setActiveTab] = useState('general'); // 'general' or 'ports'
   const [formData, setFormData] = useState({
     label: '',
     ipv4: '',
@@ -39,6 +41,7 @@ function NodeConfigPanel() {
       });
       setErrors({});
       setTouched({});
+      setActiveTab('general'); // Reset to general tab when node changes
     }
   }, [node]);
 
@@ -142,6 +145,16 @@ function NodeConfigPanel() {
     clearSelection();
   };
 
+  // Handle port update
+  const handlePortUpdate = (portId, updates) => {
+    updatePortConfig(node.id, portId, updates);
+  };
+
+  const ports = node?.data?.ports || [];
+  const portCount = ports.length;
+  const connectedPortCount = ports.filter(p => p.connectedTo).length;
+  const availablePortCount = ports.filter(p => p.enabled && !p.connectedTo).length;
+
   return (
     <div
       className="absolute top-0 right-0 h-full w-80 border-l shadow-lg overflow-y-auto"
@@ -194,8 +207,53 @@ function NodeConfigPanel() {
         </div>
       </div>
 
-      {/* Form Fields */}
-      <div className="px-4 py-4 space-y-4">
+      {/* Tabs */}
+      <div className="flex border-b" style={{borderColor: currentTheme.border}}>
+        <button
+          onClick={() => setActiveTab('general')}
+          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
+            activeTab === 'general' ? 'border-b-2' : ''
+          }`}
+          style={{
+            color: activeTab === 'general' ? currentTheme.primary : currentTheme.textSecondary,
+            borderColor: activeTab === 'general' ? currentTheme.primary : 'transparent',
+            backgroundColor: activeTab === 'general' ? currentTheme.background : 'transparent'
+          }}
+        >
+          <Settings size={16} />
+          General
+        </button>
+        <button
+          onClick={() => setActiveTab('ports')}
+          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
+            activeTab === 'ports' ? 'border-b-2' : ''
+          }`}
+          style={{
+            color: activeTab === 'ports' ? currentTheme.primary : currentTheme.textSecondary,
+            borderColor: activeTab === 'ports' ? currentTheme.primary : 'transparent',
+            backgroundColor: activeTab === 'ports' ? currentTheme.background : 'transparent'
+          }}
+        >
+          <Cable size={16} />
+          Ports
+          {portCount > 0 && (
+            <span
+              className="px-1.5 py-0.5 rounded-full text-xs font-semibold"
+              style={{
+                backgroundColor: currentTheme.primary + '20',
+                color: currentTheme.primary
+              }}
+            >
+              {portCount}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === 'general' ? (
+        /* General Tab - Form Fields */
+        <div className="px-4 py-4 space-y-4">
         {/* Label */}
         <div>
           <label className="block text-xs font-medium mb-1.5" style={{color: currentTheme.text}}>
@@ -435,48 +493,127 @@ function NodeConfigPanel() {
           />
         </div>
       </div>
+      ) : (
+        /* Ports Tab */
+        <div className="flex flex-col h-full">
+          {/* Port Stats */}
+          <div className="px-4 py-3 border-b" style={{borderColor: currentTheme.border}}>
+            <div className="flex items-center justify-between text-xs">
+              <div style={{color: currentTheme.textSecondary}}>
+                Total: <span className="font-semibold" style={{color: currentTheme.text}}>{portCount}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span style={{color: currentTheme.textSecondary}}>{availablePortCount} available</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                  <span style={{color: currentTheme.textSecondary}}>{connectedPortCount} connected</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
-      {/* Footer */}
-      <div
-        className="sticky bottom-0 flex items-center justify-end gap-2 px-4 py-3 border-t"
-        style={{
-          backgroundColor: currentTheme.surface,
-          borderColor: currentTheme.border,
-        }}
-      >
-        <button
-          onClick={handleClose}
-          className="px-3 py-1.5 rounded text-xs font-medium transition-colors"
+          {/* Ports List */}
+          <div className="flex-1 overflow-y-auto">
+            {portCount === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+                <Cable size={48} style={{color: currentTheme.border}} className="mb-3" />
+                <div className="text-sm font-medium mb-1" style={{color: currentTheme.text}}>
+                  No Ports Available
+                </div>
+                <div className="text-xs" style={{color: currentTheme.textSecondary}}>
+                  This device doesn't have any network ports
+                </div>
+              </div>
+            ) : (
+              <div>
+                {ports.map(port => (
+                  <PortConfigRow
+                    key={port.id}
+                    node={node}
+                    port={port}
+                    onUpdate={handlePortUpdate}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Footer - Only show for General tab */}
+      {activeTab === 'general' && (
+        <div
+          className="sticky bottom-0 flex items-center justify-end gap-2 px-4 py-3 border-t"
           style={{
-            color: currentTheme.text,
-            backgroundColor: currentTheme.border,
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.opacity = '0.8';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.opacity = '1';
+            backgroundColor: currentTheme.surface,
+            borderColor: currentTheme.border,
           }}
         >
-          Cancel
-        </button>
-        <button
-          onClick={handleSave}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium text-white transition-colors"
+          <button
+            onClick={handleClose}
+            className="px-3 py-1.5 rounded text-xs font-medium transition-colors"
+            style={{
+              color: currentTheme.text,
+              backgroundColor: currentTheme.border,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.opacity = '0.8';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.opacity = '1';
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium text-white transition-colors"
+            style={{
+              backgroundColor: currentTheme.primary,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.opacity = '0.8';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.opacity = '1';
+            }}
+          >
+            <Save size={14} />
+            Save
+          </button>
+        </div>
+      )}
+
+      {/* Ports tab footer */}
+      {activeTab === 'ports' && (
+        <div
+          className="sticky bottom-0 flex items-center justify-end gap-2 px-4 py-3 border-t"
           style={{
-            backgroundColor: currentTheme.primary,
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.opacity = '0.8';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.opacity = '1';
+            backgroundColor: currentTheme.surface,
+            borderColor: currentTheme.border,
           }}
         >
-          <Save size={14} />
-          Save
-        </button>
-      </div>
+          <button
+            onClick={handleClose}
+            className="px-3 py-1.5 rounded text-xs font-medium transition-colors"
+            style={{
+              color: currentTheme.text,
+              backgroundColor: currentTheme.border,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.opacity = '0.8';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.opacity = '1';
+            }}
+          >
+            Close
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,7 +1,8 @@
 import {createContext, useCallback, useContext, useState} from 'react';
-import {addEdge as reactFlowAddEdge, useEdgesState, useNodesState} from 'reactflow';
-import {createDeviceNode, createEdge} from '../utils/nodeFactory';
-import {validateConnection} from '../utils/connectionValidation';
+import {useEdgesState, useNodesState} from 'reactflow';
+import {createDeviceNode, createEdge, createPortEdge} from '../utils/nodeFactory';
+import {getDefaultVlan} from '../utils/vlanFactory';
+import {determineVlanTransport, getNodeVlans, getPortById} from '../utils/portFactory';
 
 // Create the context
 const NetworkContext = createContext(null);
@@ -25,6 +26,13 @@ export function NetworkProvider({ children }) {
 
   // View mode state (physical or logical)
   const [viewMode, setViewMode] = useState('physical'); // 'physical' or 'logical'
+
+  // NEW: VLAN state management
+  const [vlans, setVlans] = useState([getDefaultVlan()]); // Start with default VLAN 1
+
+  // NEW: Port selector modal state
+  const [portSelectorOpen, setPortSelectorOpen] = useState(false);
+  const [pendingConnection, setPendingConnection] = useState(null);
 
   // Add a new device node to the canvas
   const addNode = useCallback((deviceData, position, label = null) => {
@@ -74,25 +82,14 @@ export function NetworkProvider({ children }) {
       return;
     }
 
-    // Validate connection based on IP addressing
-    const validation = validateConnection(sourceNode, targetNode);
-
-    if (!validation.valid) {
-      // Show error and prevent connection
-      setConnectionError(validation.error);
-      setTimeout(() => setConnectionError(null), 7000);
-      return;
-    }
-
-    // Show warning if present
-    if (validation.warning) {
-      setConnectionWarning(validation.warning);
-      setTimeout(() => setConnectionWarning(null), 5000);
-    }
-
-    // Connection is valid, add the edge
-    setEdges((eds) => reactFlowAddEdge(connection, eds));
-  }, [nodes, setEdges]);
+    // NEW: Open port selector modal instead of directly creating connection
+    setPendingConnection({
+      sourceNode,
+      targetNode,
+      connection
+    });
+    setPortSelectorOpen(true);
+  }, [nodes]);
 
   // Add a new edge
   const addEdgeManual = useCallback((sourceId, targetId) => {
@@ -101,10 +98,58 @@ export function NetworkProvider({ children }) {
     return newEdge;
   }, [setEdges]);
 
+  // Port configuration operations (defined early for use in deleteEdge)
+  const updatePortConfig = useCallback((nodeId, portId, updates) => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node.id !== nodeId) return node;
+
+        const updatedPorts = node.data.ports.map((port) =>
+          port.id === portId ? { ...port, ...updates } : port
+        );
+
+        // Recalculate participating VLANs
+        const tempNode = { ...node, data: { ...node.data, ports: updatedPorts } };
+        const participatingVlans = getNodeVlans(tempNode);
+
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            ports: updatedPorts,
+            participatingVlans
+          }
+        };
+      })
+    );
+  }, [setNodes]);
+
   // Delete an edge
   const deleteEdge = useCallback((edgeId) => {
+    // Find the edge to get port information
+    const edge = edges.find((e) => e.id === edgeId);
+
+    if (edge && edge.sourcePort && edge.targetPort) {
+      // Update port connection status to null on both nodes
+      const sourceNode = nodes.find((n) => n.id === edge.source);
+      const targetNode = nodes.find((n) => n.id === edge.target);
+
+      if (sourceNode) {
+        updatePortConfig(sourceNode.id, edge.sourcePort.portId, {
+          connectedTo: null
+        });
+      }
+
+      if (targetNode) {
+        updatePortConfig(targetNode.id, edge.targetPort.portId, {
+          connectedTo: null
+        });
+      }
+    }
+
+    // Remove the edge
     setEdges((eds) => eds.filter((edge) => edge.id !== edgeId));
-  }, [setEdges]);
+  }, [edges, nodes, setEdges, updatePortConfig]);
 
   // Select a node
   const selectNode = useCallback((nodeId) => {
@@ -186,6 +231,102 @@ export function NetworkProvider({ children }) {
     setConnectionWarning(null);
   }, []);
 
+  // NEW: VLAN CRUD operations
+  const addVlan = useCallback((vlanConfig) => {
+    setVlans((prevVlans) => [...prevVlans, vlanConfig]);
+    return vlanConfig;
+  }, []);
+
+  const updateVlan = useCallback((vlanId, updates) => {
+    setVlans((prevVlans) =>
+      prevVlans.map((vlan) =>
+        vlan.id === vlanId
+          ? { ...vlan, ...updates, updatedAt: new Date().toISOString() }
+          : vlan
+      )
+    );
+  }, []);
+
+  const deleteVlan = useCallback((vlanId) => {
+    setVlans((prevVlans) => prevVlans.filter((vlan) => vlan.id !== vlanId));
+  }, []);
+
+  const getVlanById = useCallback((vlanId) => {
+    return vlans.find((vlan) => vlan.id === vlanId);
+  }, [vlans]);
+
+  const getVlanByVlanId = useCallback((vlanId) => {
+    return vlans.find((vlan) => vlan.vlanId === vlanId);
+  }, [vlans]);
+
+  const assignPortToVlan = useCallback((nodeId, portId, vlanIds, mode = 'access') => {
+    updatePortConfig(nodeId, portId, {
+      assignedVlans: vlanIds,
+      mode: mode
+    });
+  }, [updatePortConfig]);
+
+  const setPortMode = useCallback((nodeId, portId, mode) => {
+    updatePortConfig(nodeId, portId, { mode });
+  }, [updatePortConfig]);
+
+  const setTrunkAllowedVlans = useCallback((nodeId, portId, vlanIds) => {
+    updatePortConfig(nodeId, portId, {
+      mode: 'trunk',
+      assignedVlans: vlanIds
+    });
+  }, [updatePortConfig]);
+
+  const setNativeVlan = useCallback((nodeId, portId, vlanId) => {
+    updatePortConfig(nodeId, portId, {
+      nativeVlan: vlanId
+    });
+  }, [updatePortConfig]);
+
+  // NEW: Handle port selection confirmation from modal
+  const handlePortConnectionConfirm = useCallback((sourcePort, targetPort) => {
+    if (!pendingConnection) return;
+
+    const { sourceNode, targetNode } = pendingConnection;
+
+    // Determine VLAN transport for this connection
+    const vlanTransport = determineVlanTransport(sourcePort, targetPort);
+
+    // Create enhanced edge with port information
+    const newEdge = createPortEdge(
+      sourceNode.id,
+      targetNode.id,
+      sourcePort,
+      targetPort,
+      vlanTransport
+    );
+
+    // Update port connection status on both nodes
+    updatePortConfig(sourceNode.id, sourcePort.id, {
+      connectedTo: targetPort.id
+    });
+    updatePortConfig(targetNode.id, targetPort.id, {
+      connectedTo: sourcePort.id
+    });
+
+    // Add the edge
+    setEdges((eds) => [...eds, newEdge]);
+
+    // Clear pending connection
+    setPendingConnection(null);
+    setPortSelectorOpen(false);
+
+    // Show success message (optional)
+    setConnectionWarning(`Connected ${sourcePort.label} to ${targetPort.label}`);
+    setTimeout(() => setConnectionWarning(null), 3000);
+  }, [pendingConnection, updatePortConfig, setEdges]);
+
+  // NEW: Handle port selector modal close
+  const handlePortSelectorClose = useCallback(() => {
+    setPendingConnection(null);
+    setPortSelectorOpen(false);
+  }, []);
+
   // Context value
   const value = {
     // State
@@ -197,6 +338,9 @@ export function NetworkProvider({ children }) {
     connectionError,
     connectionWarning,
     viewMode,
+    vlans,  // NEW
+    portSelectorOpen,  // NEW
+    pendingConnection,  // NEW
 
     // ReactFlow handlers
     onNodesChange,
@@ -231,11 +375,33 @@ export function NetworkProvider({ children }) {
     deleteNetworkObject,
     getNetworkObjectById,
 
+    // NEW: VLAN actions
+    addVlan,
+    updateVlan,
+    deleteVlan,
+    getVlanById,
+    getVlanByVlanId,
+
+    // NEW: Port-VLAN actions
+    updatePortConfig,
+    assignPortToVlan,
+    setPortMode,
+    setTrunkAllowedVlans,
+    setNativeVlan,
+
+    // NEW: Port selector actions
+    handlePortConnectionConfirm,
+    handlePortSelectorClose,
+
     // Utility getters
     getNodeById: (nodeId) => nodes.find((n) => n.id === nodeId),
     getEdgeById: (edgeId) => edges.find((e) => e.id === edgeId),
     getNodeCount: () => nodes.length,
     getEdgeCount: () => edges.length,
+    getPortById: (nodeId, portId) => {
+      const node = nodes.find((n) => n.id === nodeId);
+      return node ? getPortById(node, portId) : null;
+    },
   };
 
   return (

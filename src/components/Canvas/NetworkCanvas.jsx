@@ -6,6 +6,7 @@ import {useSettings} from '../../context/SettingsContext';
 import {nodeTypes} from '../nodes';
 import ConnectionNotification from './ConnectionNotification';
 import NodeConfigPanel from '../NodeConfig/NodeConfigPanel';
+import PortSelectorModal from '../PortSelector/PortSelectorModal';
 
 function NetworkCanvasInner() {
   const {
@@ -17,6 +18,10 @@ function NetworkCanvasInner() {
     addNode,
     selectNode,
     clearSelection,
+    portSelectorOpen,
+    pendingConnection,
+    handlePortConnectionConfirm,
+    handlePortSelectorClose,
   } = useNetwork();
 
   const { settings } = useSettings();
@@ -143,6 +148,15 @@ function NetworkCanvasInner() {
 
       {/* Node Configuration Panel */}
       <NodeConfigPanel />
+
+      {/* Port Selector Modal */}
+      <PortSelectorModal
+        isOpen={portSelectorOpen}
+        onClose={handlePortSelectorClose}
+        sourceNode={pendingConnection?.sourceNode}
+        targetNode={pendingConnection?.targetNode}
+        onConfirm={handlePortConnectionConfirm}
+      />
     </div>
   );
 }

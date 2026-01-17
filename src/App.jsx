@@ -1,17 +1,19 @@
 import {useState} from 'react';
-import {Calculator, Cpu, GitBranch, List, Network, Settings, Share2} from 'lucide-react';
+import {Calculator, Cpu, GitBranch, Layers, List, Network, Settings, Share2} from 'lucide-react';
 import DeviceLibrary from './components/DeviceLibrary/DeviceLibrary';
 import NetworkCanvas from './components/Canvas/NetworkCanvas';
 import SettingsModal from './components/Settings/SettingsModal';
 import ListView from './components/ListView/ListView';
 import SubnetCalculator from './components/SubnetCalculator/SubnetCalculator';
+import VlanConfigPanel from './components/VlanConfig/VlanConfigPanel';
 import {useNetwork} from './context/NetworkContext';
 import {useSettings} from './context/SettingsContext';
 
 function App() {
-  const { getNodeCount, getEdgeCount, viewMode, setViewMode } = useNetwork();
+  const { getNodeCount, getEdgeCount, viewMode, setViewMode, vlans } = useNetwork();
   const { openSettings, currentTheme } = useSettings();
   const [activeView, setActiveView] = useState('topology'); // 'topology', 'list', or 'calculator'
+  const [vlanPanelOpen, setVlanPanelOpen] = useState(false);
 
   return (
     <div
@@ -150,6 +152,50 @@ function App() {
               </div>
             </div>
 
+            {/* VLAN Count (only show in topology view) */}
+            {activeView === 'topology' && (
+              <div className="text-center">
+                <div
+                  className="text-lg font-bold leading-tight"
+                  style={{ color: currentTheme.text }}
+                >
+                  {vlans.length}
+                </div>
+                <div
+                  className="text-[10px] leading-tight"
+                  style={{ color: currentTheme.textSecondary }}
+                >
+                  VLANs
+                </div>
+              </div>
+            )}
+
+            {/* VLAN Manager Button (only show in topology view) */}
+            {activeView === 'topology' && (
+              <button
+                onClick={() => setVlanPanelOpen(!vlanPanelOpen)}
+                className={`p-1.5 rounded transition-colors ${vlanPanelOpen ? 'ring-2' : ''}`}
+                style={{
+                  color: vlanPanelOpen ? currentTheme.primary : currentTheme.text,
+                  backgroundColor: vlanPanelOpen ? currentTheme.primary + '10' : 'transparent',
+                  borderColor: vlanPanelOpen ? currentTheme.primary : 'transparent'
+                }}
+                onMouseEnter={(e) => {
+                  if (!vlanPanelOpen) {
+                    e.currentTarget.style.backgroundColor = currentTheme.border;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!vlanPanelOpen) {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }
+                }}
+                title="VLAN Management"
+              >
+                <Layers size={18} />
+              </button>
+            )}
+
             {/* Settings Button */}
             <button
               onClick={openSettings}
@@ -175,6 +221,12 @@ function App() {
       <main className="flex flex-1 overflow-hidden">
         {activeView === 'topology' ? (
           <>
+            {/* VLAN Config Panel (left side) */}
+            <VlanConfigPanel
+              isOpen={vlanPanelOpen}
+              onClose={() => setVlanPanelOpen(false)}
+            />
+
             {/* Device Library Sidebar */}
             <DeviceLibrary />
 

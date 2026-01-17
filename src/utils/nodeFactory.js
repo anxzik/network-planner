@@ -1,4 +1,5 @@
 // Utility functions for creating ReactFlow nodes
+import {generatePortsForDevice} from './portFactory';
 
 // Generate unique node ID
 export function generateNodeId() {
@@ -8,6 +9,9 @@ export function generateNodeId() {
 // Create a device node for ReactFlow
 export function createDeviceNode(device, position, label = null) {
   const nodeId = generateNodeId();
+
+  // Generate ports for this device
+  const ports = generatePortsForDevice(device, nodeId);
 
   return {
     id: nodeId,
@@ -25,7 +29,12 @@ export function createDeviceNode(device, position, label = null) {
       dns1: '',
       dns2: '',
       fqdn: '',
-      notes: ''
+      notes: '',
+      // NEW: Port-level tracking
+      ports: ports,
+      // NEW: VLAN membership
+      managementVlan: 1,           // Management VLAN for device itself
+      participatingVlans: []        // Calculated from ports
     },
     // ReactFlow node properties
     draggable: true,
@@ -45,7 +54,7 @@ export function updateNodeData(node, updates) {
   };
 }
 
-// Create default edge
+// Create default edge (simple, no port info)
 export function createEdge(source, target) {
   return {
     id: `edge-${source}-${target}`,
@@ -54,5 +63,41 @@ export function createEdge(source, target) {
     type: 'default',
     animated: false,
     style: { stroke: '#b1b1b7', strokeWidth: 2 }
+  };
+}
+
+// Create enhanced edge with port information
+export function createPortEdge(sourceNodeId, targetNodeId, sourcePort, targetPort, vlanTransport = null) {
+  const edgeId = `edge-${sourcePort.id}-${targetPort.id}`;
+
+  return {
+    id: edgeId,
+    source: sourceNodeId,
+    target: targetNodeId,
+
+    // NEW: Port-level connection data
+    sourcePort: {
+      portId: sourcePort.id,
+      portIndex: sourcePort.portIndex,
+      portLabel: sourcePort.label
+    },
+    targetPort: {
+      portId: targetPort.id,
+      portIndex: targetPort.portIndex,
+      portLabel: targetPort.label
+    },
+
+    // NEW: VLAN information
+    vlanTransport: vlanTransport || {
+      mode: sourcePort.mode === 'trunk' || targetPort.mode === 'trunk' ? 'trunk' : 'access',
+      vlans: sourcePort.assignedVlans,
+      nativeVlan: sourcePort.mode === 'trunk' ? sourcePort.nativeVlan : null
+    },
+
+    // ReactFlow edge properties
+    type: 'default',
+    animated: false,
+    style: { stroke: '#b1b1b7', strokeWidth: 2 },
+    label: `${sourcePort.label} ↔ ${targetPort.label}`,
   };
 }

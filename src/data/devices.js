@@ -59,6 +59,42 @@ export const deviceCategories = {
     label: 'Cloud Services',
     color: '#0284C7',
     subcategories: ['VPC', 'Load Balancers', 'Gateways', 'Security']
+  },
+  Arista: {
+    name: 'Arista',
+    label: 'Arista Networks',
+    color: '#0066CC',
+    subcategories: ['7000 Series', '7500 Series', '7800 Series', 'CloudVision']
+  },
+  Juniper: {
+    name: 'Juniper',
+    label: 'Juniper Networks',
+    color: '#84BD00',
+    subcategories: ['EX Series', 'QFX Series', 'SRX Series', 'MX Series']
+  },
+  Fortinet: {
+    name: 'Fortinet',
+    label: 'Fortinet Security',
+    color: '#EE3124',
+    subcategories: ['FortiGate', 'FortiSwitch', 'FortiAP']
+  },
+  MikroTik: {
+    name: 'MikroTik',
+    label: 'MikroTik',
+    color: '#293239',
+    subcategories: ['RouterBOARD', 'Cloud Core', 'CRS Switches', 'hAP Series']
+  },
+  Meraki: {
+    name: 'Meraki',
+    label: 'Cisco Meraki',
+    color: '#78BE20',
+    subcategories: ['MX Security', 'MS Switches', 'MR Access Points']
+  },
+  HPE: {
+    name: 'HPE',
+    label: 'HPE Aruba',
+    color: '#FF8300',
+    subcategories: ['Aruba CX', 'Aruba Instant On', 'ProCurve']
   }
 };
 
@@ -1026,6 +1062,878 @@ export const devices = [
     },
     icon: 'boxes',
     color: '#059669',
+  },
+
+  // ==================== ARISTA NETWORKS ====================
+  {
+    id: 'arista-7050x3',
+    category: 'Arista',
+    type: 'switch',
+    name: '7050X3',
+    manufacturer: 'Arista',
+    model: '7050X3-48YC12',
+    description: 'Data Center Leaf - 48x 25G SFP28 + 12x 100G QSFP28',
+    viewType: 'physical',
+    specifications: {
+      ports: { sfp28: { count: 48, speed: '25Gbps' }, qsfp28: { count: 12, speed: '100Gbps' } },
+      features: ['EOS', 'VXLAN', 'EVPN', 'MACsec', 'Low Latency'],
+      layer: 3,
+      throughput: '3.6Tbps'
+    },
+    icon: 'server',
+    color: '#0066CC',
+  },
+  {
+    id: 'arista-7280r3',
+    category: 'Arista',
+    type: 'switch',
+    name: '7280R3',
+    manufacturer: 'Arista',
+    model: '7280R3-48C6',
+    description: 'Universal Spine - 48x 100G + 6x 400G, Deep Buffer',
+    viewType: 'physical',
+    specifications: {
+      ports: { qsfp28: { count: 48, speed: '100Gbps' }, qsfpdd: { count: 6, speed: '400Gbps' } },
+      features: ['EOS', 'Deep Buffer', 'FlexRoute', 'EVPN', 'Segment Routing'],
+      layer: 3,
+      throughput: '7.2Tbps'
+    },
+    icon: 'server',
+    color: '#0066CC',
+  },
+  {
+    id: 'arista-7500r3',
+    category: 'Arista',
+    type: 'switch',
+    name: '7500R3',
+    manufacturer: 'Arista',
+    model: '7500R3-36CQ',
+    description: 'Modular Spine/Core - 36x 400G QSFP-DD, Modular',
+    viewType: 'physical',
+    specifications: {
+      ports: { qsfpdd: { count: 36, speed: '400Gbps' } },
+      features: ['Modular', 'Deep Buffer', 'In-Service Upgrade', 'EVPN', 'SR-MPLS'],
+      layer: 3,
+      throughput: '14.4Tbps'
+    },
+    icon: 'server',
+    color: '#0066CC',
+  },
+  {
+    id: 'arista-720xp',
+    category: 'Arista',
+    type: 'switch',
+    name: '720XP',
+    manufacturer: 'Arista',
+    model: '720XP-48Y6',
+    description: 'Campus PoE Switch - 48x 2.5G PoE++ 6x 25G SFP28',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '2.5Gbps', poe: true }, sfp28: { count: 6, speed: '25Gbps' } },
+      features: ['PoE++ 1440W', 'EOS', 'Zero Touch', 'WiFi 6E Ready', 'MACsec'],
+      layer: 3,
+      poebudget: '1440W'
+    },
+    icon: 'server',
+    color: '#0066CC',
+  },
+
+  // ==================== JUNIPER NETWORKS ====================
+  // EX Series (Campus/Access)
+  {
+    id: 'juniper-ex2300',
+    category: 'Juniper',
+    type: 'switch',
+    name: 'EX2300',
+    manufacturer: 'Juniper',
+    model: 'EX2300-48P',
+    description: 'Access Switch - 48x 1G PoE+, 4x 10G SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['Junos', 'Virtual Chassis', 'PoE+ 740W', 'MACsec', 'Zero Touch'],
+      layer: 2,
+      poebudget: '740W'
+    },
+    icon: 'network',
+    color: '#84BD00',
+  },
+  {
+    id: 'juniper-ex3400',
+    category: 'Juniper',
+    type: 'switch',
+    name: 'EX3400',
+    manufacturer: 'Juniper',
+    model: 'EX3400-48P',
+    description: 'L3 Access Switch - 48x 1G PoE+, 4x 10G + 2x 40G',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfpPlus: { count: 4, speed: '10Gbps' }, qsfpPlus: { count: 2, speed: '40Gbps' } },
+      features: ['Junos', 'Layer 3', 'Virtual Chassis', 'PoE++ 1100W', 'EVPN-VXLAN'],
+      layer: 3,
+      poebudget: '1100W'
+    },
+    icon: 'server',
+    color: '#84BD00',
+  },
+  {
+    id: 'juniper-ex4400',
+    category: 'Juniper',
+    type: 'switch',
+    name: 'EX4400',
+    manufacturer: 'Juniper',
+    model: 'EX4400-48MP',
+    description: 'Campus Distribution - 48x mGig PoE++, 8x 10G/25G',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '5Gbps', poe: true }, sfp28: { count: 8, speed: '25Gbps' } },
+      features: ['Junos', 'mGig', 'PoE++ 2200W', 'Virtual Chassis', 'MACsec', 'WiFi 6E Ready'],
+      layer: 3,
+      poebudget: '2200W'
+    },
+    icon: 'server',
+    color: '#84BD00',
+  },
+  // QFX Series (Data Center)
+  {
+    id: 'juniper-qfx5120',
+    category: 'Juniper',
+    type: 'switch',
+    name: 'QFX5120',
+    manufacturer: 'Juniper',
+    model: 'QFX5120-48Y',
+    description: 'DC Leaf Switch - 48x 25G SFP28, 8x 100G QSFP28',
+    viewType: 'physical',
+    specifications: {
+      ports: { sfp28: { count: 48, speed: '25Gbps' }, qsfp28: { count: 8, speed: '100Gbps' } },
+      features: ['Junos', 'EVPN-VXLAN', 'IP Fabric', 'Low Latency', 'MACsec'],
+      layer: 3,
+      throughput: '3.2Tbps'
+    },
+    icon: 'server',
+    color: '#84BD00',
+  },
+  {
+    id: 'juniper-qfx5220',
+    category: 'Juniper',
+    type: 'switch',
+    name: 'QFX5220',
+    manufacturer: 'Juniper',
+    model: 'QFX5220-32CD',
+    description: 'DC Spine Switch - 32x 400G QSFP-DD',
+    viewType: 'physical',
+    specifications: {
+      ports: { qsfpdd: { count: 32, speed: '400Gbps' } },
+      features: ['Junos', 'EVPN-VXLAN', 'IP Fabric', 'Deep Buffer', 'SR-MPLS'],
+      layer: 3,
+      throughput: '12.8Tbps'
+    },
+    icon: 'server',
+    color: '#84BD00',
+  },
+  // SRX Series (Firewalls)
+  {
+    id: 'juniper-srx300',
+    category: 'Juniper',
+    type: 'firewall',
+    name: 'SRX300',
+    manufacturer: 'Juniper',
+    model: 'SRX300',
+    description: 'Branch Firewall - 8x 1G, IPS, AppSecure, VPN',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 8, speed: '1Gbps' } },
+      features: ['Junos', 'NGFW', 'IPS', 'VPN', 'AppSecure', 'UTM'],
+      layer: 7,
+      throughput: '1Gbps'
+    },
+    icon: 'shield',
+    color: '#84BD00',
+  },
+  {
+    id: 'juniper-srx1500',
+    category: 'Juniper',
+    type: 'firewall',
+    name: 'SRX1500',
+    manufacturer: 'Juniper',
+    model: 'SRX1500',
+    description: 'Enterprise Firewall - 16x 1G + 4x 10G SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 16, speed: '1Gbps' }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['Junos', 'NGFW', 'Advanced Threat', 'SSL Inspection', 'SD-WAN'],
+      layer: 7,
+      throughput: '9Gbps'
+    },
+    icon: 'shield',
+    color: '#84BD00',
+  },
+  // MX Series (Routers)
+  {
+    id: 'juniper-mx204',
+    category: 'Juniper',
+    type: 'router',
+    name: 'MX204',
+    manufacturer: 'Juniper',
+    model: 'MX204',
+    description: 'Universal Router - 4x 100G QSFP28, Compact',
+    viewType: 'physical',
+    specifications: {
+      ports: { qsfp28: { count: 4, speed: '100Gbps' } },
+      features: ['Junos', 'BGP', 'MPLS', 'Segment Routing', 'Timing'],
+      layer: 3,
+      throughput: '400Gbps'
+    },
+    icon: 'router',
+    color: '#84BD00',
+  },
+
+  // ==================== FORTINET ====================
+  // FortiGate Firewalls
+  {
+    id: 'fortinet-fg60f',
+    category: 'Fortinet',
+    type: 'firewall',
+    name: 'FortiGate 60F',
+    manufacturer: 'Fortinet',
+    model: 'FG-60F',
+    description: 'SMB Firewall - 10x GbE, WiFi optional, SD-WAN',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 10, speed: '1Gbps' } },
+      features: ['FortiOS', 'NGFW', 'SD-WAN', 'SSL Inspection', 'FortiGuard'],
+      layer: 7,
+      throughput: '10Gbps'
+    },
+    icon: 'shield',
+    color: '#EE3124',
+  },
+  {
+    id: 'fortinet-fg100f',
+    category: 'Fortinet',
+    type: 'firewall',
+    name: 'FortiGate 100F',
+    manufacturer: 'Fortinet',
+    model: 'FG-100F',
+    description: 'Mid-range NGFW - 18x GbE + 4x SFP+, HA Ready',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 18, speed: '1Gbps' }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['FortiOS', 'NGFW', 'SD-WAN', 'Active-Active HA', 'FortiGuard'],
+      layer: 7,
+      throughput: '20Gbps'
+    },
+    icon: 'shield',
+    color: '#EE3124',
+  },
+  {
+    id: 'fortinet-fg200f',
+    category: 'Fortinet',
+    type: 'firewall',
+    name: 'FortiGate 200F',
+    manufacturer: 'Fortinet',
+    model: 'FG-200F',
+    description: 'Enterprise Firewall - 16x GbE + 8x SFP+ + 4x SFP28',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 16, speed: '1Gbps' }, sfpPlus: { count: 8, speed: '10Gbps' }, sfp28: { count: 4, speed: '25Gbps' } },
+      features: ['FortiOS', 'NGFW', 'SD-WAN', 'Zero Trust', 'ZTNA', 'FortiGuard'],
+      layer: 7,
+      throughput: '27Gbps'
+    },
+    icon: 'shield',
+    color: '#EE3124',
+  },
+  {
+    id: 'fortinet-fg600f',
+    category: 'Fortinet',
+    type: 'firewall',
+    name: 'FortiGate 600F',
+    manufacturer: 'Fortinet',
+    model: 'FG-600F',
+    description: 'Data Center Firewall - 8x 25G + 2x 100G QSFP28',
+    viewType: 'physical',
+    specifications: {
+      ports: { sfp28: { count: 8, speed: '25Gbps' }, qsfp28: { count: 2, speed: '100Gbps' } },
+      features: ['FortiOS', 'NGFW', 'Hyperscale', 'Zero Trust', 'ASIC Acceleration'],
+      layer: 7,
+      throughput: '140Gbps'
+    },
+    icon: 'shield',
+    color: '#EE3124',
+  },
+  // FortiSwitch
+  {
+    id: 'fortinet-fs124e',
+    category: 'Fortinet',
+    type: 'switch',
+    name: 'FortiSwitch 124E',
+    manufacturer: 'Fortinet',
+    model: 'FS-124E-POE',
+    description: 'L2 PoE Switch - 24x GbE PoE + 4x SFP',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 24, speed: '1Gbps', poe: true }, sfp: { count: 4, speed: '1Gbps' } },
+      features: ['FortiLink', 'PoE+ 370W', 'VLANs', 'Security Fabric'],
+      layer: 2,
+      poebudget: '370W'
+    },
+    icon: 'network',
+    color: '#EE3124',
+  },
+  {
+    id: 'fortinet-fs448e',
+    category: 'Fortinet',
+    type: 'switch',
+    name: 'FortiSwitch 448E',
+    manufacturer: 'Fortinet',
+    model: 'FS-448E-FPOE',
+    description: 'L3 PoE Switch - 48x GbE PoE + 4x 10G SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['FortiLink', 'Full PoE++ 740W', 'Layer 3', 'Security Fabric', 'Stacking'],
+      layer: 3,
+      poebudget: '740W'
+    },
+    icon: 'server',
+    color: '#EE3124',
+  },
+  // FortiAP
+  {
+    id: 'fortinet-fap231f',
+    category: 'Fortinet',
+    type: 'accesspoint',
+    name: 'FortiAP 231F',
+    manufacturer: 'Fortinet',
+    model: 'FAP-231F',
+    description: 'WiFi 6 Indoor AP - Tri-radio, 2.5GbE',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 2, speed: '2.5Gbps', poe: true } },
+      wireless: { standards: ['Wi-Fi 6'], maxSpeed: '2400Mbps' },
+      features: ['WiFi 6', 'Tri-radio', 'Security Fabric', 'WIDS/WIPS'],
+      layer: 2
+    },
+    icon: 'wifi',
+    color: '#EE3124',
+  },
+
+  // ==================== MIKROTIK ====================
+  // hAP Series (SOHO/SMB)
+  {
+    id: 'mikrotik-hap-ax3',
+    category: 'MikroTik',
+    type: 'router',
+    name: 'hAP ax3',
+    manufacturer: 'MikroTik',
+    model: 'C53UiG+5HPaxD2HPaxD',
+    description: 'WiFi 6 Router - 5x GbE, dual-band WiFi 6',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 5, speed: '1Gbps' } },
+      wireless: { standards: ['Wi-Fi 6'], maxSpeed: '1800Mbps' },
+      features: ['RouterOS', 'WiFi 6', 'VLAN', 'Firewall', 'VPN'],
+      layer: 3
+    },
+    icon: 'router',
+    color: '#293239',
+  },
+  {
+    id: 'mikrotik-rb5009',
+    category: 'MikroTik',
+    type: 'router',
+    name: 'RB5009UG+S+IN',
+    manufacturer: 'MikroTik',
+    model: 'RB5009UG+S+IN',
+    description: 'Pro Router - 7x GbE + 1x 2.5G + 1x 10G SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 7, speed: '1Gbps' }, ethernet25g: { count: 1, speed: '2.5Gbps' }, sfpPlus: { count: 1, speed: '10Gbps' } },
+      features: ['RouterOS', 'Quad-core ARM', '1GB RAM', 'Hardware Acceleration'],
+      layer: 3,
+      throughput: '2.5Gbps'
+    },
+    icon: 'router',
+    color: '#293239',
+  },
+  // Cloud Core Routers
+  {
+    id: 'mikrotik-ccr2004',
+    category: 'MikroTik',
+    type: 'router',
+    name: 'CCR2004-1G-12S+2XS',
+    manufacturer: 'MikroTik',
+    model: 'CCR2004-1G-12S+2XS',
+    description: 'Core Router - 12x 10G SFP+ + 2x 25G SFP28',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '1Gbps' }, sfpPlus: { count: 12, speed: '10Gbps' }, sfp28: { count: 2, speed: '25Gbps' } },
+      features: ['RouterOS', 'Annapurna Labs CPU', '4GB RAM', 'Routing Table 4M'],
+      layer: 3,
+      throughput: '72Gbps'
+    },
+    icon: 'router',
+    color: '#293239',
+  },
+  {
+    id: 'mikrotik-ccr2216',
+    category: 'MikroTik',
+    type: 'router',
+    name: 'CCR2216-1G-12XS-2XQ',
+    manufacturer: 'MikroTik',
+    model: 'CCR2216-1G-12XS-2XQ',
+    description: 'Carrier Router - 12x 25G + 2x 100G QSFP28',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '1Gbps' }, sfp28: { count: 12, speed: '25Gbps' }, qsfp28: { count: 2, speed: '100Gbps' } },
+      features: ['RouterOS', '16-core Marvell', '16GB RAM', 'Full BGP'],
+      layer: 3,
+      throughput: '100Gbps'
+    },
+    icon: 'router',
+    color: '#293239',
+  },
+  // CRS Switches
+  {
+    id: 'mikrotik-crs328',
+    category: 'MikroTik',
+    type: 'switch',
+    name: 'CRS328-24P-4S+RM',
+    manufacturer: 'MikroTik',
+    model: 'CRS328-24P-4S+RM',
+    description: 'L3 PoE Switch - 24x GbE PoE + 4x 10G SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 24, speed: '1Gbps', poe: true }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['SwOS/RouterOS', 'PoE+ 500W', 'Layer 3', 'VLAN', 'LACP'],
+      layer: 3,
+      poebudget: '500W'
+    },
+    icon: 'server',
+    color: '#293239',
+  },
+  {
+    id: 'mikrotik-crs518',
+    category: 'MikroTik',
+    type: 'switch',
+    name: 'CRS518-16XS-2XQ',
+    manufacturer: 'MikroTik',
+    model: 'CRS518-16XS-2XQ-RM',
+    description: 'Core Switch - 16x 25G SFP28 + 2x 100G QSFP28',
+    viewType: 'physical',
+    specifications: {
+      ports: { sfp28: { count: 16, speed: '25Gbps' }, qsfp28: { count: 2, speed: '100Gbps' } },
+      features: ['SwOS/RouterOS', 'Marvell Prestera', 'Layer 3', 'VXLAN'],
+      layer: 3,
+      throughput: '600Gbps'
+    },
+    icon: 'server',
+    color: '#293239',
+  },
+
+  // ==================== CISCO MERAKI ====================
+  // MX Security Appliances
+  {
+    id: 'meraki-mx68',
+    category: 'Meraki',
+    type: 'firewall',
+    name: 'MX68',
+    manufacturer: 'Cisco Meraki',
+    model: 'MX68',
+    description: 'Cloud-managed Security - 12x GbE, SD-WAN',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 12, speed: '1Gbps' } },
+      features: ['Cloud Dashboard', 'SD-WAN', 'Auto VPN', 'Content Filter', 'AMP'],
+      layer: 7,
+      throughput: '450Mbps'
+    },
+    icon: 'shield',
+    color: '#78BE20',
+  },
+  {
+    id: 'meraki-mx85',
+    category: 'Meraki',
+    type: 'firewall',
+    name: 'MX85',
+    manufacturer: 'Cisco Meraki',
+    model: 'MX85',
+    description: 'Branch Security - 10x GbE + 2x SFP+, HA Capable',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 10, speed: '1Gbps' }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['Cloud Dashboard', 'SD-WAN', 'Auto VPN', 'HA Warm Spare', 'AMP'],
+      layer: 7,
+      throughput: '1Gbps'
+    },
+    icon: 'shield',
+    color: '#78BE20',
+  },
+  {
+    id: 'meraki-mx250',
+    category: 'Meraki',
+    type: 'firewall',
+    name: 'MX250',
+    manufacturer: 'Cisco Meraki',
+    model: 'MX250',
+    description: 'Enterprise Security - 8x GbE + 8x SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 8, speed: '1Gbps' }, sfpPlus: { count: 8, speed: '10Gbps' } },
+      features: ['Cloud Dashboard', 'SD-WAN', 'Auto VPN', 'Redundant PSU', 'AMP'],
+      layer: 7,
+      throughput: '4Gbps'
+    },
+    icon: 'shield',
+    color: '#78BE20',
+  },
+  // MS Switches
+  {
+    id: 'meraki-ms120-8',
+    category: 'Meraki',
+    type: 'switch',
+    name: 'MS120-8',
+    manufacturer: 'Cisco Meraki',
+    model: 'MS120-8LP',
+    description: 'Compact PoE Switch - 8x GbE PoE, 2x SFP',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 8, speed: '1Gbps', poe: true }, sfp: { count: 2, speed: '1Gbps' } },
+      features: ['Cloud Dashboard', 'PoE+ 67W', 'VLANs', 'Fanless'],
+      layer: 2,
+      poebudget: '67W'
+    },
+    icon: 'network',
+    color: '#78BE20',
+  },
+  {
+    id: 'meraki-ms225-48',
+    category: 'Meraki',
+    type: 'switch',
+    name: 'MS225-48',
+    manufacturer: 'Cisco Meraki',
+    model: 'MS225-48FP',
+    description: 'Access Switch - 48x GbE PoE+, 4x SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['Cloud Dashboard', 'PoE+ 740W', 'VLANs', 'Stacking'],
+      layer: 2,
+      poebudget: '740W'
+    },
+    icon: 'network',
+    color: '#78BE20',
+  },
+  {
+    id: 'meraki-ms350-48',
+    category: 'Meraki',
+    type: 'switch',
+    name: 'MS350-48',
+    manufacturer: 'Cisco Meraki',
+    model: 'MS350-48FP',
+    description: 'L3 Aggregation - 48x GbE PoE++, 4x 10G SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['Cloud Dashboard', 'Layer 3', 'PoE++ 1100W', 'OSPF', 'Stacking'],
+      layer: 3,
+      poebudget: '1100W'
+    },
+    icon: 'server',
+    color: '#78BE20',
+  },
+  // MR Access Points
+  {
+    id: 'meraki-mr46',
+    category: 'Meraki',
+    type: 'accesspoint',
+    name: 'MR46',
+    manufacturer: 'Cisco Meraki',
+    model: 'MR46',
+    description: 'WiFi 6 Indoor AP - 4x4:4 MU-MIMO, 2.5GbE',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '2.5Gbps', poe: true } },
+      wireless: { standards: ['Wi-Fi 6'], maxSpeed: '3500Mbps' },
+      features: ['Cloud Dashboard', 'WiFi 6', '4x4 MIMO', 'BLE', 'Location Analytics'],
+      layer: 2
+    },
+    icon: 'wifi',
+    color: '#78BE20',
+  },
+  {
+    id: 'meraki-mr56',
+    category: 'Meraki',
+    type: 'accesspoint',
+    name: 'MR56',
+    manufacturer: 'Cisco Meraki',
+    model: 'MR56',
+    description: 'WiFi 6 High-density - 8x8:8 MU-MIMO, 5GbE',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '5Gbps', poe: true } },
+      wireless: { standards: ['Wi-Fi 6'], maxSpeed: '5900Mbps' },
+      features: ['Cloud Dashboard', 'WiFi 6', '8x8 MIMO', 'High Density', 'Dedicated Security Radio'],
+      layer: 2
+    },
+    icon: 'wifi',
+    color: '#78BE20',
+  },
+
+  // ==================== HPE ARUBA ====================
+  // Aruba CX Switches
+  {
+    id: 'hpe-cx6100-24g',
+    category: 'HPE',
+    type: 'switch',
+    name: 'CX 6100 24G',
+    manufacturer: 'HPE Aruba',
+    model: 'CX 6100 24G 4SFP+',
+    description: 'L2 Access Switch - 24x GbE, 4x SFP+, Fanless',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 24, speed: '1Gbps' }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['AOS-CX', 'REST API', 'VLANs', 'Fanless', 'Zero Touch'],
+      layer: 2
+    },
+    icon: 'network',
+    color: '#FF8300',
+  },
+  {
+    id: 'hpe-cx6200-48g',
+    category: 'HPE',
+    type: 'switch',
+    name: 'CX 6200 48G PoE',
+    manufacturer: 'HPE Aruba',
+    model: 'CX 6200 48G PoE 4SFP+',
+    description: 'L2 Access Switch - 48x GbE PoE, 4x SFP+, 740W',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['AOS-CX', 'PoE+ 740W', 'REST API', 'VSX Ready', 'Zero Touch'],
+      layer: 2,
+      poebudget: '740W'
+    },
+    icon: 'network',
+    color: '#FF8300',
+  },
+  {
+    id: 'hpe-cx6300-48g',
+    category: 'HPE',
+    type: 'switch',
+    name: 'CX 6300 48G PoE',
+    manufacturer: 'HPE Aruba',
+    model: 'CX 6300 48G PoE 4SFP56',
+    description: 'L3 Access Switch - 48x GbE PoE, 4x 50G SFP56, 1440W',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfp56: { count: 4, speed: '50Gbps' } },
+      features: ['AOS-CX', 'Layer 3', 'PoE++ 1440W', 'VSX', 'Dynamic Segmentation'],
+      layer: 3,
+      poebudget: '1440W'
+    },
+    icon: 'server',
+    color: '#FF8300',
+  },
+  {
+    id: 'hpe-cx6400',
+    category: 'HPE',
+    type: 'switch',
+    name: 'CX 6400',
+    manufacturer: 'HPE Aruba',
+    model: 'CX 6400',
+    description: 'Modular Core/Campus - Up to 384x 10G or 96x 100G',
+    viewType: 'physical',
+    specifications: {
+      ports: { slots: { count: 6, type: 'Line Card' } },
+      features: ['AOS-CX', 'Modular', 'Dual Supervisors', 'VSX', 'Analytics'],
+      layer: 3,
+      throughput: '19.2Tbps'
+    },
+    icon: 'server',
+    color: '#FF8300',
+  },
+  {
+    id: 'hpe-cx8360-32y4c',
+    category: 'HPE',
+    type: 'switch',
+    name: 'CX 8360-32Y4C',
+    manufacturer: 'HPE Aruba',
+    model: 'CX 8360-32Y4C',
+    description: 'DC Leaf/Spine - 32x 25G SFP28, 4x 100G QSFP28',
+    viewType: 'physical',
+    specifications: {
+      ports: { sfp28: { count: 32, speed: '25Gbps' }, qsfp28: { count: 4, speed: '100Gbps' } },
+      features: ['AOS-CX', 'EVPN-VXLAN', 'Low Latency', 'NAE', 'MACsec'],
+      layer: 3,
+      throughput: '1.2Tbps'
+    },
+    icon: 'server',
+    color: '#FF8300',
+  },
+  // Aruba Instant On (SMB)
+  {
+    id: 'hpe-ion-1930-24g',
+    category: 'HPE',
+    type: 'switch',
+    name: 'Instant On 1930 24G',
+    manufacturer: 'HPE Aruba',
+    model: '1930 24G 4SFP/SFP+',
+    description: 'SMB Smart Switch - 24x GbE, 4x SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 24, speed: '1Gbps' }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['Instant On Cloud', 'Smart Managed', 'VLANs', 'Voice VLAN'],
+      layer: 2
+    },
+    icon: 'network',
+    color: '#FF8300',
+  },
+  {
+    id: 'hpe-ion-1960-48g',
+    category: 'HPE',
+    type: 'switch',
+    name: 'Instant On 1960 48G PoE',
+    manufacturer: 'HPE Aruba',
+    model: '1960 48G 40pPoE 2XGT 2SFP+',
+    description: 'SMB PoE Switch - 48x GbE, 40-port PoE, 2x 10GBase-T, 2x SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, ethernet10g: { count: 2, speed: '10Gbps' }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['Instant On Cloud', 'PoE+ 600W', 'Stackable', 'LACP'],
+      layer: 2,
+      poebudget: '600W'
+    },
+    icon: 'network',
+    color: '#FF8300',
+  },
+  // Aruba Access Points
+  {
+    id: 'hpe-ap515',
+    category: 'HPE',
+    type: 'accesspoint',
+    name: 'AP-515',
+    manufacturer: 'HPE Aruba',
+    model: 'AP-515',
+    description: 'WiFi 6 Indoor AP - 4x4:4 MIMO, 2.5GbE, BLE',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 2, speed: '2.5Gbps', poe: true } },
+      wireless: { standards: ['Wi-Fi 6'], maxSpeed: '2400Mbps' },
+      features: ['WiFi 6', 'AirMatch', 'ClientMatch', 'BLE 5.0', 'Zigbee'],
+      layer: 2
+    },
+    icon: 'wifi',
+    color: '#FF8300',
+  },
+  {
+    id: 'hpe-ap635',
+    category: 'HPE',
+    type: 'accesspoint',
+    name: 'AP-635',
+    manufacturer: 'HPE Aruba',
+    model: 'AP-635',
+    description: 'WiFi 6E Outdoor AP - Tri-band, 2.5GbE, IP67',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 2, speed: '2.5Gbps', poe: true } },
+      wireless: { standards: ['Wi-Fi 6E'], maxSpeed: '3900Mbps' },
+      features: ['WiFi 6E', '6GHz Band', 'IP67', 'Tri-radio', 'IoT Ready'],
+      layer: 2
+    },
+    icon: 'wifi',
+    color: '#FF8300',
+  },
+
+  // ==================== MORE SOHO DEVICES ====================
+  {
+    id: 'soho-mesh-system',
+    category: 'SOHO',
+    type: 'accesspoint',
+    name: 'Mesh WiFi System',
+    manufacturer: 'Generic',
+    model: 'Mesh-3Pack',
+    description: 'Whole-home mesh WiFi system - 3 nodes',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 2, speed: '1Gbps' } },
+      wireless: { standards: ['Wi-Fi 6'], maxSpeed: '3000Mbps' },
+      features: ['Mesh Networking', 'Seamless Roaming', 'App Control', 'Parental Controls'],
+      layer: 2
+    },
+    icon: 'wifi',
+    color: '#4F46E5',
+  },
+  {
+    id: 'soho-switch-8port',
+    category: 'SOHO',
+    type: 'switch',
+    name: '8-Port Desktop Switch',
+    manufacturer: 'Generic',
+    model: 'GS108',
+    description: 'Unmanaged gigabit desktop switch',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 8, speed: '1Gbps' } },
+      features: ['Unmanaged', 'Fanless', 'Plug and Play', 'Energy Efficient'],
+      layer: 2
+    },
+    icon: 'network',
+    color: '#4F46E5',
+  },
+  {
+    id: 'soho-switch-5port-poe',
+    category: 'SOHO',
+    type: 'switch',
+    name: '5-Port PoE Switch',
+    manufacturer: 'Generic',
+    model: 'GS305P',
+    description: 'Unmanaged PoE switch for cameras/APs',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 5, speed: '1Gbps', poe: true } },
+      features: ['PoE+ 63W', 'Unmanaged', 'Fanless', 'Compact'],
+      layer: 2,
+      poebudget: '63W'
+    },
+    icon: 'network',
+    color: '#4F46E5',
+  },
+  {
+    id: 'soho-ap-outdoor',
+    category: 'SOHO',
+    type: 'accesspoint',
+    name: 'Outdoor Access Point',
+    manufacturer: 'Generic',
+    model: 'OAP-300',
+    description: 'Weatherproof outdoor WiFi access point',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '1Gbps', poe: true } },
+      wireless: { standards: ['Wi-Fi 5'], maxSpeed: '1300Mbps' },
+      features: ['IP65 Rated', 'Outdoor Use', 'PoE Powered', 'Long Range'],
+      layer: 2
+    },
+    icon: 'wifi',
+    color: '#4F46E5',
+  },
+  {
+    id: 'soho-nas-4bay',
+    category: 'SOHO',
+    type: 'storage',
+    name: '4-Bay NAS',
+    manufacturer: 'Generic',
+    model: 'NAS-400',
+    description: 'Network attached storage with 4 drive bays',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 2, speed: '2.5Gbps' } },
+      features: ['RAID 0/1/5/6/10', 'iSCSI', 'SMB/NFS', 'Link Aggregation'],
+      layer: 3
+    },
+    icon: 'hard-drive',
+    color: '#4F46E5',
   },
 ];
 

@@ -442,7 +442,6 @@ function SubnetCalculator() {
             </div>
           )}
         </div>
-      )}
 
       {/* VLSM Section */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
