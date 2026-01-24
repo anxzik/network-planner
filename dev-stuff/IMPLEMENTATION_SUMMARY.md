@@ -1,333 +1,387 @@
-# 🎯 IP Subnet Calculator - Implementation Summary
+# Network Planner - Implementation Summary
 
-## ✅ What Was Built
+## Overview
 
-A comprehensive IP subnet calculator feature for your Network Planner application with the following components:
+Network Planner is a cross-platform desktop application for designing and planning network topologies. Built with Electron, React, and ReactFlow, it provides comprehensive tools for network visualization, IP management, VLAN configuration, and subnet calculations.
 
-### 📁 Files Created
+## Implemented Features
 
-#### 1. **Core Utilities** (`src/utils/subnetCalculator.js` - 13KB)
-Advanced networking utility functions including:
-- ✅ CIDR notation parsing
-- ✅ Subnet information calculation
-- ✅ IP address manipulation (increment/decrement)
-- ✅ Supernetting (route summarization)
-- ✅ Subnetting (network division)
-- ✅ VLSM allocation (variable length subnet masks)
-- ✅ IP classification and private range detection
-- ✅ Wildcard mask calculation
+### 1. Electron Desktop Application
 
-#### 2. **React Component** (`src/components/SubnetCalculator/SubnetCalculator.jsx` - 22KB)
-Full-featured UI with:
-- 🎨 Beautiful, intuitive interface with expandable sections
-- 🔢 Basic subnet calculator with dual input modes (Mask or CIDR)
-- 🌐 Supernetting tool for route summarization
-- 📊 Subnetting tool for network division
-- 🎯 VLSM allocation for department-based planning
-- 📋 Copy-to-clipboard functionality for all values
-- 🎭 Color-coded sections (Blue, Purple, Green, Orange)
-- 📱 Responsive design
+**Files:**
 
-#### 3. **Integration** (`src/App.jsx` - Modified)
-Updated main application to include:
-- New "Calculator" tab in the navigation bar
-- Integration with existing theme system
-- Seamless navigation between Topology, List, and Calculator views
+- `src/main.ts` - Electron main process
+- `src/preload.ts` - Preload script for secure context bridge
+- `src/renderer.ts` - Renderer entry point
+- `forge.config.ts` - Electron Forge configuration
 
-#### 4. **Documentation** (Multiple files)
-- `SUBNET_CALCULATOR.md` - Comprehensive technical documentation
-- `SUBNET_CALCULATOR_QUICKSTART.md` - User-friendly quick start guide
-- `SUBNET_CALCULATOR_EXAMPLES.js` - Code examples and use cases
+**Capabilities:**
+
+- Cross-platform support (Windows, macOS, Linux)
+- Native window management
+- Secure context isolation
+- ASAR packaging with integrity validation
+- Multiple distribution formats (Squirrel, ZIP, DEB, RPM)
 
 ---
 
-## 🚀 Features
+### 2. Network Topology Canvas
 
-### Basic Subnet Calculator
-Calculates:
-- CIDR notation (e.g., /24)
-- Network and broadcast addresses
-- First and last usable IPs
-- Number of usable and total hosts
-- IP class (A, B, C, D, E)
-- Private/Public IP detection
-- Wildcard mask
+**Files:**
 
-### Supernetting (Route Summarization)
-- Combine multiple subnets into one larger network
-- Useful for BGP route aggregation
-- Reduces routing table entries
-- Example: 192.168.0.0/24 + 192.168.1.0/24 = 192.168.0.0/23
+- `src/components/Canvas/NetworkCanvas.jsx` - Main canvas component
+- `src/components/Canvas/Controls.jsx` - Zoom/pan controls
+- `src/components/Canvas/ConnectionNotification.jsx` - Connection feedback
+- `src/components/nodes/DeviceNode.jsx` - Custom node component
 
-### Subnetting (Network Division)
-- Divide any network into smaller subnets
-- Specify the new CIDR prefix
-- Shows all resulting subnets with details
-- Example: 192.168.0.0/24 → 4 × /26 subnets
+**Capabilities:**
 
-### VLSM (Variable Length Subnet Mask)
-- Allocate subnets based on host requirements
-- Minimizes wasted IP addresses
-- Department/team specific planning
-- Example: Engineering (100 hosts), Sales (50 hosts), etc.
+- Interactive ReactFlow canvas
+- Drag-and-drop device placement from library
+- Custom node rendering for all device types
+- Physical and Logical view modes
+- Node selection and multi-select
+- Edge creation with port selection
+- Zoom, pan, and fit-to-view controls
+- Delete key to remove selected nodes
 
 ---
 
-## 🎮 How to Use
+### 3. Device Library
 
-### Accessing the Calculator
-1. Open your Network Planner application
-2. Click the **Calculator** tab in the top navigation bar
-3. The subnet calculator interface loads with 4 collapsible sections
+**Files:**
 
-### Basic Workflow
+- `src/components/DeviceLibrary/DeviceLibrary.jsx` - Main library component
+- `src/components/DeviceLibrary/DeviceCard.jsx` - Device card display
+- `src/components/DeviceLibrary/DeviceCategory.jsx` - Category accordion
+- `src/data/devices.js` - Device catalog data
 
-**Step 1: Calculate Basic Subnet**
-```
-1. Enter IP: 192.168.0.0
-2. Select CIDR: 24
-3. Click "Calculate"
-4. View all subnet details
-```
+**Device Categories:**
 
-**Step 2: Use Advanced Features**
-```
-- For Supernetting: Enter multiple subnets in CIDR format
-- For Subnetting: Set new CIDR prefix value
-- For VLSM: Add department requirements with host counts
+- **SOHO**: Home routers, small switches, access points
+- **Enterprise**: Core switches, distribution switches, routers, firewalls
+- **SDN**: Controllers, virtual switches, orchestrators
+- **Cloud**: VPCs, load balancers, cloud gateways
+
+**Capabilities:**
+
+- Categorized device browser
+- Collapsible category sections
+- Device search/filter
+- Drag-to-canvas functionality
+- Device specifications display
+
+---
+
+### 4. Node Configuration Panel
+
+**Files:**
+
+- `src/components/NodeConfig/NodeConfigPanel.jsx` - Configuration panel
+- `src/components/NodeConfig/PortConfigRow.jsx` - Port row configuration
+
+**Configurable Properties:**
+
+- Device name/alias
+- FQDN (Fully Qualified Domain Name)
+- IPv4 address
+- IPv6 address
+- Subnet mask
+- Gateway
+- DNS 1 and DNS 2
+- Notes field
+
+**Capabilities:**
+
+- Real-time property editing
+- Port configuration display
+- VLAN assignment per port
+- Connection status indicators
+
+---
+
+### 5. VLAN Management
+
+**Files:**
+
+- `src/components/VlanConfig/VlanConfigPanel.jsx` - VLAN panel
+- `src/components/VlanConfig/VlanCard.jsx` - VLAN display card
+- `src/components/VlanConfig/VlanEditor.jsx` - Create/edit modal
+- `src/utils/vlanFactory.js` - VLAN utilities
+
+**Capabilities:**
+
+- Create, edit, delete VLANs
+- VLAN ID, name, description, color
+- Default VLAN 1 (protected)
+- Search and filter VLANs
+- Port-to-VLAN assignment
+- Visual indicators on topology
+- Delete confirmation with port warning
+
+---
+
+### 6. Port Selector
+
+**Files:**
+
+- `src/components/PortSelector/PortSelectorModal.jsx` - Selection modal
+- `src/components/PortSelector/PortPanel.jsx` - Port display panel
+- `src/components/PortSelector/PortConnectionSummary.jsx` - Connection summary
+- `src/utils/portFactory.js` - Port utilities
+
+**Capabilities:**
+
+- Visual port grid for each device
+- Port status indicators (available, connected, selected)
+- VLAN tag display on ports
+- Source and target device panels
+- Connection validation
+- Port speed and type information
+
+---
+
+### 7. IP Subnet Calculator
+
+**Files:**
+
+- `src/components/SubnetCalculator/SubnetCalculator.jsx` - Calculator UI
+- `src/utils/subnetCalculator.js` - Calculation utilities
+- `src/utils/ipValidation.js` - Validation utilities
+
+**Features:**
+
+1. **Basic Calculator** (Blue section)
+   - IP + mask/CIDR input
+   - Network/broadcast address
+   - First/last usable IP
+   - Host count (usable and total)
+   - IP class detection
+   - Private/public classification
+   - Wildcard mask
+
+2. **Supernetting** (Purple section)
+   - Combine multiple subnets
+   - Route summarization
+   - CIDR aggregation
+
+3. **Subnetting** (Green section)
+   - Divide network into smaller subnets
+   - Specify target CIDR
+   - List all resulting subnets
+
+4. **VLSM Allocation** (Orange section)
+   - Allocate by host requirements
+   - Named subnet allocation
+   - Efficient IP utilization
+
+**Copy-to-clipboard for all calculated values**
+
+---
+
+### 8. Scratchpad
+
+**Files:**
+
+- `src/components/Scratchpad/Scratchpad.jsx` - Main scratchpad panel
+- `src/components/Scratchpad/CalculationCard.jsx` - Saved calculation display
+- `src/context/ScratchpadContext.jsx` - State management
+
+**Capabilities:**
+
+- Save subnet calculations
+- Notes section with auto-save
+- Resizable panel (drag handle)
+- Calculation count badge
+- Delete individual calculations
+- Clear all calculations
+- Tab switching (Calculations/Notes)
+
+---
+
+### 9. List View
+
+**Files:**
+
+- `src/components/ListView/ListView.jsx` - Main list view
+- `src/components/ListView/TopologyDeviceList.jsx` - Device table
+- `src/components/ListView/NetworkObjectForm.jsx` - Device form
+
+**Capabilities:**
+
+- Tabular device display
+- Device property editing
+- Alternative to topology view
+- Search and filter devices
+
+---
+
+### 10. Settings
+
+**Files:**
+
+- `src/components/Settings/SettingsModal.jsx` - Settings modal
+- `src/components/Settings/CanvasSettings.jsx` - Canvas options
+- `src/components/Settings/UISettings.jsx` - UI preferences
+- `src/components/Settings/DeviceLibrarySettings.jsx` - Library options
+- `src/context/SettingsContext.jsx` - Settings state
+
+**Capabilities:**
+
+- Theme selection
+- Canvas configuration
+- UI preferences
+- Device library display options
+- Settings persistence
+
+---
+
+### 11. State Management
+
+**Files:**
+
+- `src/context/NetworkContext.jsx` - Network topology state
+- `src/context/SettingsContext.jsx` - App settings state
+- `src/context/ScratchpadContext.jsx` - Scratchpad state
+
+**NetworkContext:**
+
+- Nodes and edges management
+- VLAN state
+- Selected node tracking
+- View mode (physical/logical)
+- Node count and edge count
+
+**SettingsContext:**
+
+- Theme management
+- Settings modal state
+- Canvas and UI preferences
+
+**ScratchpadContext:**
+
+- Open/close state
+- Panel height
+- Saved calculations
+- Notes content
+
+---
+
+### 12. Utility Modules
+
+**Files:**
+
+- `src/utils/subnetCalculator.js` - IP subnet calculations
+- `src/utils/ipValidation.js` - IP address validation
+- `src/utils/connectionValidation.js` - Connection rules
+- `src/utils/vlanFactory.js` - VLAN creation
+- `src/utils/portFactory.js` - Port initialization
+- `src/utils/nodeFactory.js` - Node creation
+- `src/utils/deviceHelpers.js` - Device utilities
+- `src/utils/storage.js` - localStorage persistence
+
+---
+
+## Technology Stack
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Electron | 40.0.0 | Desktop framework |
+| Electron Forge | 7.11.1 | Build tooling |
+| React | 19.2.3 | UI framework |
+| ReactFlow | 11.11.4 | Graph visualization |
+| Tailwind CSS | 4.1.18 | Styling |
+| Vite | 5.4.21 | Build tool |
+| Lucide React | 0.562.0 | Icons |
+| TypeScript | ~4.5.4 | Electron processes |
+
+---
+
+## File Structure
+
+```text
+src/
+├── main.ts                      # Electron main process
+├── preload.ts                   # Preload script
+├── renderer.ts                  # Renderer entry
+├── main.jsx                     # React entry
+├── App.jsx                      # Main app component
+├── App.css                      # App styles
+├── index.css                    # Global styles
+├── components/
+│   ├── Canvas/                  # Topology canvas
+│   ├── DeviceLibrary/           # Device browser
+│   ├── ListView/                # List view
+│   ├── NodeConfig/              # Config panel
+│   ├── PortSelector/            # Port selection
+│   ├── Scratchpad/              # Scratchpad panel
+│   ├── Settings/                # Settings modal
+│   ├── SubnetCalculator/        # Calculator view
+│   ├── VlanConfig/              # VLAN management
+│   └── nodes/                   # Custom nodes
+├── context/
+│   ├── NetworkContext.jsx       # Network state
+│   ├── SettingsContext.jsx      # Settings state
+│   └── ScratchpadContext.jsx    # Scratchpad state
+├── data/
+│   └── devices.js               # Device catalog
+└── utils/
+    ├── subnetCalculator.js      # IP calculations
+    ├── ipValidation.js          # Validation
+    ├── connectionValidation.js  # Connection rules
+    ├── vlanFactory.js           # VLAN utilities
+    ├── portFactory.js           # Port utilities
+    ├── nodeFactory.js           # Node utilities
+    ├── deviceHelpers.js         # Device helpers
+    └── storage.js               # Storage utilities
 ```
 
 ---
 
-## 💻 Code Structure
+## Running the Application
 
-```
-Network Planner/
-├── src/
-│   ├── components/
-│   │   ├── SubnetCalculator/
-│   │   │   └── SubnetCalculator.jsx      [React Component - 22KB]
-│   │   └── ... (existing components)
-│   ├── utils/
-│   │   ├── subnetCalculator.js           [Core Logic - 13KB]
-│   │   ├── ipValidation.js               (existing, extended)
-│   │   └── ... (existing utilities)
-│   ├── App.jsx                           (updated with Calculator tab)
-│   └── ...
-├── SUBNET_CALCULATOR.md                  [Technical Docs]
-├── SUBNET_CALCULATOR_QUICKSTART.md       [Quick Start Guide]
-├── SUBNET_CALCULATOR_EXAMPLES.js         [Usage Examples]
-└── ...
+```bash
+# Development
+npm start
+
+# Package for current platform
+npm run package
+
+# Create installers
+npm run make
+
+# Lint code
+npm run lint
 ```
 
 ---
 
-## 🔧 Technical Details
+## Key Features Summary
 
-### Supported Functions
-
-**Basic Calculations:**
-```javascript
-calculateSubnetInfo(ip, maskOrCidr)
-parseCIDR(cidrNotation)
-incrementIP(ip)
-decrementIP(ip)
-```
-
-**Network Operations:**
-```javascript
-calculateSupernetting(subnets)
-calculateSubnetting(cidrNotation, newCidr)
-calculateVLSM(cidrNotation, requirements)
-```
-
-**Utility Functions:**
-```javascript
-getIPClass(ip)
-isPrivateIP(ip)
-calculateWildcardMask(mask)
-```
-
-### IP Validation Integration
-Uses existing validation functions:
-- `isValidIPv4(ip)` - Validates IPv4 format
-- `isValidSubnetMask(mask)` - Validates contiguous mask
-- `maskToCIDR(mask)` - Converts mask to CIDR
-- `cidrToMask(cidr)` - Converts CIDR to mask
+| Feature | Status | Description |
+|---------|--------|-------------|
+| Electron Shell | Complete | Cross-platform desktop app |
+| Topology Canvas | Complete | ReactFlow-based visualization |
+| Device Library | Complete | Categorized device catalog |
+| Node Config | Complete | Device property editing |
+| VLAN Management | Complete | Create, edit, assign VLANs |
+| Port Selector | Complete | Visual port selection |
+| Subnet Calculator | Complete | IP/subnet calculations |
+| Scratchpad | Complete | Save calculations & notes |
+| List View | Complete | Tabular device view |
+| Settings | Complete | Theme & preferences |
+| Local Storage | Complete | Data persistence |
+| Physical/Logical Views | Complete | Dual topology views |
 
 ---
 
-## 🎨 UI/UX Design
+## Documentation
 
-### Color Scheme
-- **Blue** (#3B82F6): Basic Calculator
-- **Purple** (#A855F7): Supernetting
-- **Green** (#22C55E): Subnetting
-- **Orange** (#F97316): VLSM Allocation
-
-### Interactive Features
-- 📋 Copy-to-clipboard buttons on all values
-- ⚡ Expandable/collapsible sections
-- 🔄 Real-time calculations
-- ✅ Input validation with error messages
-- 📊 Responsive grid layout for results
-- 🎯 Dynamic field updates
-
----
-
-## 📚 Documentation Files
-
-### 1. **SUBNET_CALCULATOR_QUICKSTART.md**
-**Best for**: Users who want to get started quickly
-- 🚀 Getting started guide
-- 📊 Feature overview
-- 🎯 Common tasks
-- 💡 Pro tips
-- ⚠️ Validation rules
-- 📋 Reference tables
-
-### 2. **SUBNET_CALCULATOR.md**
-**Best for**: Detailed reference and documentation
-- 📖 Complete feature documentation
-- 🔧 API reference with code examples
-- 📝 Use cases and best practices
-- 🚨 Troubleshooting guide
-- 📊 CIDR and IP class reference
-- ⚙️ Performance considerations
-
-### 3. **SUBNET_CALCULATOR_EXAMPLES.js**
-**Best for**: Developers integrating the calculator
-- 💻 10 detailed code examples
-- 📝 Real-world scenarios
-- 🔌 React integration examples
-- 🏢 Data center design example
-- ✨ Advanced use cases
-
----
-
-## 🧪 Testing the Calculator
-
-### Example 1: Basic Calculation
-```
-Input: 192.168.1.0 / 24
-Output:
-- Network: 192.168.1.0
-- Broadcast: 192.168.1.255
-- First IP: 192.168.1.1
-- Last IP: 192.168.1.254
-- Hosts: 254
-```
-
-### Example 2: Supernetting
-```
-Input: 192.168.0.0/24, 192.168.1.0/24, 192.168.2.0/24, 192.168.3.0/24
-Output: 192.168.0.0/22
-```
-
-### Example 3: Subnetting
-```
-Input: 10.0.0.0/16, divide into /24
-Output: 256 subnets (10.0.0.0/24 to 10.0.255.0/24)
-```
-
-### Example 4: VLSM
-```
-Input: 10.0.0.0/16 for:
-  - Engineering: 100 hosts
-  - Sales: 50 hosts
-  - Support: 25 hosts
-
-Output:
-  - Engineering: 10.0.0.0/25 (126 hosts)
-  - Sales: 10.0.1.0/26 (62 hosts)
-  - Support: 10.0.2.0/27 (30 hosts)
-```
-
----
-
-## 🔐 Built-in Validations
-
-- ✅ IPv4 format validation (0.0.0.0 to 255.255.255.255)
-- ✅ Subnet mask validation (contiguous 1s followed by 0s)
-- ✅ CIDR range validation (0-32)
-- ✅ Supernet contiguity checking
-- ✅ VLSM allocation verification
-- ✅ IP range boundary checking
-
----
-
-## 🚀 Performance Characteristics
-
-- **Basic Calculations**: < 1ms
-- **Subnetting (up to /24)**: < 10ms
-- **Supernetting**: < 5ms
-- **VLSM (10 requirements)**: < 20ms
-- **Memory Usage**: Minimal (no external dependencies)
-
----
-
-## 🔄 Integration with Existing Code
-
-The subnet calculator:
-- ✅ Uses existing `ipValidation.js` utilities
-- ✅ Follows the same component structure as other components
-- ✅ Integrates with the existing theme system
-- ✅ Uses the same styling approach (Tailwind CSS)
-- ✅ Maintains consistent UI/UX patterns
-- ✅ Compatible with React hooks (useState, useCallback)
-
----
-
-## 📦 Dependencies
-
-The calculator uses:
-- React (built-in hooks: useState, useCallback)
-- Tailwind CSS (for styling)
-- Lucide React (for icons)
-- No external math libraries (pure JavaScript calculations)
-
----
-
-## 🎓 Learning Resources
-
-Located in documentation:
-- IP addressing fundamentals
-- CIDR notation explained
-- RFC 1918 private ranges
-- IP class classification
-- Route summarization concepts
-- VLSM allocation strategies
-- Network planning best practices
-
----
-
-## ✨ Next Steps
-
-1. **Test the calculator** by clicking the Calculator tab
-2. **Try the examples** provided in each section
-3. **Read the quick start** for immediate usage
-4. **Review the API docs** for integration into other components
-5. **Refer to examples.js** for code patterns
-
----
-
-## 🎉 Summary
-
-You now have a **production-ready IP subnet calculator** that:
-- ✅ Handles all subnet calculations
-- ✅ Provides multiple views and use cases
-- ✅ Includes comprehensive documentation
-- ✅ Integrates seamlessly with your app
-- ✅ Follows your existing code patterns
-- ✅ Uses your current styling system
-- ✅ Is fully functional and tested
-
-**Total Implementation:**
-- 2 main files (component + utilities)
-- 1 updated file (App.jsx)
-- 3 documentation files
-- ~35KB of code (35 lines component + utilities)
-- 0 external dependencies beyond what you already use
-
-Enjoy your new subnet calculator! 🚀
-
+| File | Description |
+|------|-------------|
+| `CLAUDE.md` | Development guide for AI assistance |
+| `ARCHITECTURE.md` | System architecture diagrams |
+| `IMPLEMENTATION_SUMMARY.md` | This file - feature overview |
+| `README.md` | Project introduction |
+| `SUBNET_CALCULATOR.md` | Calculator feature docs |
+| `SUBNET_CALCULATOR_QUICKSTART.md` | Calculator quick start |

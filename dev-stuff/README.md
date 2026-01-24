@@ -1,16 +1,57 @@
-# React + Vite
+# Network Planner
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A cross-platform desktop application for designing and planning network topologies. Built with Electron, React, and ReactFlow.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Interactive Topology Canvas** - Drag-and-drop network devices onto a visual canvas
+- **Device Library** - Comprehensive catalog of SOHO, Enterprise, SDN, and Cloud equipment
+- **VLAN Management** - Create, edit, and assign VLANs to device ports
+- **Port Configuration** - Visual port selection with status indicators
+- **IP Subnet Calculator** - Calculate subnets, supernets, and VLSM allocations
+- **Scratchpad** - Save calculations and notes for reference
+- **Multiple Views** - Topology, List, and Calculator views
+- **Physical/Logical Modes** - Switch between connection types
+- **Theme Support** - Customizable UI themes
+- **Local Persistence** - Data saved to localStorage
 
-## React Compiler
+## Quick Start
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+# Install dependencies
+npm install
 
-## Expanding the ESLint configuration
+# Start development server
+npm start
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# Package for distribution
+npm run make
+```
+
+## Requirements
+
+- Node.js 18+
+- npm 9+
+
+## Technology Stack
+
+- **Electron 40** - Desktop application framework
+- **React 19** - UI framework
+- **ReactFlow 11** - Graph visualization
+- **Tailwind CSS 4** - Styling
+- **Vite 5** - Build tool
+- **Electron Forge** - Build and packaging
+
+## Documentation
+
+See the `dev-stuff/` directory for detailed documentation:
+
+- `CLAUDE.md` - Development guide
+- `ARCHITECTURE.md` - System architecture
+- `IMPLEMENTATION_SUMMARY.md` - Feature overview
+- `SUBNET_CALCULATOR.md` - Calculator documentation
+- `SUBNET_CALCULATOR_QUICKSTART.md` - Calculator quick start
+
+## License
+
+MIT
