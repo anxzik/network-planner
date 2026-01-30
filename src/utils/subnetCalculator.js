@@ -237,7 +237,7 @@ export function calculateSupernetting(subnets) {
   const supermask = '1'.repeat(supernet) + '0'.repeat(32 - supernet);
   const supermaskOctets = [];
   for (let i = 0; i < 4; i++) {
-    supermaskOctets.push(parseInt(supermask.substr(i * 8, 8), 2));
+    supermaskOctets.push(parseInt(supermask.slice(i * 8, i * 8 + 8), 2));
   }
   const supermaskStr = supermaskOctets.join('.');
   const supermaskIP = binarySubnets[0].ip;

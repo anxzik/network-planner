@@ -51,7 +51,7 @@ export function ScratchpadProvider({ children }) {
   // Add a new calculation
   const addCalculation = useCallback((calculation) => {
     const newCalc = {
-      id: `calc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `calc-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
       timestamp: Date.now(),
       ...calculation,
     };

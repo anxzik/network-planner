@@ -2,12 +2,10 @@ import {useMemo, useState} from 'react';
 import {Cloud, Cpu, ExternalLink, Search, Server} from 'lucide-react';
 import {useSettings} from '../../context/SettingsContext';
 import {useNetwork} from '../../context/NetworkContext';
-import {useScratchpad} from '../../context/ScratchpadContext';
 
 function TopologyDeviceList() {
   const { currentTheme } = useSettings();
   const { topologyDevices, selectNode } = useNetwork();
-  const { openScratchpad } = useScratchpad();
   const [searchQuery, setSearchQuery] = useState('');
   const [filterViewType, setFilterViewType] = useState('all'); // 'all', 'physical', 'logical'
 
