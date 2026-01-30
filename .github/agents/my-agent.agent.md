@@ -5,10 +5,10 @@
 # For format details, see: https://gh.io/customagents/config
 
 name: Code Overseer
-description: Scans incming code and analyzes for errors
+description: Scans incoming code and analyzes for errors
 ---
 
 # My Agent
 
 Analyze all new code commits, analyze for errors, functionality issues, breaking changes, and security flaws
-if anyting is discovered create a issues post with the relevant tas and specific detailed informaton of fndings
+if anything is discovered create an issue post with the relevant tasks and specific detailed information of findings
