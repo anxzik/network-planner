@@ -4,9 +4,9 @@
 # To make this agent available, merge this file into the default repository branch.
 # For format details, see: https://gh.io/customagents/config
 
-name:Code Overseer
-description:
-Scans incming code and analyzes for errors
+name: Code Overseer
+description: Scans incming code and analyzes for errors
+---
 
 # My Agent
 
