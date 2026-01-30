@@ -11,4 +11,4 @@ Scans incming code and analyzes for errors
 # My Agent
 
 Analyze all new code commits, analyze for errors, functionality issues, breaking changes, and security flaws
-if anyting is discovered create a issues post wit the relevant tas and specific detailed informaton of fndings
+if anyting is discovered create a issues post with the relevant tas and specific detailed informaton of fndings
