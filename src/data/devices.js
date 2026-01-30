@@ -1,34 +1,1012 @@
 // Device category definitions
 export const deviceCategories = {
+  Generic: {
+    name: 'Generic',
+    label: 'Generic Devices',
+    color: '#6B7280',
+    subcategories: ['Routers', 'Switches', 'Hubs', 'Modems', 'Access Points', 'Firewalls']
+  },
+  GenericLogical: {
+    name: 'GenericLogical',
+    label: 'Logical Components',
+    color: '#8B5CF6',
+    subcategories: ['VLANs', 'Subnets', 'Routing Protocols', 'Network Segments']
+  },
+  Cisco: {
+    name: 'Cisco',
+    label: 'Cisco Systems',
+    color: '#049FD9',
+    subcategories: ['Catalyst Switches', 'ISR Routers', 'ASA Firewalls', 'Nexus', 'Meraki']
+  },
+  Ubiquiti: {
+    name: 'Ubiquiti',
+    label: 'Ubiquiti Networks',
+    color: '#0559C9',
+    subcategories: ['UniFi Switches', 'Dream Machines', 'Access Points', 'EdgeRouters']
+  },
+  PaloAlto: {
+    name: 'PaloAlto',
+    label: 'Palo Alto Networks',
+    color: '#FA582D',
+    subcategories: ['PA-Series', 'Prisma', 'Panorama']
+  },
+  Dell: {
+    name: 'Dell',
+    label: 'Dell Networking',
+    color: '#007DB8',
+    subcategories: ['PowerSwitch', 'PowerConnect', 'Networking']
+  },
   SOHO: {
     name: 'SOHO',
-    label: 'Small Office / Home Office',
+    label: 'Small Office / Home',
     color: '#4F46E5',
-    subcategories: ['Routers', 'Switches', 'Access Points', 'Network Attached Storage', 'Modems']
+    subcategories: ['Routers', 'Switches', 'Access Points', 'Storage']
   },
   Enterprise: {
     name: 'Enterprise',
     label: 'Enterprise Equipment',
     color: '#DC2626',
-    subcategories: ['Core Switches', 'Distribution Switches', 'Routers', 'Firewalls', 'Load Balancers', 'Security Appliances']
+    subcategories: ['Core', 'Distribution', 'Security']
   },
   SDN: {
     name: 'SDN',
-    label: 'SDN / Modern Platforms',
+    label: 'SDN / Virtual',
     color: '#059669',
-    subcategories: ['Controllers', 'Virtual Network', 'Orchestrators', 'Network Functions']
+    subcategories: ['Controllers', 'Virtual', 'Automation']
   },
   Cloud: {
     name: 'Cloud',
-    label: 'Cloud Networking',
+    label: 'Cloud Services',
     color: '#0284C7',
-    subcategories: ['VPC Components', 'Load Balancers', 'Gateways', 'CDN', 'Security']
+    subcategories: ['VPC', 'Load Balancers', 'Gateways', 'Security']
+  },
+  Arista: {
+    name: 'Arista',
+    label: 'Arista Networks',
+    color: '#0066CC',
+    subcategories: ['7000 Series', '7500 Series', '7800 Series', 'CloudVision']
+  },
+  Juniper: {
+    name: 'Juniper',
+    label: 'Juniper Networks',
+    color: '#84BD00',
+    subcategories: ['EX Series', 'QFX Series', 'SRX Series', 'MX Series']
+  },
+  Fortinet: {
+    name: 'Fortinet',
+    label: 'Fortinet Security',
+    color: '#EE3124',
+    subcategories: ['FortiGate', 'FortiSwitch', 'FortiAP']
+  },
+  MikroTik: {
+    name: 'MikroTik',
+    label: 'MikroTik',
+    color: '#293239',
+    subcategories: ['RouterBOARD', 'Cloud Core', 'CRS Switches', 'hAP Series']
+  },
+  Meraki: {
+    name: 'Meraki',
+    label: 'Cisco Meraki',
+    color: '#78BE20',
+    subcategories: ['MX Security', 'MS Switches', 'MR Access Points']
+  },
+  HPE: {
+    name: 'HPE',
+    label: 'HPE Aruba',
+    color: '#FF8300',
+    subcategories: ['Aruba CX', 'Aruba Instant On', 'ProCurve']
+  },
+  Endpoints: {
+    name: 'Endpoints',
+    label: 'Endpoints',
+    color: '#10B981',
+    subcategories: ['Servers', 'Workstations', 'Single Board', 'Storage']
+  },
+  Hypervisors: {
+    name: 'Hypervisors',
+    label: 'Hypervisors',
+    color: '#6366F1',
+    subcategories: ['VMware', 'Open Source', 'Microsoft', 'Citrix']
+  },
+  VirtualInfra: {
+    name: 'VirtualInfra',
+    label: 'Virtual Infrastructure',
+    color: '#EC4899',
+    subcategories: ['Virtual Machines', 'Containers', 'Cloud Instances']
   }
 };
 
-// Comprehensive device catalog
+// ==================== GENERIC PHYSICAL DEVICES ====================
 export const devices = [
-  // ==================== SOHO DEVICES ====================
+  // Generic Routers
+  {
+    id: 'gen-router-001',
+    category: 'Generic',
+    type: 'router',
+    name: 'Router',
+    manufacturer: 'Generic',
+    model: 'Standard Router',
+    description: 'Basic Layer 3 router for network routing',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 4, speed: '1Gbps' } },
+      features: ['NAT', 'DHCP', 'Static Routing', 'Firewall'],
+      layer: 3
+    },
+    icon: 'router',
+    color: '#6B7280',
+  },
+  {
+    id: 'gen-router-002',
+    category: 'Generic',
+    type: 'router',
+    name: 'Core Router',
+    manufacturer: 'Generic',
+    model: 'Enterprise Router',
+    description: 'High-performance routing for enterprise networks',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 8, speed: '10Gbps' } },
+      features: ['BGP', 'OSPF', 'MPLS', 'QoS'],
+      layer: 3
+    },
+    icon: 'router',
+    color: '#6B7280',
+  },
+
+  // Generic Switches
+  {
+    id: 'gen-switch-001',
+    category: 'Generic',
+    type: 'switch',
+    name: 'Switch',
+    manufacturer: 'Generic',
+    model: 'Standard Switch',
+    description: 'Layer 2 unmanaged switch',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 8, speed: '1Gbps' } },
+      features: ['Auto-MDI/MDIX', 'Store-and-Forward'],
+      layer: 2
+    },
+    icon: 'network',
+    color: '#6B7280',
+  },
+  {
+    id: 'gen-switch-002',
+    category: 'Generic',
+    type: 'switch',
+    name: 'Managed Switch',
+    manufacturer: 'Generic',
+    model: 'L2 Managed',
+    description: 'Layer 2 managed switch with VLANs',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 24, speed: '1Gbps' } },
+      features: ['VLANs', 'QoS', 'SNMP', 'Port Mirroring'],
+      layer: 2
+    },
+    icon: 'network',
+    color: '#6B7280',
+  },
+  {
+    id: 'gen-switch-003',
+    category: 'Generic',
+    type: 'switch',
+    name: 'Layer 3 Switch',
+    manufacturer: 'Generic',
+    model: 'L3 Switch',
+    description: 'Multilayer switch with routing capabilities',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps' }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['Layer 3 Routing', 'OSPF', 'VLANs', 'ACLs'],
+      layer: 3
+    },
+    icon: 'server',
+    color: '#6B7280',
+  },
+  {
+    id: 'gen-switch-004',
+    category: 'Generic',
+    type: 'switch',
+    name: 'Fiber Switch',
+    manufacturer: 'Generic',
+    model: 'SFP Switch',
+    description: 'Fiber optic switch with SFP ports',
+    viewType: 'physical',
+    specifications: {
+      ports: { sfp: { count: 24, speed: '1Gbps' } },
+      features: ['Fiber Connectivity', 'Long Distance', 'Low Latency'],
+      layer: 2
+    },
+    icon: 'network',
+    color: '#6B7280',
+  },
+
+  // Generic Hubs
+  {
+    id: 'gen-hub-001',
+    category: 'Generic',
+    type: 'hub',
+    name: 'Hub',
+    manufacturer: 'Generic',
+    model: 'Ethernet Hub',
+    description: 'Legacy Layer 1 hub - broadcasts to all ports',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 8, speed: '100Mbps' } },
+      features: ['Half-Duplex', 'Collision Domain'],
+      layer: 1
+    },
+    icon: 'circle',
+    color: '#6B7280',
+  },
+
+  // Generic Modems
+  {
+    id: 'gen-modem-001',
+    category: 'Generic',
+    type: 'modem',
+    name: 'Cable Modem',
+    manufacturer: 'Generic',
+    model: 'DOCSIS 3.1',
+    description: 'Cable modem for broadband internet',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '1Gbps' }, coax: { count: 1 } },
+      features: ['DOCSIS 3.1', 'High-Speed Internet'],
+      layer: 2
+    },
+    icon: 'router',
+    color: '#6B7280',
+  },
+  {
+    id: 'gen-modem-002',
+    category: 'Generic',
+    type: 'modem',
+    name: 'DSL Modem',
+    manufacturer: 'Generic',
+    model: 'VDSL2',
+    description: 'DSL modem for phone line internet',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '1Gbps' }, rj11: { count: 1 } },
+      features: ['VDSL2', 'ADSL2+'],
+      layer: 2
+    },
+    icon: 'router',
+    color: '#6B7280',
+  },
+  {
+    id: 'gen-modem-003',
+    category: 'Generic',
+    type: 'modem',
+    name: 'Fiber Modem (ONT)',
+    manufacturer: 'Generic',
+    model: 'GPON ONT',
+    description: 'Optical Network Terminal for fiber internet',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 4, speed: '1Gbps' }, fiber: { count: 1 } },
+      features: ['GPON', 'Fiber to Home'],
+      layer: 2
+    },
+    icon: 'zap',
+    color: '#6B7280',
+  },
+
+  // Generic Firewalls
+  {
+    id: 'gen-firewall-001',
+    category: 'Generic',
+    type: 'firewall',
+    name: 'Firewall',
+    manufacturer: 'Generic',
+    model: 'Stateful Firewall',
+    description: 'Basic stateful packet inspection firewall',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 6, speed: '1Gbps' } },
+      features: ['Stateful Inspection', 'NAT', 'VPN', 'ACLs'],
+      layer: 4
+    },
+    icon: 'shield',
+    color: '#6B7280',
+  },
+
+  // ==================== GENERIC LOGICAL COMPONENTS ====================
+  {
+    id: 'log-vlan-001',
+    category: 'GenericLogical',
+    type: 'vlan',
+    name: 'VLAN',
+    manufacturer: 'Logical',
+    model: 'Virtual LAN',
+    description: 'Virtual LAN for network segmentation',
+    viewType: 'logical',
+    specifications: {
+      features: ['Layer 2 Segmentation', 'Broadcast Domain'],
+      layer: 2,
+      virtual: true
+    },
+    icon: 'git-branch',
+    color: '#8B5CF6',
+  },
+  {
+    id: 'log-subnet-001',
+    category: 'GenericLogical',
+    type: 'subnet',
+    name: 'Subnet',
+    manufacturer: 'Logical',
+    model: 'IP Subnet',
+    description: 'IP subnet for logical network division',
+    viewType: 'logical',
+    specifications: {
+      features: ['IP Address Range', 'Network/Broadcast'],
+      layer: 3,
+      virtual: true
+    },
+    icon: 'box',
+    color: '#8B5CF6',
+  },
+  {
+    id: 'log-route-001',
+    category: 'GenericLogical',
+    type: 'routing',
+    name: 'Routing Protocol',
+    manufacturer: 'Logical',
+    model: 'Dynamic Routing',
+    description: 'Dynamic routing protocol (OSPF/BGP/EIGRP)',
+    viewType: 'logical',
+    specifications: {
+      features: ['Path Selection', 'Route Advertisement'],
+      layer: 3,
+      virtual: true
+    },
+    icon: 'route',
+    color: '#8B5CF6',
+  },
+
+  // ==================== CISCO DEVICES ====================
+  // Cisco Catalyst Switches
+  {
+    id: 'cisco-cat-2960',
+    category: 'Cisco',
+    type: 'switch',
+    name: 'Catalyst 2960',
+    manufacturer: 'Cisco',
+    model: 'Catalyst 2960-X',
+    description: 'L2 Access Switch - 24/48 ports, PoE+, FlexStack',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['FlexStack', 'PoE+ 370W', 'VLANs', 'QoS'],
+      layer: 2,
+      throughput: '176Gbps'
+    },
+    icon: 'network',
+    color: '#049FD9',
+  },
+  {
+    id: 'cisco-cat-3560',
+    category: 'Cisco',
+    type: 'switch',
+    name: 'Catalyst 3560',
+    manufacturer: 'Cisco',
+    model: 'Catalyst 3560-X',
+    description: 'L3 Switch - OSPF/EIGRP routing, Stacking, 24/48 ports',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['Layer 3 Routing', 'OSPF', 'EIGRP', 'StackWise-480', 'PoE+ 740W'],
+      layer: 3,
+      throughput: '176Gbps'
+    },
+    icon: 'server',
+    color: '#049FD9',
+  },
+  {
+    id: 'cisco-cat-3750',
+    category: 'Cisco',
+    type: 'switch',
+    name: 'Catalyst 3750',
+    manufacturer: 'Cisco',
+    model: 'Catalyst 3750-X',
+    description: 'L3 Stackable Switch - Enterprise access/distribution',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['StackWise Plus', 'Layer 3', 'OSPF/EIGRP/BGP', 'PoE+ 1150W'],
+      layer: 3,
+      throughput: '176Gbps'
+    },
+    icon: 'server',
+    color: '#049FD9',
+  },
+  {
+    id: 'cisco-cat-3850',
+    category: 'Cisco',
+    type: 'switch',
+    name: 'Catalyst 3850',
+    manufacturer: 'Cisco',
+    model: 'Catalyst 3850',
+    description: 'L3 Stackable Switch - 1/10G, StackPower, UADP',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['StackWise-480', 'UADP ASIC', 'Full Layer 3', 'PoE+ 1100W'],
+      layer: 3,
+      throughput: '480Gbps'
+    },
+    icon: 'server',
+    color: '#049FD9',
+  },
+  {
+    id: 'cisco-cat-9300',
+    category: 'Cisco',
+    type: 'switch',
+    name: 'Catalyst 9300',
+    manufacturer: 'Cisco',
+    model: 'Catalyst 9300',
+    description: 'Next-gen L3 Switch - DNA, StackWise Virtual, 24/48 ports',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['Cisco DNA', 'StackWise Virtual', 'UADP 3.0', 'PoE++ 1100W'],
+      layer: 3,
+      throughput: '440Gbps'
+    },
+    icon: 'server',
+    color: '#049FD9',
+  },
+  {
+    id: 'cisco-cat-9500',
+    category: 'Cisco',
+    type: 'switch',
+    name: 'Catalyst 9500',
+    manufacturer: 'Cisco',
+    model: 'Catalyst 9500',
+    description: 'Core/Aggregation Switch - 40/100G uplinks, modular',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '10Gbps' }, qsfp28: { count: 8, speed: '100Gbps' } },
+      features: ['Modular', 'Cisco DNA', 'MACsec', 'Redundant Supervisors'],
+      layer: 3,
+      throughput: '12.8Tbps'
+    },
+    icon: 'server',
+    color: '#049FD9',
+  },
+
+  // Cisco Nexus (Data Center)
+  {
+    id: 'cisco-nexus-5000',
+    category: 'Cisco',
+    type: 'switch',
+    name: 'Nexus 5000',
+    manufacturer: 'Cisco',
+    model: 'Nexus 5548P',
+    description: 'Top-of-Rack Switch - FCoE, 10G SFP+, FEX support',
+    viewType: 'physical',
+    specifications: {
+      ports: { sfpPlus: { count: 48, speed: '10Gbps' } },
+      features: ['FCoE', 'FEX', 'vPC', 'Low Latency'],
+      layer: 3,
+      throughput: '960Gbps'
+    },
+    icon: 'server',
+    color: '#049FD9',
+  },
+  {
+    id: 'cisco-nexus-7000',
+    category: 'Cisco',
+    type: 'switch',
+    name: 'Nexus 7000',
+    manufacturer: 'Cisco',
+    model: 'Nexus 7700',
+    description: 'Modular Data Center Core - Multi-Tbps, Redundancy',
+    viewType: 'physical',
+    specifications: {
+      ports: { slots: { count: 10, type: 'Line Card' } },
+      features: ['Modular', 'vPC', 'OTV', 'FabricPath', 'N+1 Redundancy'],
+      layer: 3,
+      throughput: '15Tbps'
+    },
+    icon: 'server',
+    color: '#049FD9',
+  },
+  {
+    id: 'cisco-nexus-9000',
+    category: 'Cisco',
+    type: 'switch',
+    name: 'Nexus 9000',
+    manufacturer: 'Cisco',
+    model: 'Nexus 9300',
+    description: 'Next-gen DC Switch - ACI ready, 10/25/40/100G',
+    viewType: 'physical',
+    specifications: {
+      ports: { sfp28: { count: 48, speed: '25Gbps' }, qsfp28: { count: 8, speed: '100Gbps' } },
+      features: ['ACI', 'VXLAN', 'CloudScale ASIC', 'MACsec'],
+      layer: 3,
+      throughput: '3.6Tbps'
+    },
+    icon: 'server',
+    color: '#049FD9',
+  },
+
+  // Cisco ISR Routers
+  {
+    id: 'cisco-isr-1100',
+    category: 'Cisco',
+    type: 'router',
+    name: 'ISR 1100',
+    manufacturer: 'Cisco',
+    model: 'ISR 1111-8P',
+    description: 'Branch Router - SD-WAN, 8 ports, PoE',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 8, speed: '1Gbps', poe: true } },
+      features: ['SD-WAN', 'IOS XE', 'Secure Boot', 'Cloud-managed'],
+      layer: 3,
+      throughput: '1Gbps'
+    },
+    icon: 'router',
+    color: '#049FD9',
+  },
+  {
+    id: 'cisco-isr-4000',
+    category: 'Cisco',
+    type: 'router',
+    name: 'ISR 4000',
+    manufacturer: 'Cisco',
+    model: 'ISR 4431',
+    description: 'Enterprise Router - Modular, 4 onboard GE, SFP slots',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 4, speed: '1Gbps' }, slots: { count: 4, type: 'NIM' } },
+      features: ['Modular', 'IOS XE', 'DMVPN', 'QoS', 'IPsec'],
+      layer: 3,
+      throughput: '2Gbps'
+    },
+    icon: 'router',
+    color: '#049FD9',
+  },
+
+  // Cisco ASA Firewalls
+  {
+    id: 'cisco-asa-5506',
+    category: 'Cisco',
+    type: 'firewall',
+    name: 'ASA 5506-X',
+    manufacturer: 'Cisco',
+    model: 'ASA 5506-X',
+    description: 'Small Business Firewall - FirePOWER optional, 8 ports',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 8, speed: '1Gbps' } },
+      features: ['Stateful Firewall', 'VPN', 'IPS (optional)', 'AnyConnect'],
+      layer: 7,
+      throughput: '750Mbps'
+    },
+    icon: 'shield',
+    color: '#049FD9',
+  },
+  {
+    id: 'cisco-asa-5516',
+    category: 'Cisco',
+    type: 'firewall',
+    name: 'ASA 5516-X',
+    manufacturer: 'Cisco',
+    model: 'ASA 5516-X',
+    description: 'Mid-range Firewall - FirePOWER, 10 ports',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 10, speed: '1Gbps' }, sfp: { count: 2, speed: '10Gbps' } },
+      features: ['FirePOWER Services', 'Active/Standby HA', 'VPN', 'IPS'],
+      layer: 7,
+      throughput: '3Gbps'
+    },
+    icon: 'shield',
+    color: '#049FD9',
+  },
+
+  // ==================== UBIQUITI DEVICES ====================
+  // UniFi Dream Machines
+  {
+    id: 'ubnt-udm-pro',
+    category: 'Ubiquiti',
+    type: 'router',
+    name: 'Dream Machine Pro',
+    manufacturer: 'Ubiquiti',
+    model: 'UDM-Pro',
+    description: 'All-in-One - Router, Switch, Controller, IPS/IDS, UniFi Protect',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 8, speed: '1Gbps' }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['UniFi Controller', 'IPS/IDS', 'DPI', 'VPN', 'VLAN'],
+      layer: 3,
+      throughput: '3.5Gbps'
+    },
+    icon: 'router',
+    color: '#0559C9',
+  },
+  {
+    id: 'ubnt-udm-se',
+    category: 'Ubiquiti',
+    type: 'router',
+    name: 'Dream Machine SE',
+    manufacturer: 'Ubiquiti',
+    model: 'UDM-SE',
+    description: 'Special Edition - PoE switch, 2.5GbE, WiFi 6',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 8, speed: '2.5Gbps', poe: true } },
+      features: ['UniFi Controller', 'WiFi 6', 'IPS/IDS', 'PoE++ 120W'],
+      layer: 3,
+      throughput: '2.5Gbps'
+    },
+    icon: 'router',
+    color: '#0559C9',
+  },
+
+  // UniFi Switches
+  {
+    id: 'ubnt-usw-lite-8-poe',
+    category: 'Ubiquiti',
+    type: 'switch',
+    name: 'USW Lite 8 PoE',
+    manufacturer: 'Ubiquiti',
+    model: 'USW-Lite-8-PoE',
+    description: 'L2 Switch - 8 ports, PoE+, 52W budget, Compact',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 8, speed: '1Gbps', poe: true } },
+      features: ['PoE+ 52W', 'Fanless', 'VLANs', 'Cloud Management'],
+      layer: 2,
+      poebudget: '52W'
+    },
+    icon: 'network',
+    color: '#0559C9',
+  },
+  {
+    id: 'ubnt-usw-24-poe',
+    category: 'Ubiquiti',
+    type: 'switch',
+    name: 'USW 24 PoE',
+    manufacturer: 'Ubiquiti',
+    model: 'USW-24-PoE',
+    description: 'L2 Switch - 24 ports, PoE+, 400W budget, 2x SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 24, speed: '1Gbps', poe: true }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['PoE+ 400W', 'Auto-sensing PoE', 'VLANs', 'Link Aggregation'],
+      layer: 2,
+      poebudget: '400W'
+    },
+    icon: 'network',
+    color: '#0559C9',
+  },
+  {
+    id: 'ubnt-usw-pro-24-poe',
+    category: 'Ubiquiti',
+    type: 'switch',
+    name: 'USW Pro 24 PoE',
+    manufacturer: 'Ubiquiti',
+    model: 'USW-Pro-24-PoE',
+    description: 'L3 Switch - 24 ports, PoE++, 400W, Layer 3 routing',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 24, speed: '1Gbps', poe: true }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['Layer 3', 'PoE++ 400W', 'Static Routing', 'Display'],
+      layer: 3,
+      poebudget: '400W'
+    },
+    icon: 'server',
+    color: '#0559C9',
+  },
+  {
+    id: 'ubnt-usw-pro-48-poe',
+    category: 'Ubiquiti',
+    type: 'switch',
+    name: 'USW Pro 48 PoE',
+    manufacturer: 'Ubiquiti',
+    model: 'USW-Pro-48-PoE',
+    description: 'L3 Switch - 48 ports, PoE++, 600W, 4x SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['Layer 3', 'PoE++ 600W', 'Touchscreen', 'Auto-sensing'],
+      layer: 3,
+      poebudget: '600W'
+    },
+    icon: 'server',
+    color: '#0559C9',
+  },
+  {
+    id: 'ubnt-usw-aggregation',
+    category: 'Ubiquiti',
+    type: 'switch',
+    name: 'USW Aggregation',
+    manufacturer: 'Ubiquiti',
+    model: 'USW-Aggregation',
+    description: 'L3 Core Switch - 28x 10G SFP+, Layer 3, High throughput',
+    viewType: 'physical',
+    specifications: {
+      ports: { sfpPlus: { count: 28, speed: '10Gbps' } },
+      features: ['Layer 3', 'Stacking', 'Link Aggregation', 'OSPF'],
+      layer: 3,
+      throughput: '560Gbps'
+    },
+    icon: 'server',
+    color: '#0559C9',
+  },
+
+  // UniFi Access Points
+  {
+    id: 'ubnt-u6-lite',
+    category: 'Ubiquiti',
+    type: 'accesspoint',
+    name: 'U6 Lite',
+    manufacturer: 'Ubiquiti',
+    model: 'U6-Lite',
+    description: 'WiFi 6 AP - Dual-band, 1.5Gbps, PoE',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '1Gbps', poe: true } },
+      wireless: { standards: ['Wi-Fi 6'], maxSpeed: '1500Mbps' },
+      features: ['WiFi 6', 'MU-MIMO', 'OFDMA', 'PoE'],
+      layer: 2
+    },
+    icon: 'wifi',
+    color: '#0559C9',
+  },
+  {
+    id: 'ubnt-u6-pro',
+    category: 'Ubiquiti',
+    type: 'accesspoint',
+    name: 'U6 Pro',
+    manufacturer: 'Ubiquiti',
+    model: 'U6-Pro',
+    description: 'WiFi 6 AP - Tri-band, 5.3Gbps, 2.5GbE PoE',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '2.5Gbps', poe: true } },
+      wireless: { standards: ['Wi-Fi 6'], maxSpeed: '5300Mbps' },
+      features: ['WiFi 6', 'Tri-band', '2.5GbE', 'PoE++'],
+      layer: 2
+    },
+    icon: 'wifi',
+    color: '#0559C9',
+  },
+
+  // EdgeRouters
+  {
+    id: 'ubnt-er-x',
+    category: 'Ubiquiti',
+    type: 'router',
+    name: 'EdgeRouter X',
+    manufacturer: 'Ubiquiti',
+    model: 'ER-X',
+    description: 'Entry Router - 5 ports, VLAN, routing, compact',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 5, speed: '1Gbps' } },
+      features: ['VLAN', 'Static/Dynamic Routing', 'Hardware Offload'],
+      layer: 3,
+      throughput: '1Gbps'
+    },
+    icon: 'router',
+    color: '#0559C9',
+  },
+  {
+    id: 'ubnt-er-12',
+    category: 'Ubiquiti',
+    type: 'router',
+    name: 'EdgeRouter 12',
+    manufacturer: 'Ubiquiti',
+    model: 'ER-12',
+    description: 'Enterprise Router - 10 GbE + 2 SFP, rack-mount',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 10, speed: '1Gbps' }, sfp: { count: 2, speed: '10Gbps' } },
+      features: ['Advanced Routing', 'BGP', 'OSPF', 'VPN'],
+      layer: 3,
+      throughput: '3.4Gbps'
+    },
+    icon: 'router',
+    color: '#0559C9',
+  },
+
+  // ==================== PALO ALTO DEVICES ====================
+  {
+    id: 'pa-220',
+    category: 'PaloAlto',
+    type: 'firewall',
+    name: 'PA-220',
+    manufacturer: 'Palo Alto',
+    model: 'PA-220',
+    description: 'NGFW - Small branch, 500Mbps, 8 ports, Threat Prevention',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 8, speed: '1Gbps' } },
+      features: ['App-ID', 'User-ID', 'Content-ID', 'SSL Decryption', 'VPN'],
+      layer: 7,
+      throughput: '500Mbps'
+    },
+    icon: 'shield',
+    color: '#FA582D',
+  },
+  {
+    id: 'pa-450',
+    category: 'PaloAlto',
+    type: 'firewall',
+    name: 'PA-450',
+    manufacturer: 'Palo Alto',
+    model: 'PA-450',
+    description: 'NGFW - Mid-size branch, 1.5Gbps, 16 ports, SD-WAN',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 16, speed: '1Gbps' } },
+      features: ['SD-WAN', 'App-ID', 'Threat Prevention', 'WildFire', 'VPN'],
+      layer: 7,
+      throughput: '1.5Gbps'
+    },
+    icon: 'shield',
+    color: '#FA582D',
+  },
+  {
+    id: 'pa-850',
+    category: 'PaloAlto',
+    type: 'firewall',
+    name: 'PA-850',
+    manufacturer: 'Palo Alto',
+    model: 'PA-850',
+    description: 'NGFW - Enterprise branch, 2.9Gbps, 16 ports + 4 SFP',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 16, speed: '1Gbps' }, sfp: { count: 4, speed: '10Gbps' } },
+      features: ['ML-Powered NGFW', 'Threat Prevention', 'SD-WAN', 'IoT Security'],
+      layer: 7,
+      throughput: '2.9Gbps'
+    },
+    icon: 'shield',
+    color: '#FA582D',
+  },
+  {
+    id: 'pa-3220',
+    category: 'PaloAlto',
+    type: 'firewall',
+    name: 'PA-3220',
+    manufacturer: 'Palo Alto',
+    model: 'PA-3220',
+    description: 'NGFW - Data center, 7.5Gbps, 16x 1GbE + 4x 10G SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 16, speed: '1Gbps' }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['Advanced Threat Prevention', 'WildFire', 'DNS Security', 'IoT'],
+      layer: 7,
+      throughput: '7.5Gbps'
+    },
+    icon: 'shield',
+    color: '#FA582D',
+  },
+  {
+    id: 'pa-5220',
+    category: 'PaloAlto',
+    type: 'firewall',
+    name: 'PA-5220',
+    manufacturer: 'Palo Alto',
+    model: 'PA-5220',
+    description: 'NGFW - High-end, 36Gbps, 16x 10G + 4x 40G, Modular',
+    viewType: 'physical',
+    specifications: {
+      ports: { sfpPlus: { count: 16, speed: '10Gbps' }, qsfp: { count: 4, speed: '40Gbps' } },
+      features: ['High Performance', 'Advanced Threat', 'Modular', 'Redundant PSU'],
+      layer: 7,
+      throughput: '36Gbps'
+    },
+    icon: 'shield',
+    color: '#FA582D',
+  },
+
+  // ==================== DELL NETWORKING ====================
+  // PowerSwitch Series
+  {
+    id: 'dell-n1108',
+    category: 'Dell',
+    type: 'switch',
+    name: 'PowerSwitch N1108',
+    manufacturer: 'Dell',
+    model: 'N1108T-ON',
+    description: 'L2 Smart Switch - 8 ports, PoE+, Fanless, Compact',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 8, speed: '1Gbps', poe: true } },
+      features: ['PoE+ 65W', 'VLANs', 'QoS', 'Web Management'],
+      layer: 2,
+      poebudget: '65W'
+    },
+    icon: 'network',
+    color: '#007DB8',
+  },
+  {
+    id: 'dell-n2024',
+    category: 'Dell',
+    type: 'switch',
+    name: 'PowerSwitch N2024',
+    manufacturer: 'Dell',
+    model: 'N2024',
+    description: 'L2 Switch - 24 ports, PoE+, 2x 10G SFP+, 370W',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 24, speed: '1Gbps', poe: true }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['PoE+ 370W', 'VLANs', 'LACP', 'Stacking Ready'],
+      layer: 2,
+      poebudget: '370W'
+    },
+    icon: 'network',
+    color: '#007DB8',
+  },
+  {
+    id: 'dell-s3100',
+    category: 'Dell',
+    type: 'switch',
+    name: 'PowerSwitch S3100',
+    manufacturer: 'Dell',
+    model: 'S3148',
+    description: 'L3 Switch - 48x 1G, 4x 10G SFP+, Full Layer 3',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps' }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['Full Layer 3', 'OSPF', 'BGP', 'VRF', 'Stacking'],
+      layer: 3,
+      throughput: '176Gbps'
+    },
+    icon: 'server',
+    color: '#007DB8',
+  },
+  {
+    id: 'dell-s4100',
+    category: 'Dell',
+    type: 'switch',
+    name: 'PowerSwitch S4100',
+    manufacturer: 'Dell',
+    model: 'S4148T-ON',
+    description: 'L3 Switch - 48x 1G PoE+, 6x 10G/25G, 1050W PoE',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfp28: { count: 6, speed: '25Gbps' } },
+      features: ['PoE++ 1050W', 'Full L3', 'VLT', 'VXLAN', 'ONIE'],
+      layer: 3,
+      poebudget: '1050W'
+    },
+    icon: 'server',
+    color: '#007DB8',
+  },
+  {
+    id: 'dell-s5200',
+    category: 'Dell',
+    type: 'switch',
+    name: 'PowerSwitch S5200',
+    manufacturer: 'Dell',
+    model: 'S5248F-ON',
+    description: 'L3 ToR Switch - 48x 25G SFP28, 8x 100G QSFP28',
+    viewType: 'physical',
+    specifications: {
+      ports: { sfp28: { count: 48, speed: '25Gbps' }, qsfp28: { count: 8, speed: '100Gbps' } },
+      features: ['ONIE', 'VLT', 'VXLAN', 'BGP EVPN', 'Low Latency'],
+      layer: 3,
+      throughput: '3.2Tbps'
+    },
+    icon: 'server',
+    color: '#007DB8',
+  },
+
+  // Keep existing SOHO, Enterprise, SDN, Cloud categories for backward compatibility
+  // (keeping a few key devices from the original file)
+
+  // SOHO
   {
     id: 'soho-router-001',
     category: 'SOHO',
@@ -37,766 +1015,18 @@ export const devices = [
     manufacturer: 'Generic',
     model: 'HR-100',
     description: 'Basic home router with NAT and DHCP',
+    viewType: 'physical',
     specifications: {
-      ports: {
-        ethernet: { count: 4, speed: '1Gbps' },
-        wan: { count: 1, speed: '1Gbps' }
-      },
-      wireless: {
-        standards: ['802.11ac'],
-        bands: ['2.4GHz', '5GHz'],
-        maxSpeed: '1200Mbps'
-      },
+      ports: { ethernet: { count: 4, speed: '1Gbps' }, wan: { count: 1, speed: '1Gbps' } },
+      wireless: { standards: ['802.11ac'], bands: ['2.4GHz', '5GHz'], maxSpeed: '1200Mbps' },
       features: ['NAT', 'DHCP Server', 'Basic Firewall', 'QoS'],
-      layer: 3,
-      throughput: '900Mbps',
-      powerConsumption: '12W'
+      layer: 3
     },
     icon: 'router',
     color: '#4F46E5',
-    defaultSize: { width: 80, height: 80 }
-  },
-  {
-    id: 'soho-router-002',
-    category: 'SOHO',
-    type: 'router',
-    name: 'Gaming Router',
-    manufacturer: 'Generic',
-    model: 'GR-300',
-    description: 'High-performance gaming router with advanced QoS',
-    specifications: {
-      ports: {
-        ethernet: { count: 5, speed: '1Gbps' },
-        wan: { count: 1, speed: '2.5Gbps' }
-      },
-      wireless: {
-        standards: ['802.11ax', 'Wi-Fi 6'],
-        bands: ['2.4GHz', '5GHz'],
-        maxSpeed: '3000Mbps'
-      },
-      features: ['Gaming QoS', 'DDoS Protection', 'VPN Support', 'MU-MIMO'],
-      layer: 3,
-      throughput: '2Gbps',
-      powerConsumption: '18W'
-    },
-    icon: 'router',
-    color: '#4F46E5',
-    defaultSize: { width: 80, height: 80 }
-  },
-  {
-    id: 'soho-router-003',
-    category: 'SOHO',
-    type: 'router',
-    name: 'WiFi 6 Router',
-    manufacturer: 'Generic',
-    model: 'W6-200',
-    description: 'Modern WiFi 6 router for high-density environments',
-    specifications: {
-      ports: {
-        ethernet: { count: 4, speed: '1Gbps' },
-        wan: { count: 1, speed: '1Gbps' }
-      },
-      wireless: {
-        standards: ['802.11ax', 'Wi-Fi 6'],
-        bands: ['2.4GHz', '5GHz'],
-        maxSpeed: '1800Mbps'
-      },
-      features: ['OFDMA', 'MU-MIMO', 'WPA3', 'Parental Controls'],
-      layer: 3,
-      throughput: '1.5Gbps',
-      powerConsumption: '15W'
-    },
-    icon: 'router',
-    color: '#4F46E5',
-    defaultSize: { width: 80, height: 80 }
-  },
-  {
-    id: 'soho-switch-001',
-    category: 'SOHO',
-    type: 'switch',
-    name: '5-Port Switch',
-    manufacturer: 'Generic',
-    model: 'SW-5U',
-    description: 'Unmanaged 5-port desktop switch',
-    specifications: {
-      ports: {
-        ethernet: { count: 5, speed: '1Gbps' }
-      },
-      features: ['Auto-MDI/MDIX', 'Auto-negotiation', 'Plug and Play'],
-      layer: 2,
-      throughput: '10Gbps',
-      powerConsumption: '4W'
-    },
-    icon: 'network',
-    color: '#4F46E5',
-    defaultSize: { width: 80, height: 80 }
-  },
-  {
-    id: 'soho-switch-002',
-    category: 'SOHO',
-    type: 'switch',
-    name: '8-Port Switch',
-    manufacturer: 'Generic',
-    model: 'SW-8U',
-    description: 'Unmanaged 8-port desktop switch',
-    specifications: {
-      ports: {
-        ethernet: { count: 8, speed: '1Gbps' }
-      },
-      features: ['Auto-MDI/MDIX', 'Store and Forward', 'Energy Efficient'],
-      layer: 2,
-      throughput: '16Gbps',
-      powerConsumption: '6W'
-    },
-    icon: 'network',
-    color: '#4F46E5',
-    defaultSize: { width: 80, height: 80 }
-  },
-  {
-    id: 'soho-switch-003',
-    category: 'SOHO',
-    type: 'switch',
-    name: '8-Port PoE Switch',
-    manufacturer: 'Generic',
-    model: 'SW-8P',
-    description: 'Managed 8-port PoE+ switch for small offices',
-    specifications: {
-      ports: {
-        ethernet: { count: 8, speed: '1Gbps', poe: true }
-      },
-      features: ['PoE+ 802.3at', 'VLAN Support', 'QoS', 'Web Management'],
-      layer: 2,
-      throughput: '16Gbps',
-      powerConsumption: '120W',
-      poebudget: '65W'
-    },
-    icon: 'network',
-    color: '#4F46E5',
-    defaultSize: { width: 80, height: 80 }
-  },
-  {
-    id: 'soho-ap-001',
-    category: 'SOHO',
-    type: 'accesspoint',
-    name: 'WiFi 5 Access Point',
-    manufacturer: 'Generic',
-    model: 'AP-AC',
-    description: 'Dual-band 802.11ac access point',
-    specifications: {
-      ports: {
-        ethernet: { count: 1, speed: '1Gbps', poe: true }
-      },
-      wireless: {
-        standards: ['802.11ac'],
-        bands: ['2.4GHz', '5GHz'],
-        maxSpeed: '1300Mbps'
-      },
-      features: ['PoE Powered', 'Ceiling Mount', 'MU-MIMO', 'Band Steering'],
-      layer: 2,
-      powerConsumption: '12W'
-    },
-    icon: 'wifi',
-    color: '#4F46E5',
-    defaultSize: { width: 80, height: 80 }
-  },
-  {
-    id: 'soho-ap-002',
-    category: 'SOHO',
-    type: 'accesspoint',
-    name: 'WiFi 6 Access Point',
-    manufacturer: 'Generic',
-    model: 'AP-AX',
-    description: 'High-performance WiFi 6 access point',
-    specifications: {
-      ports: {
-        ethernet: { count: 1, speed: '2.5Gbps', poe: true }
-      },
-      wireless: {
-        standards: ['802.11ax', 'Wi-Fi 6'],
-        bands: ['2.4GHz', '5GHz'],
-        maxSpeed: '2400Mbps'
-      },
-      features: ['PoE+ Powered', 'OFDMA', 'MU-MIMO', 'WPA3'],
-      layer: 2,
-      powerConsumption: '18W'
-    },
-    icon: 'wifi',
-    color: '#4F46E5',
-    defaultSize: { width: 80, height: 80 }
-  },
-  {
-    id: 'soho-ap-003',
-    category: 'SOHO',
-    type: 'accesspoint',
-    name: 'Mesh WiFi Node',
-    manufacturer: 'Generic',
-    model: 'MESH-01',
-    description: 'Wireless mesh network node',
-    specifications: {
-      ports: {
-        ethernet: { count: 2, speed: '1Gbps' }
-      },
-      wireless: {
-        standards: ['802.11ac'],
-        bands: ['2.4GHz', '5GHz', '5GHz Backhaul'],
-        maxSpeed: '1300Mbps'
-      },
-      features: ['Self-Healing Mesh', 'Seamless Roaming', 'Smart Placement'],
-      layer: 2,
-      powerConsumption: '10W'
-    },
-    icon: 'wifi',
-    color: '#4F46E5',
-    defaultSize: { width: 80, height: 80 }
-  },
-  {
-    id: 'soho-nas-001',
-    category: 'SOHO',
-    type: 'storage',
-    name: '2-Bay NAS',
-    manufacturer: 'Generic',
-    model: 'NAS-2B',
-    description: 'Network attached storage with RAID support',
-    specifications: {
-      ports: {
-        ethernet: { count: 1, speed: '1Gbps' },
-        usb: { count: 2, speed: 'USB 3.0' }
-      },
-      features: ['RAID 0/1', 'Media Server', 'Cloud Sync', 'Snapshot'],
-      storage: {
-        bays: 2,
-        maxCapacity: '32TB'
-      },
-      layer: 2,
-      powerConsumption: '25W'
-    },
-    icon: 'hard-drive',
-    color: '#4F46E5',
-    defaultSize: { width: 80, height: 80 }
-  },
-  {
-    id: 'soho-nas-002',
-    category: 'SOHO',
-    type: 'storage',
-    name: '4-Bay NAS',
-    manufacturer: 'Generic',
-    model: 'NAS-4B',
-    description: 'Advanced NAS with virtualization support',
-    specifications: {
-      ports: {
-        ethernet: { count: 2, speed: '1Gbps' },
-        usb: { count: 3, speed: 'USB 3.0' }
-      },
-      features: ['RAID 0/1/5/6/10', 'VM Support', 'Encryption', 'Hot Swap'],
-      storage: {
-        bays: 4,
-        maxCapacity: '64TB'
-      },
-      layer: 2,
-      powerConsumption: '45W'
-    },
-    icon: 'server',
-    color: '#4F46E5',
-    defaultSize: { width: 80, height: 80 }
-  },
-  {
-    id: 'soho-modem-001',
-    category: 'SOHO',
-    type: 'modem',
-    name: 'Cable Modem',
-    manufacturer: 'Generic',
-    model: 'CM-100',
-    description: 'DOCSIS 3.1 cable modem',
-    specifications: {
-      ports: {
-        ethernet: { count: 1, speed: '1Gbps' },
-        coax: { count: 1 }
-      },
-      features: ['DOCSIS 3.1', 'Gigabit Ethernet', 'IPv6 Support'],
-      maxSpeed: {
-        download: '1Gbps',
-        upload: '35Mbps'
-      },
-      layer: 2,
-      powerConsumption: '8W'
-    },
-    icon: 'router',
-    color: '#4F46E5',
-    defaultSize: { width: 80, height: 80 }
-  },
-  {
-    id: 'soho-modem-002',
-    category: 'SOHO',
-    type: 'modem',
-    name: 'DSL Modem',
-    manufacturer: 'Generic',
-    model: 'DSL-50',
-    description: 'VDSL2 modem for fiber-to-cabinet',
-    specifications: {
-      ports: {
-        ethernet: { count: 1, speed: '1Gbps' },
-        rj11: { count: 1 }
-      },
-      features: ['VDSL2', 'ADSL2+', 'Vectoring Support'],
-      maxSpeed: {
-        download: '100Mbps',
-        upload: '40Mbps'
-      },
-      layer: 2,
-      powerConsumption: '6W'
-    },
-    icon: 'router',
-    color: '#4F46E5',
-    defaultSize: { width: 80, height: 80 }
   },
 
-  // ==================== ENTERPRISE DEVICES ====================
-  {
-    id: 'ent-core-001',
-    category: 'Enterprise',
-    type: 'switch',
-    name: '48-Port Core Switch',
-    manufacturer: 'Generic',
-    model: 'CORE-48',
-    description: 'Layer 3 core switch with 10G uplinks',
-    specifications: {
-      ports: {
-        ethernet: { count: 48, speed: '1Gbps' },
-        sfpPlus: { count: 4, speed: '10Gbps' }
-      },
-      features: ['Layer 3 Routing', 'OSPF', 'BGP', 'Stacking', 'HSRP/VRRP'],
-      layer: 3,
-      throughput: '176Gbps',
-      powerConsumption: '250W'
-    },
-    icon: 'server',
-    color: '#DC2626',
-    defaultSize: { width: 100, height: 100 }
-  },
-  {
-    id: 'ent-core-002',
-    category: 'Enterprise',
-    type: 'switch',
-    name: 'Chassis Core Switch',
-    manufacturer: 'Generic',
-    model: 'CORE-CHASSIS',
-    description: 'Modular chassis switch for data center core',
-    specifications: {
-      ports: {
-        slots: { count: 8, type: 'Line Card Slots' },
-        supervisor: { count: 2, redundancy: true }
-      },
-      features: ['Hot-Swappable Modules', 'N+1 Power', 'VSS', '100G Capable'],
-      layer: 3,
-      throughput: '3.2Tbps',
-      powerConsumption: '2000W'
-    },
-    icon: 'server',
-    color: '#DC2626',
-    defaultSize: { width: 120, height: 120 }
-  },
-  {
-    id: 'ent-dist-001',
-    category: 'Enterprise',
-    type: 'switch',
-    name: '24-Port Distribution Switch',
-    manufacturer: 'Generic',
-    model: 'DIST-24',
-    description: 'Layer 3 distribution switch with PoE+',
-    specifications: {
-      ports: {
-        ethernet: { count: 24, speed: '1Gbps', poe: true },
-        sfpPlus: { count: 4, speed: '10Gbps' }
-      },
-      features: ['Layer 3', 'PoE+ 802.3at', 'Stacking', 'VLANs', 'ACLs'],
-      layer: 3,
-      throughput: '128Gbps',
-      powerConsumption: '450W',
-      poebudget: '370W'
-    },
-    icon: 'network',
-    color: '#DC2626',
-    defaultSize: { width: 100, height: 100 }
-  },
-  {
-    id: 'ent-dist-002',
-    category: 'Enterprise',
-    type: 'switch',
-    name: '48-Port PoE+ Switch',
-    manufacturer: 'Generic',
-    model: 'DIST-48P',
-    description: 'High-capacity PoE+ distribution switch',
-    specifications: {
-      ports: {
-        ethernet: { count: 48, speed: '1Gbps', poe: true },
-        sfpPlus: { count: 4, speed: '10Gbps' }
-      },
-      features: ['PoE+ 802.3at', 'Layer 3', 'Stacking', 'QoS', 'LACP'],
-      layer: 3,
-      throughput: '176Gbps',
-      powerConsumption: '900W',
-      poebudget: '740W'
-    },
-    icon: 'network',
-    color: '#DC2626',
-    defaultSize: { width: 100, height: 100 }
-  },
-  {
-    id: 'ent-router-001',
-    category: 'Enterprise',
-    type: 'router',
-    name: 'Enterprise Edge Router',
-    manufacturer: 'Generic',
-    model: 'EDGE-1000',
-    description: 'High-performance edge router with advanced routing',
-    specifications: {
-      ports: {
-        ethernet: { count: 8, speed: '1Gbps' },
-        sfp: { count: 2, speed: '10Gbps' }
-      },
-      features: ['BGP', 'OSPF', 'MPLS', 'IPsec VPN', 'QoS', 'NAT'],
-      layer: 3,
-      throughput: '10Gbps',
-      powerConsumption: '180W'
-    },
-    icon: 'router',
-    color: '#DC2626',
-    defaultSize: { width: 100, height: 100 }
-  },
-  {
-    id: 'ent-router-002',
-    category: 'Enterprise',
-    type: 'router',
-    name: 'Border Router',
-    manufacturer: 'Generic',
-    model: 'BR-5000',
-    description: 'Carrier-grade border router for ISP peering',
-    specifications: {
-      ports: {
-        sfpPlus: { count: 12, speed: '10Gbps' },
-        qsfp: { count: 4, speed: '40Gbps' }
-      },
-      features: ['Full BGP Table', 'MPLS', 'IPv6', 'RPKI', 'BFD'],
-      layer: 3,
-      throughput: '240Gbps',
-      powerConsumption: '600W'
-    },
-    icon: 'router',
-    color: '#DC2626',
-    defaultSize: { width: 120, height: 120 }
-  },
-  {
-    id: 'ent-fw-001',
-    category: 'Enterprise',
-    type: 'firewall',
-    name: 'Next-Gen Firewall',
-    manufacturer: 'Generic',
-    model: 'NGFW-3000',
-    description: 'Advanced firewall with IPS and application control',
-    specifications: {
-      ports: {
-        ethernet: { count: 8, speed: '1Gbps' },
-        sfpPlus: { count: 2, speed: '10Gbps' }
-      },
-      features: ['IPS/IDS', 'App Control', 'SSL Inspection', 'VPN', 'DLP'],
-      layer: 7,
-      throughput: '3Gbps',
-      powerConsumption: '200W'
-    },
-    icon: 'shield',
-    color: '#DC2626',
-    defaultSize: { width: 100, height: 100 }
-  },
-  {
-    id: 'ent-fw-002',
-    category: 'Enterprise',
-    type: 'firewall',
-    name: 'UTM Appliance',
-    manufacturer: 'Generic',
-    model: 'UTM-500',
-    description: 'Unified threat management appliance',
-    specifications: {
-      ports: {
-        ethernet: { count: 6, speed: '1Gbps' }
-      },
-      features: ['Firewall', 'VPN', 'Anti-virus', 'Web Filtering', 'Email Security'],
-      layer: 7,
-      throughput: '1Gbps',
-      powerConsumption: '120W'
-    },
-    icon: 'shield',
-    color: '#DC2626',
-    defaultSize: { width: 100, height: 100 }
-  },
-  {
-    id: 'ent-vpn-001',
-    category: 'Enterprise',
-    type: 'vpn',
-    name: 'VPN Concentrator',
-    manufacturer: 'Generic',
-    model: 'VPN-2000',
-    description: 'High-capacity IPsec VPN concentrator',
-    specifications: {
-      ports: {
-        ethernet: { count: 4, speed: '1Gbps' }
-      },
-      features: ['IPsec', 'SSL VPN', '10,000 concurrent tunnels', 'HA Support'],
-      layer: 3,
-      throughput: '2Gbps',
-      powerConsumption: '150W'
-    },
-    icon: 'shield',
-    color: '#DC2626',
-    defaultSize: { width: 100, height: 100 }
-  },
-  {
-    id: 'ent-lb-001',
-    category: 'Enterprise',
-    type: 'loadbalancer',
-    name: 'Application Load Balancer',
-    manufacturer: 'Generic',
-    model: 'ALB-5000',
-    description: 'Layer 7 application load balancer',
-    specifications: {
-      ports: {
-        ethernet: { count: 8, speed: '10Gbps' }
-      },
-      features: ['Layer 7 LB', 'SSL Offload', 'WAF', 'Health Checks', 'Session Persistence'],
-      layer: 7,
-      throughput: '20Gbps',
-      powerConsumption: '300W'
-    },
-    icon: 'server',
-    color: '#DC2626',
-    defaultSize: { width: 100, height: 100 }
-  },
-  {
-    id: 'ent-lb-002',
-    category: 'Enterprise',
-    type: 'loadbalancer',
-    name: 'Network Load Balancer',
-    manufacturer: 'Generic',
-    model: 'NLB-8000',
-    description: 'High-performance Layer 4 load balancer',
-    specifications: {
-      ports: {
-        ethernet: { count: 4, speed: '10Gbps' }
-      },
-      features: ['Layer 4 LB', 'DSR', 'Connection Pooling', 'HA', 'ECMP'],
-      layer: 4,
-      throughput: '40Gbps',
-      powerConsumption: '250W'
-    },
-    icon: 'server',
-    color: '#DC2626',
-    defaultSize: { width: 100, height: 100 }
-  },
-  {
-    id: 'ent-wan-001',
-    category: 'Enterprise',
-    type: 'wanoptimizer',
-    name: 'WAN Optimizer',
-    manufacturer: 'Generic',
-    model: 'WO-1000',
-    description: 'WAN optimization and acceleration appliance',
-    specifications: {
-      ports: {
-        ethernet: { count: 4, speed: '1Gbps' }
-      },
-      features: ['Deduplication', 'Compression', 'TCP Optimization', 'Caching'],
-      layer: 7,
-      throughput: '2Gbps',
-      powerConsumption: '180W'
-    },
-    icon: 'zap',
-    color: '#DC2626',
-    defaultSize: { width: 100, height: 100 }
-  },
-  {
-    id: 'ent-ids-001',
-    category: 'Enterprise',
-    type: 'security',
-    name: 'IDS/IPS Appliance',
-    manufacturer: 'Generic',
-    model: 'IPS-3000',
-    description: 'Intrusion detection and prevention system',
-    specifications: {
-      ports: {
-        ethernet: { count: 4, speed: '10Gbps' }
-      },
-      features: ['Deep Packet Inspection', 'Threat Intelligence', 'Inline/TAP', 'SIEM Integration'],
-      layer: 7,
-      throughput: '10Gbps',
-      powerConsumption: '220W'
-    },
-    icon: 'shield-check',
-    color: '#DC2626',
-    defaultSize: { width: 100, height: 100 }
-  },
-
-  // ==================== SDN / MODERN DEVICES ====================
-  {
-    id: 'sdn-ctrl-001',
-    category: 'SDN',
-    type: 'controller',
-    name: 'SDN Controller',
-    manufacturer: 'Generic',
-    model: 'SDN-CTRL',
-    description: 'Software-defined networking controller',
-    specifications: {
-      ports: {
-        ethernet: { count: 2, speed: '10Gbps' }
-      },
-      features: ['OpenFlow', 'REST API', 'Network Automation', 'Multi-tenant'],
-      protocols: ['OpenFlow 1.3', 'NETCONF', 'RESTCONF'],
-      layer: 3,
-      powerConsumption: '150W'
-    },
-    icon: 'cpu',
-    color: '#059669',
-    defaultSize: { width: 100, height: 100 }
-  },
-  {
-    id: 'sdn-ctrl-002',
-    category: 'SDN',
-    type: 'controller',
-    name: 'Network Orchestrator',
-    manufacturer: 'Generic',
-    model: 'ORCH-100',
-    description: 'Cloud-native network orchestration platform',
-    specifications: {
-      ports: {
-        management: { count: 2, speed: '1Gbps' }
-      },
-      features: ['Multi-cloud', 'Service Chaining', 'Policy Management', 'Analytics'],
-      protocols: ['NETCONF', 'gRPC', 'REST'],
-      layer: 3,
-      powerConsumption: '200W'
-    },
-    icon: 'workflow',
-    color: '#059669',
-    defaultSize: { width: 100, height: 100 }
-  },
-  {
-    id: 'sdn-vswitch-001',
-    category: 'SDN',
-    type: 'virtualswitch',
-    name: 'Open vSwitch',
-    manufacturer: 'OpenSource',
-    model: 'OVS-2.17',
-    description: 'Production-quality virtual switch',
-    specifications: {
-      features: ['OpenFlow', 'VXLAN', 'GRE', 'STT', 'DPDK', 'Multi-layer'],
-      protocols: ['OpenFlow', 'OVSDB'],
-      layer: 2,
-      virtual: true
-    },
-    icon: 'boxes',
-    color: '#059669',
-    defaultSize: { width: 100, height: 100 }
-  },
-  {
-    id: 'sdn-vrouter-001',
-    category: 'SDN',
-    type: 'virtualrouter',
-    name: 'Virtual Router',
-    manufacturer: 'Generic',
-    model: 'VR-1000',
-    description: 'Software-based routing instance',
-    specifications: {
-      features: ['BGP', 'OSPF', 'MPLS', 'VRF', 'IPsec'],
-      protocols: ['BGP', 'OSPF', 'IS-IS'],
-      layer: 3,
-      virtual: true
-    },
-    icon: 'router',
-    color: '#059669',
-    defaultSize: { width: 100, height: 100 }
-  },
-  {
-    id: 'sdn-nfv-001',
-    category: 'SDN',
-    type: 'nfv',
-    name: 'NFV Platform',
-    manufacturer: 'Generic',
-    model: 'NFV-PLAT',
-    description: 'Network functions virtualization platform',
-    specifications: {
-      ports: {
-        ethernet: { count: 4, speed: '10Gbps' }
-      },
-      features: ['VNF Management', 'Service Chaining', 'MANO', 'vCPU Scaling'],
-      layer: 3,
-      powerConsumption: '400W'
-    },
-    icon: 'cloud',
-    color: '#059669',
-    defaultSize: { width: 100, height: 100 }
-  },
-  {
-    id: 'sdn-whitebox-001',
-    category: 'SDN',
-    type: 'switch',
-    name: 'Whitebox Switch',
-    manufacturer: 'Generic',
-    model: 'WB-32X100',
-    description: 'Bare-metal switch with disaggregated NOS',
-    specifications: {
-      ports: {
-        qsfp28: { count: 32, speed: '100Gbps' }
-      },
-      features: ['SONiC/FBOSS', 'OpenFlow', 'P4 Runtime', 'ONIE'],
-      layer: 3,
-      throughput: '6.4Tbps',
-      powerConsumption: '550W'
-    },
-    icon: 'server',
-    color: '#059669',
-    defaultSize: { width: 120, height: 120 }
-  },
-  {
-    id: 'sdn-flow-001',
-    category: 'SDN',
-    type: 'monitoring',
-    name: 'Flow Collector',
-    manufacturer: 'Generic',
-    model: 'FLOW-COL',
-    description: 'NetFlow/sFlow/IPFIX collector and analyzer',
-    specifications: {
-      ports: {
-        ethernet: { count: 2, speed: '10Gbps' }
-      },
-      features: ['NetFlow v9', 'sFlow', 'IPFIX', 'DDoS Detection', 'Analytics'],
-      layer: 7,
-      powerConsumption: '180W'
-    },
-    icon: 'activity',
-    color: '#059669',
-    defaultSize: { width: 100, height: 100 }
-  },
-  {
-    id: 'sdn-auto-001',
-    category: 'SDN',
-    type: 'automation',
-    name: 'Network Automation Server',
-    manufacturer: 'Generic',
-    model: 'AUTO-SRV',
-    description: 'Network automation and configuration management',
-    specifications: {
-      ports: {
-        ethernet: { count: 2, speed: '1Gbps' }
-      },
-      features: ['Ansible', 'Python/NAPALM', 'GitOps', 'CI/CD', 'Backup/Restore'],
-      protocols: ['NETCONF', 'SSH', 'RESTCONF', 'gNMI'],
-      layer: 7,
-      powerConsumption: '120W'
-    },
-    icon: 'settings',
-    color: '#059669',
-    defaultSize: { width: 100, height: 100 }
-  },
-
-  // ==================== CLOUD DEVICES ====================
+  // Cloud
   {
     id: 'cloud-vpc-001',
     category: 'Cloud',
@@ -805,33 +1035,14 @@ export const devices = [
     manufacturer: 'Cloud Provider',
     model: 'VPC',
     description: 'Logically isolated cloud network',
+    viewType: 'logical',
     specifications: {
       features: ['Subnet Management', 'Route Tables', 'Network ACLs', 'Security Groups'],
-      addressSpace: 'RFC1918',
       layer: 3,
       virtual: true
     },
     icon: 'cloud',
     color: '#0284C7',
-    defaultSize: { width: 120, height: 120 }
-  },
-  {
-    id: 'cloud-tgw-001',
-    category: 'Cloud',
-    type: 'gateway',
-    name: 'Transit Gateway',
-    manufacturer: 'Cloud Provider',
-    model: 'TGW',
-    description: 'Hub for connecting VPCs and on-premises networks',
-    specifications: {
-      features: ['Inter-VPC Routing', 'VPN Attachments', 'Direct Connect', 'Route Tables'],
-      throughput: '50Gbps',
-      layer: 3,
-      virtual: true
-    },
-    icon: 'git-branch',
-    color: '#0284C7',
-    defaultSize: { width: 100, height: 100 }
   },
   {
     id: 'cloud-igw-001',
@@ -841,6 +1052,7 @@ export const devices = [
     manufacturer: 'Cloud Provider',
     model: 'IGW',
     description: 'Gateway for VPC internet connectivity',
+    viewType: 'logical',
     specifications: {
       features: ['Public IP Translation', 'Stateless NAT', 'Redundant', 'Scalable'],
       layer: 3,
@@ -848,177 +1060,1524 @@ export const devices = [
     },
     icon: 'globe',
     color: '#0284C7',
-    defaultSize: { width: 100, height: 100 }
   },
+
+  // SDN
   {
-    id: 'cloud-nat-001',
-    category: 'Cloud',
-    type: 'gateway',
-    name: 'NAT Gateway',
-    manufacturer: 'Cloud Provider',
-    model: 'NATGW',
-    description: 'Managed NAT service for private subnets',
+    id: 'sdn-vswitch-001',
+    category: 'SDN',
+    type: 'virtualswitch',
+    name: 'Open vSwitch',
+    manufacturer: 'OpenSource',
+    model: 'OVS-2.17',
+    description: 'Production-quality virtual switch',
+    viewType: 'logical',
     specifications: {
-      features: ['Outbound NAT', 'Static IP', 'HA', 'Port Allocation'],
-      throughput: '45Gbps',
-      layer: 3,
+      features: ['OpenFlow', 'VXLAN', 'GRE', 'STT', 'DPDK', 'Multi-layer'],
+      protocols: ['OpenFlow', 'OVSDB'],
+      layer: 2,
       virtual: true
     },
-    icon: 'arrow-left-right',
-    color: '#0284C7',
-    defaultSize: { width: 100, height: 100 }
+    icon: 'boxes',
+    color: '#059669',
   },
+
+  // ==================== ARISTA NETWORKS ====================
   {
-    id: 'cloud-alb-001',
-    category: 'Cloud',
-    type: 'loadbalancer',
-    name: 'Application Load Balancer',
-    manufacturer: 'Cloud Provider',
-    model: 'ALB',
-    description: 'Layer 7 load balancer with path-based routing',
+    id: 'arista-7050x3',
+    category: 'Arista',
+    type: 'switch',
+    name: '7050X3',
+    manufacturer: 'Arista',
+    model: '7050X3-48YC12',
+    description: 'Data Center Leaf - 48x 25G SFP28 + 12x 100G QSFP28',
+    viewType: 'physical',
     specifications: {
-      features: ['HTTP/HTTPS', 'Path Routing', 'Host Routing', 'SSL Termination', 'WAF'],
-      layer: 7,
-      virtual: true
+      ports: { sfp28: { count: 48, speed: '25Gbps' }, qsfp28: { count: 12, speed: '100Gbps' } },
+      features: ['EOS', 'VXLAN', 'EVPN', 'MACsec', 'Low Latency'],
+      layer: 3,
+      throughput: '3.6Tbps'
     },
     icon: 'server',
-    color: '#0284C7',
-    defaultSize: { width: 100, height: 100 }
+    color: '#0066CC',
   },
   {
-    id: 'cloud-nlb-001',
-    category: 'Cloud',
-    type: 'loadbalancer',
-    name: 'Network Load Balancer',
-    manufacturer: 'Cloud Provider',
-    model: 'NLB',
-    description: 'Ultra-low latency Layer 4 load balancer',
+    id: 'arista-7280r3',
+    category: 'Arista',
+    type: 'switch',
+    name: '7280R3',
+    manufacturer: 'Arista',
+    model: '7280R3-48C6',
+    description: 'Universal Spine - 48x 100G + 6x 400G, Deep Buffer',
+    viewType: 'physical',
     specifications: {
-      features: ['TCP/UDP', 'Static IP', 'Preserve Source IP', 'Connection Draining'],
-      throughput: 'Millions of RPS',
-      layer: 4,
-      virtual: true
+      ports: { qsfp28: { count: 48, speed: '100Gbps' }, qsfpdd: { count: 6, speed: '400Gbps' } },
+      features: ['EOS', 'Deep Buffer', 'FlexRoute', 'EVPN', 'Segment Routing'],
+      layer: 3,
+      throughput: '7.2Tbps'
     },
     icon: 'server',
-    color: '#0284C7',
-    defaultSize: { width: 100, height: 100 }
+    color: '#0066CC',
   },
   {
-    id: 'cloud-glb-001',
-    category: 'Cloud',
-    type: 'loadbalancer',
-    name: 'Global Load Balancer',
-    manufacturer: 'Cloud Provider',
-    model: 'GLB',
-    description: 'Multi-region load balancer with geo-routing',
+    id: 'arista-7500r3',
+    category: 'Arista',
+    type: 'switch',
+    name: '7500R3',
+    manufacturer: 'Arista',
+    model: '7500R3-36CQ',
+    description: 'Modular Spine/Core - 36x 400G QSFP-DD, Modular',
+    viewType: 'physical',
     specifications: {
-      features: ['Global Anycast', 'Geo-routing', 'Health Checks', 'Failover'],
-      layer: 7,
-      virtual: true
-    },
-    icon: 'globe',
-    color: '#0284C7',
-    defaultSize: { width: 120, height: 120 }
-  },
-  {
-    id: 'cloud-cdn-001',
-    category: 'Cloud',
-    type: 'cdn',
-    name: 'CDN Edge Location',
-    manufacturer: 'Cloud Provider',
-    model: 'CDN-EDGE',
-    description: 'Content delivery network edge node',
-    specifications: {
-      features: ['Edge Caching', 'DDoS Protection', 'SSL/TLS', 'Origin Shield', 'Lambda@Edge'],
-      layer: 7,
-      virtual: true
-    },
-    icon: 'zap',
-    color: '#0284C7',
-    defaultSize: { width: 100, height: 100 }
-  },
-  {
-    id: 'cloud-vpngw-001',
-    category: 'Cloud',
-    type: 'gateway',
-    name: 'VPN Gateway',
-    manufacturer: 'Cloud Provider',
-    model: 'VPNGW',
-    description: 'Site-to-site and client VPN gateway',
-    specifications: {
-      features: ['IPsec', 'Client VPN', 'BGP', 'Redundant Tunnels', 'Certificate Auth'],
-      throughput: '1.25Gbps',
+      ports: { qsfpdd: { count: 36, speed: '400Gbps' } },
+      features: ['Modular', 'Deep Buffer', 'In-Service Upgrade', 'EVPN', 'SR-MPLS'],
       layer: 3,
-      virtual: true
+      throughput: '14.4Tbps'
     },
-    icon: 'shield',
-    color: '#0284C7',
-    defaultSize: { width: 100, height: 100 }
+    icon: 'server',
+    color: '#0066CC',
   },
   {
-    id: 'cloud-fw-001',
-    category: 'Cloud',
+    id: 'arista-720xp',
+    category: 'Arista',
+    type: 'switch',
+    name: '720XP',
+    manufacturer: 'Arista',
+    model: '720XP-48Y6',
+    description: 'Campus PoE Switch - 48x 2.5G PoE++ 6x 25G SFP28',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '2.5Gbps', poe: true }, sfp28: { count: 6, speed: '25Gbps' } },
+      features: ['PoE++ 1440W', 'EOS', 'Zero Touch', 'WiFi 6E Ready', 'MACsec'],
+      layer: 3,
+      poebudget: '1440W'
+    },
+    icon: 'server',
+    color: '#0066CC',
+  },
+
+  // ==================== JUNIPER NETWORKS ====================
+  // EX Series (Campus/Access)
+  {
+    id: 'juniper-ex2300',
+    category: 'Juniper',
+    type: 'switch',
+    name: 'EX2300',
+    manufacturer: 'Juniper',
+    model: 'EX2300-48P',
+    description: 'Access Switch - 48x 1G PoE+, 4x 10G SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['Junos', 'Virtual Chassis', 'PoE+ 740W', 'MACsec', 'Zero Touch'],
+      layer: 2,
+      poebudget: '740W'
+    },
+    icon: 'network',
+    color: '#84BD00',
+  },
+  {
+    id: 'juniper-ex3400',
+    category: 'Juniper',
+    type: 'switch',
+    name: 'EX3400',
+    manufacturer: 'Juniper',
+    model: 'EX3400-48P',
+    description: 'L3 Access Switch - 48x 1G PoE+, 4x 10G + 2x 40G',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfpPlus: { count: 4, speed: '10Gbps' }, qsfpPlus: { count: 2, speed: '40Gbps' } },
+      features: ['Junos', 'Layer 3', 'Virtual Chassis', 'PoE++ 1100W', 'EVPN-VXLAN'],
+      layer: 3,
+      poebudget: '1100W'
+    },
+    icon: 'server',
+    color: '#84BD00',
+  },
+  {
+    id: 'juniper-ex4400',
+    category: 'Juniper',
+    type: 'switch',
+    name: 'EX4400',
+    manufacturer: 'Juniper',
+    model: 'EX4400-48MP',
+    description: 'Campus Distribution - 48x mGig PoE++, 8x 10G/25G',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '5Gbps', poe: true }, sfp28: { count: 8, speed: '25Gbps' } },
+      features: ['Junos', 'mGig', 'PoE++ 2200W', 'Virtual Chassis', 'MACsec', 'WiFi 6E Ready'],
+      layer: 3,
+      poebudget: '2200W'
+    },
+    icon: 'server',
+    color: '#84BD00',
+  },
+  // QFX Series (Data Center)
+  {
+    id: 'juniper-qfx5120',
+    category: 'Juniper',
+    type: 'switch',
+    name: 'QFX5120',
+    manufacturer: 'Juniper',
+    model: 'QFX5120-48Y',
+    description: 'DC Leaf Switch - 48x 25G SFP28, 8x 100G QSFP28',
+    viewType: 'physical',
+    specifications: {
+      ports: { sfp28: { count: 48, speed: '25Gbps' }, qsfp28: { count: 8, speed: '100Gbps' } },
+      features: ['Junos', 'EVPN-VXLAN', 'IP Fabric', 'Low Latency', 'MACsec'],
+      layer: 3,
+      throughput: '3.2Tbps'
+    },
+    icon: 'server',
+    color: '#84BD00',
+  },
+  {
+    id: 'juniper-qfx5220',
+    category: 'Juniper',
+    type: 'switch',
+    name: 'QFX5220',
+    manufacturer: 'Juniper',
+    model: 'QFX5220-32CD',
+    description: 'DC Spine Switch - 32x 400G QSFP-DD',
+    viewType: 'physical',
+    specifications: {
+      ports: { qsfpdd: { count: 32, speed: '400Gbps' } },
+      features: ['Junos', 'EVPN-VXLAN', 'IP Fabric', 'Deep Buffer', 'SR-MPLS'],
+      layer: 3,
+      throughput: '12.8Tbps'
+    },
+    icon: 'server',
+    color: '#84BD00',
+  },
+  // SRX Series (Firewalls)
+  {
+    id: 'juniper-srx300',
+    category: 'Juniper',
     type: 'firewall',
-    name: 'Cloud Firewall',
-    manufacturer: 'Cloud Provider',
-    model: 'CFW',
-    description: 'Managed stateful firewall service',
+    name: 'SRX300',
+    manufacturer: 'Juniper',
+    model: 'SRX300',
+    description: 'Branch Firewall - 8x 1G, IPS, AppSecure, VPN',
+    viewType: 'physical',
     specifications: {
-      features: ['Stateful Inspection', 'IPS', 'TLS Inspection', 'Domain Filtering'],
+      ports: { ethernet: { count: 8, speed: '1Gbps' } },
+      features: ['Junos', 'NGFW', 'IPS', 'VPN', 'AppSecure', 'UTM'],
       layer: 7,
-      virtual: true
+      throughput: '1Gbps'
     },
     icon: 'shield',
-    color: '#0284C7',
-    defaultSize: { width: 100, height: 100 }
+    color: '#84BD00',
   },
   {
-    id: 'cloud-waf-001',
-    category: 'Cloud',
-    type: 'security',
-    name: 'Web Application Firewall',
-    manufacturer: 'Cloud Provider',
-    model: 'WAF',
-    description: 'Protect web applications from common attacks',
+    id: 'juniper-srx1500',
+    category: 'Juniper',
+    type: 'firewall',
+    name: 'SRX1500',
+    manufacturer: 'Juniper',
+    model: 'SRX1500',
+    description: 'Enterprise Firewall - 16x 1G + 4x 10G SFP+',
+    viewType: 'physical',
     specifications: {
-      features: ['OWASP Top 10', 'Bot Management', 'Rate Limiting', 'Geo-blocking', 'Custom Rules'],
+      ports: { ethernet: { count: 16, speed: '1Gbps' }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['Junos', 'NGFW', 'Advanced Threat', 'SSL Inspection', 'SD-WAN'],
       layer: 7,
-      virtual: true
+      throughput: '9Gbps'
     },
-    icon: 'shield-check',
-    color: '#0284C7',
-    defaultSize: { width: 100, height: 100 }
+    icon: 'shield',
+    color: '#84BD00',
+  },
+  // MX Series (Routers)
+  {
+    id: 'juniper-mx204',
+    category: 'Juniper',
+    type: 'router',
+    name: 'MX204',
+    manufacturer: 'Juniper',
+    model: 'MX204',
+    description: 'Universal Router - 4x 100G QSFP28, Compact',
+    viewType: 'physical',
+    specifications: {
+      ports: { qsfp28: { count: 4, speed: '100Gbps' } },
+      features: ['Junos', 'BGP', 'MPLS', 'Segment Routing', 'Timing'],
+      layer: 3,
+      throughput: '400Gbps'
+    },
+    icon: 'router',
+    color: '#84BD00',
+  },
+
+  // ==================== FORTINET ====================
+  // FortiGate Firewalls
+  {
+    id: 'fortinet-fg60f',
+    category: 'Fortinet',
+    type: 'firewall',
+    name: 'FortiGate 60F',
+    manufacturer: 'Fortinet',
+    model: 'FG-60F',
+    description: 'SMB Firewall - 10x GbE, WiFi optional, SD-WAN',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 10, speed: '1Gbps' } },
+      features: ['FortiOS', 'NGFW', 'SD-WAN', 'SSL Inspection', 'FortiGuard'],
+      layer: 7,
+      throughput: '10Gbps'
+    },
+    icon: 'shield',
+    color: '#EE3124',
   },
   {
-    id: 'cloud-ddos-001',
-    category: 'Cloud',
-    type: 'security',
-    name: 'DDoS Protection',
-    manufacturer: 'Cloud Provider',
-    model: 'DDOS-SHIELD',
-    description: 'Always-on DDoS mitigation service',
+    id: 'fortinet-fg100f',
+    category: 'Fortinet',
+    type: 'firewall',
+    name: 'FortiGate 100F',
+    manufacturer: 'Fortinet',
+    model: 'FG-100F',
+    description: 'Mid-range NGFW - 18x GbE + 4x SFP+, HA Ready',
+    viewType: 'physical',
     specifications: {
-      features: ['L3/L4/L7 Protection', 'Automatic Mitigation', 'Traffic Scrubbing', 'Anycast'],
+      ports: { ethernet: { count: 18, speed: '1Gbps' }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['FortiOS', 'NGFW', 'SD-WAN', 'Active-Active HA', 'FortiGuard'],
       layer: 7,
-      virtual: true
+      throughput: '20Gbps'
     },
-    icon: 'shield-alert',
-    color: '#0284C7',
-    defaultSize: { width: 100, height: 100 }
+    icon: 'shield',
+    color: '#EE3124',
+  },
+  {
+    id: 'fortinet-fg200f',
+    category: 'Fortinet',
+    type: 'firewall',
+    name: 'FortiGate 200F',
+    manufacturer: 'Fortinet',
+    model: 'FG-200F',
+    description: 'Enterprise Firewall - 16x GbE + 8x SFP+ + 4x SFP28',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 16, speed: '1Gbps' }, sfpPlus: { count: 8, speed: '10Gbps' }, sfp28: { count: 4, speed: '25Gbps' } },
+      features: ['FortiOS', 'NGFW', 'SD-WAN', 'Zero Trust', 'ZTNA', 'FortiGuard'],
+      layer: 7,
+      throughput: '27Gbps'
+    },
+    icon: 'shield',
+    color: '#EE3124',
+  },
+  {
+    id: 'fortinet-fg600f',
+    category: 'Fortinet',
+    type: 'firewall',
+    name: 'FortiGate 600F',
+    manufacturer: 'Fortinet',
+    model: 'FG-600F',
+    description: 'Data Center Firewall - 8x 25G + 2x 100G QSFP28',
+    viewType: 'physical',
+    specifications: {
+      ports: { sfp28: { count: 8, speed: '25Gbps' }, qsfp28: { count: 2, speed: '100Gbps' } },
+      features: ['FortiOS', 'NGFW', 'Hyperscale', 'Zero Trust', 'ASIC Acceleration'],
+      layer: 7,
+      throughput: '140Gbps'
+    },
+    icon: 'shield',
+    color: '#EE3124',
+  },
+  // FortiSwitch
+  {
+    id: 'fortinet-fs124e',
+    category: 'Fortinet',
+    type: 'switch',
+    name: 'FortiSwitch 124E',
+    manufacturer: 'Fortinet',
+    model: 'FS-124E-POE',
+    description: 'L2 PoE Switch - 24x GbE PoE + 4x SFP',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 24, speed: '1Gbps', poe: true }, sfp: { count: 4, speed: '1Gbps' } },
+      features: ['FortiLink', 'PoE+ 370W', 'VLANs', 'Security Fabric'],
+      layer: 2,
+      poebudget: '370W'
+    },
+    icon: 'network',
+    color: '#EE3124',
+  },
+  {
+    id: 'fortinet-fs448e',
+    category: 'Fortinet',
+    type: 'switch',
+    name: 'FortiSwitch 448E',
+    manufacturer: 'Fortinet',
+    model: 'FS-448E-FPOE',
+    description: 'L3 PoE Switch - 48x GbE PoE + 4x 10G SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['FortiLink', 'Full PoE++ 740W', 'Layer 3', 'Security Fabric', 'Stacking'],
+      layer: 3,
+      poebudget: '740W'
+    },
+    icon: 'server',
+    color: '#EE3124',
+  },
+  // FortiAP
+  {
+    id: 'fortinet-fap231f',
+    category: 'Fortinet',
+    type: 'accesspoint',
+    name: 'FortiAP 231F',
+    manufacturer: 'Fortinet',
+    model: 'FAP-231F',
+    description: 'WiFi 6 Indoor AP - Tri-radio, 2.5GbE',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 2, speed: '2.5Gbps', poe: true } },
+      wireless: { standards: ['Wi-Fi 6'], maxSpeed: '2400Mbps' },
+      features: ['WiFi 6', 'Tri-radio', 'Security Fabric', 'WIDS/WIPS'],
+      layer: 2
+    },
+    icon: 'wifi',
+    color: '#EE3124',
+  },
+
+  // ==================== MIKROTIK ====================
+  // hAP Series (SOHO/SMB)
+  {
+    id: 'mikrotik-hap-ax3',
+    category: 'MikroTik',
+    type: 'router',
+    name: 'hAP ax3',
+    manufacturer: 'MikroTik',
+    model: 'C53UiG+5HPaxD2HPaxD',
+    description: 'WiFi 6 Router - 5x GbE, dual-band WiFi 6',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 5, speed: '1Gbps' } },
+      wireless: { standards: ['Wi-Fi 6'], maxSpeed: '1800Mbps' },
+      features: ['RouterOS', 'WiFi 6', 'VLAN', 'Firewall', 'VPN'],
+      layer: 3
+    },
+    icon: 'router',
+    color: '#293239',
+  },
+  {
+    id: 'mikrotik-rb5009',
+    category: 'MikroTik',
+    type: 'router',
+    name: 'RB5009UG+S+IN',
+    manufacturer: 'MikroTik',
+    model: 'RB5009UG+S+IN',
+    description: 'Pro Router - 7x GbE + 1x 2.5G + 1x 10G SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 7, speed: '1Gbps' }, ethernet25g: { count: 1, speed: '2.5Gbps' }, sfpPlus: { count: 1, speed: '10Gbps' } },
+      features: ['RouterOS', 'Quad-core ARM', '1GB RAM', 'Hardware Acceleration'],
+      layer: 3,
+      throughput: '2.5Gbps'
+    },
+    icon: 'router',
+    color: '#293239',
+  },
+  // Cloud Core Routers
+  {
+    id: 'mikrotik-ccr2004',
+    category: 'MikroTik',
+    type: 'router',
+    name: 'CCR2004-1G-12S+2XS',
+    manufacturer: 'MikroTik',
+    model: 'CCR2004-1G-12S+2XS',
+    description: 'Core Router - 12x 10G SFP+ + 2x 25G SFP28',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '1Gbps' }, sfpPlus: { count: 12, speed: '10Gbps' }, sfp28: { count: 2, speed: '25Gbps' } },
+      features: ['RouterOS', 'Annapurna Labs CPU', '4GB RAM', 'Routing Table 4M'],
+      layer: 3,
+      throughput: '72Gbps'
+    },
+    icon: 'router',
+    color: '#293239',
+  },
+  {
+    id: 'mikrotik-ccr2216',
+    category: 'MikroTik',
+    type: 'router',
+    name: 'CCR2216-1G-12XS-2XQ',
+    manufacturer: 'MikroTik',
+    model: 'CCR2216-1G-12XS-2XQ',
+    description: 'Carrier Router - 12x 25G + 2x 100G QSFP28',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '1Gbps' }, sfp28: { count: 12, speed: '25Gbps' }, qsfp28: { count: 2, speed: '100Gbps' } },
+      features: ['RouterOS', '16-core Marvell', '16GB RAM', 'Full BGP'],
+      layer: 3,
+      throughput: '100Gbps'
+    },
+    icon: 'router',
+    color: '#293239',
+  },
+  // CRS Switches
+  {
+    id: 'mikrotik-crs328',
+    category: 'MikroTik',
+    type: 'switch',
+    name: 'CRS328-24P-4S+RM',
+    manufacturer: 'MikroTik',
+    model: 'CRS328-24P-4S+RM',
+    description: 'L3 PoE Switch - 24x GbE PoE + 4x 10G SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 24, speed: '1Gbps', poe: true }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['SwOS/RouterOS', 'PoE+ 500W', 'Layer 3', 'VLAN', 'LACP'],
+      layer: 3,
+      poebudget: '500W'
+    },
+    icon: 'server',
+    color: '#293239',
+  },
+  {
+    id: 'mikrotik-crs518',
+    category: 'MikroTik',
+    type: 'switch',
+    name: 'CRS518-16XS-2XQ',
+    manufacturer: 'MikroTik',
+    model: 'CRS518-16XS-2XQ-RM',
+    description: 'Core Switch - 16x 25G SFP28 + 2x 100G QSFP28',
+    viewType: 'physical',
+    specifications: {
+      ports: { sfp28: { count: 16, speed: '25Gbps' }, qsfp28: { count: 2, speed: '100Gbps' } },
+      features: ['SwOS/RouterOS', 'Marvell Prestera', 'Layer 3', 'VXLAN'],
+      layer: 3,
+      throughput: '600Gbps'
+    },
+    icon: 'server',
+    color: '#293239',
+  },
+
+  // ==================== CISCO MERAKI ====================
+  // MX Security Appliances
+  {
+    id: 'meraki-mx68',
+    category: 'Meraki',
+    type: 'firewall',
+    name: 'MX68',
+    manufacturer: 'Cisco Meraki',
+    model: 'MX68',
+    description: 'Cloud-managed Security - 12x GbE, SD-WAN',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 12, speed: '1Gbps' } },
+      features: ['Cloud Dashboard', 'SD-WAN', 'Auto VPN', 'Content Filter', 'AMP'],
+      layer: 7,
+      throughput: '450Mbps'
+    },
+    icon: 'shield',
+    color: '#78BE20',
+  },
+  {
+    id: 'meraki-mx85',
+    category: 'Meraki',
+    type: 'firewall',
+    name: 'MX85',
+    manufacturer: 'Cisco Meraki',
+    model: 'MX85',
+    description: 'Branch Security - 10x GbE + 2x SFP+, HA Capable',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 10, speed: '1Gbps' }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['Cloud Dashboard', 'SD-WAN', 'Auto VPN', 'HA Warm Spare', 'AMP'],
+      layer: 7,
+      throughput: '1Gbps'
+    },
+    icon: 'shield',
+    color: '#78BE20',
+  },
+  {
+    id: 'meraki-mx250',
+    category: 'Meraki',
+    type: 'firewall',
+    name: 'MX250',
+    manufacturer: 'Cisco Meraki',
+    model: 'MX250',
+    description: 'Enterprise Security - 8x GbE + 8x SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 8, speed: '1Gbps' }, sfpPlus: { count: 8, speed: '10Gbps' } },
+      features: ['Cloud Dashboard', 'SD-WAN', 'Auto VPN', 'Redundant PSU', 'AMP'],
+      layer: 7,
+      throughput: '4Gbps'
+    },
+    icon: 'shield',
+    color: '#78BE20',
+  },
+  // MS Switches
+  {
+    id: 'meraki-ms120-8',
+    category: 'Meraki',
+    type: 'switch',
+    name: 'MS120-8',
+    manufacturer: 'Cisco Meraki',
+    model: 'MS120-8LP',
+    description: 'Compact PoE Switch - 8x GbE PoE, 2x SFP',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 8, speed: '1Gbps', poe: true }, sfp: { count: 2, speed: '1Gbps' } },
+      features: ['Cloud Dashboard', 'PoE+ 67W', 'VLANs', 'Fanless'],
+      layer: 2,
+      poebudget: '67W'
+    },
+    icon: 'network',
+    color: '#78BE20',
+  },
+  {
+    id: 'meraki-ms225-48',
+    category: 'Meraki',
+    type: 'switch',
+    name: 'MS225-48',
+    manufacturer: 'Cisco Meraki',
+    model: 'MS225-48FP',
+    description: 'Access Switch - 48x GbE PoE+, 4x SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['Cloud Dashboard', 'PoE+ 740W', 'VLANs', 'Stacking'],
+      layer: 2,
+      poebudget: '740W'
+    },
+    icon: 'network',
+    color: '#78BE20',
+  },
+  {
+    id: 'meraki-ms350-48',
+    category: 'Meraki',
+    type: 'switch',
+    name: 'MS350-48',
+    manufacturer: 'Cisco Meraki',
+    model: 'MS350-48FP',
+    description: 'L3 Aggregation - 48x GbE PoE++, 4x 10G SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['Cloud Dashboard', 'Layer 3', 'PoE++ 1100W', 'OSPF', 'Stacking'],
+      layer: 3,
+      poebudget: '1100W'
+    },
+    icon: 'server',
+    color: '#78BE20',
+  },
+  // MR Access Points
+  {
+    id: 'meraki-mr46',
+    category: 'Meraki',
+    type: 'accesspoint',
+    name: 'MR46',
+    manufacturer: 'Cisco Meraki',
+    model: 'MR46',
+    description: 'WiFi 6 Indoor AP - 4x4:4 MU-MIMO, 2.5GbE',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '2.5Gbps', poe: true } },
+      wireless: { standards: ['Wi-Fi 6'], maxSpeed: '3500Mbps' },
+      features: ['Cloud Dashboard', 'WiFi 6', '4x4 MIMO', 'BLE', 'Location Analytics'],
+      layer: 2
+    },
+    icon: 'wifi',
+    color: '#78BE20',
+  },
+  {
+    id: 'meraki-mr56',
+    category: 'Meraki',
+    type: 'accesspoint',
+    name: 'MR56',
+    manufacturer: 'Cisco Meraki',
+    model: 'MR56',
+    description: 'WiFi 6 High-density - 8x8:8 MU-MIMO, 5GbE',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '5Gbps', poe: true } },
+      wireless: { standards: ['Wi-Fi 6'], maxSpeed: '5900Mbps' },
+      features: ['Cloud Dashboard', 'WiFi 6', '8x8 MIMO', 'High Density', 'Dedicated Security Radio'],
+      layer: 2
+    },
+    icon: 'wifi',
+    color: '#78BE20',
+  },
+
+  // ==================== HPE ARUBA ====================
+  // Aruba CX Switches
+  {
+    id: 'hpe-cx6100-24g',
+    category: 'HPE',
+    type: 'switch',
+    name: 'CX 6100 24G',
+    manufacturer: 'HPE Aruba',
+    model: 'CX 6100 24G 4SFP+',
+    description: 'L2 Access Switch - 24x GbE, 4x SFP+, Fanless',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 24, speed: '1Gbps' }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['AOS-CX', 'REST API', 'VLANs', 'Fanless', 'Zero Touch'],
+      layer: 2
+    },
+    icon: 'network',
+    color: '#FF8300',
+  },
+  {
+    id: 'hpe-cx6200-48g',
+    category: 'HPE',
+    type: 'switch',
+    name: 'CX 6200 48G PoE',
+    manufacturer: 'HPE Aruba',
+    model: 'CX 6200 48G PoE 4SFP+',
+    description: 'L2 Access Switch - 48x GbE PoE, 4x SFP+, 740W',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['AOS-CX', 'PoE+ 740W', 'REST API', 'VSX Ready', 'Zero Touch'],
+      layer: 2,
+      poebudget: '740W'
+    },
+    icon: 'network',
+    color: '#FF8300',
+  },
+  {
+    id: 'hpe-cx6300-48g',
+    category: 'HPE',
+    type: 'switch',
+    name: 'CX 6300 48G PoE',
+    manufacturer: 'HPE Aruba',
+    model: 'CX 6300 48G PoE 4SFP56',
+    description: 'L3 Access Switch - 48x GbE PoE, 4x 50G SFP56, 1440W',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, sfp56: { count: 4, speed: '50Gbps' } },
+      features: ['AOS-CX', 'Layer 3', 'PoE++ 1440W', 'VSX', 'Dynamic Segmentation'],
+      layer: 3,
+      poebudget: '1440W'
+    },
+    icon: 'server',
+    color: '#FF8300',
+  },
+  {
+    id: 'hpe-cx6400',
+    category: 'HPE',
+    type: 'switch',
+    name: 'CX 6400',
+    manufacturer: 'HPE Aruba',
+    model: 'CX 6400',
+    description: 'Modular Core/Campus - Up to 384x 10G or 96x 100G',
+    viewType: 'physical',
+    specifications: {
+      ports: { slots: { count: 6, type: 'Line Card' } },
+      features: ['AOS-CX', 'Modular', 'Dual Supervisors', 'VSX', 'Analytics'],
+      layer: 3,
+      throughput: '19.2Tbps'
+    },
+    icon: 'server',
+    color: '#FF8300',
+  },
+  {
+    id: 'hpe-cx8360-32y4c',
+    category: 'HPE',
+    type: 'switch',
+    name: 'CX 8360-32Y4C',
+    manufacturer: 'HPE Aruba',
+    model: 'CX 8360-32Y4C',
+    description: 'DC Leaf/Spine - 32x 25G SFP28, 4x 100G QSFP28',
+    viewType: 'physical',
+    specifications: {
+      ports: { sfp28: { count: 32, speed: '25Gbps' }, qsfp28: { count: 4, speed: '100Gbps' } },
+      features: ['AOS-CX', 'EVPN-VXLAN', 'Low Latency', 'NAE', 'MACsec'],
+      layer: 3,
+      throughput: '1.2Tbps'
+    },
+    icon: 'server',
+    color: '#FF8300',
+  },
+  // Aruba Instant On (SMB)
+  {
+    id: 'hpe-ion-1930-24g',
+    category: 'HPE',
+    type: 'switch',
+    name: 'Instant On 1930 24G',
+    manufacturer: 'HPE Aruba',
+    model: '1930 24G 4SFP/SFP+',
+    description: 'SMB Smart Switch - 24x GbE, 4x SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 24, speed: '1Gbps' }, sfpPlus: { count: 4, speed: '10Gbps' } },
+      features: ['Instant On Cloud', 'Smart Managed', 'VLANs', 'Voice VLAN'],
+      layer: 2
+    },
+    icon: 'network',
+    color: '#FF8300',
+  },
+  {
+    id: 'hpe-ion-1960-48g',
+    category: 'HPE',
+    type: 'switch',
+    name: 'Instant On 1960 48G PoE',
+    manufacturer: 'HPE Aruba',
+    model: '1960 48G 40pPoE 2XGT 2SFP+',
+    description: 'SMB PoE Switch - 48x GbE, 40-port PoE, 2x 10GBase-T, 2x SFP+',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 48, speed: '1Gbps', poe: true }, ethernet10g: { count: 2, speed: '10Gbps' }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['Instant On Cloud', 'PoE+ 600W', 'Stackable', 'LACP'],
+      layer: 2,
+      poebudget: '600W'
+    },
+    icon: 'network',
+    color: '#FF8300',
+  },
+  // Aruba Access Points
+  {
+    id: 'hpe-ap515',
+    category: 'HPE',
+    type: 'accesspoint',
+    name: 'AP-515',
+    manufacturer: 'HPE Aruba',
+    model: 'AP-515',
+    description: 'WiFi 6 Indoor AP - 4x4:4 MIMO, 2.5GbE, BLE',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 2, speed: '2.5Gbps', poe: true } },
+      wireless: { standards: ['Wi-Fi 6'], maxSpeed: '2400Mbps' },
+      features: ['WiFi 6', 'AirMatch', 'ClientMatch', 'BLE 5.0', 'Zigbee'],
+      layer: 2
+    },
+    icon: 'wifi',
+    color: '#FF8300',
+  },
+  {
+    id: 'hpe-ap635',
+    category: 'HPE',
+    type: 'accesspoint',
+    name: 'AP-635',
+    manufacturer: 'HPE Aruba',
+    model: 'AP-635',
+    description: 'WiFi 6E Outdoor AP - Tri-band, 2.5GbE, IP67',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 2, speed: '2.5Gbps', poe: true } },
+      wireless: { standards: ['Wi-Fi 6E'], maxSpeed: '3900Mbps' },
+      features: ['WiFi 6E', '6GHz Band', 'IP67', 'Tri-radio', 'IoT Ready'],
+      layer: 2
+    },
+    icon: 'wifi',
+    color: '#FF8300',
+  },
+
+  // ==================== MORE SOHO DEVICES ====================
+  {
+    id: 'soho-mesh-system',
+    category: 'SOHO',
+    type: 'accesspoint',
+    name: 'Mesh WiFi System',
+    manufacturer: 'Generic',
+    model: 'Mesh-3Pack',
+    description: 'Whole-home mesh WiFi system - 3 nodes',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 2, speed: '1Gbps' } },
+      wireless: { standards: ['Wi-Fi 6'], maxSpeed: '3000Mbps' },
+      features: ['Mesh Networking', 'Seamless Roaming', 'App Control', 'Parental Controls'],
+      layer: 2
+    },
+    icon: 'wifi',
+    color: '#4F46E5',
+  },
+  {
+    id: 'soho-switch-8port',
+    category: 'SOHO',
+    type: 'switch',
+    name: '8-Port Desktop Switch',
+    manufacturer: 'Generic',
+    model: 'GS108',
+    description: 'Unmanaged gigabit desktop switch',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 8, speed: '1Gbps' } },
+      features: ['Unmanaged', 'Fanless', 'Plug and Play', 'Energy Efficient'],
+      layer: 2
+    },
+    icon: 'network',
+    color: '#4F46E5',
+  },
+  {
+    id: 'soho-switch-5port-poe',
+    category: 'SOHO',
+    type: 'switch',
+    name: '5-Port PoE Switch',
+    manufacturer: 'Generic',
+    model: 'GS305P',
+    description: 'Unmanaged PoE switch for cameras/APs',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 5, speed: '1Gbps', poe: true } },
+      features: ['PoE+ 63W', 'Unmanaged', 'Fanless', 'Compact'],
+      layer: 2,
+      poebudget: '63W'
+    },
+    icon: 'network',
+    color: '#4F46E5',
+  },
+  {
+    id: 'soho-ap-outdoor',
+    category: 'SOHO',
+    type: 'accesspoint',
+    name: 'Outdoor Access Point',
+    manufacturer: 'Generic',
+    model: 'OAP-300',
+    description: 'Weatherproof outdoor WiFi access point',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '1Gbps', poe: true } },
+      wireless: { standards: ['Wi-Fi 5'], maxSpeed: '1300Mbps' },
+      features: ['IP65 Rated', 'Outdoor Use', 'PoE Powered', 'Long Range'],
+      layer: 2
+    },
+    icon: 'wifi',
+    color: '#4F46E5',
+  },
+  {
+    id: 'soho-nas-4bay',
+    category: 'SOHO',
+    type: 'storage',
+    name: '4-Bay NAS',
+    manufacturer: 'Generic',
+    model: 'NAS-400',
+    description: 'Network attached storage with 4 drive bays',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 2, speed: '2.5Gbps' } },
+      features: ['RAID 0/1/5/6/10', 'iSCSI', 'SMB/NFS', 'Link Aggregation'],
+      layer: 3
+    },
+    icon: 'hard-drive',
+    color: '#4F46E5',
+  },
+
+  // ==================== ENDPOINTS (Physical Compute) ====================
+  // Linux Servers
+  {
+    id: 'endpoint-linux-001',
+    category: 'Endpoints',
+    type: 'server',
+    name: 'Linux Server',
+    manufacturer: 'Generic',
+    model: 'Linux Server',
+    description: 'Generic Linux server for network services',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 2, speed: '1Gbps' } },
+      features: ['Linux OS', 'SSH', 'Network Services'],
+      layer: 3
+    },
+    icon: 'server',
+    color: '#10B981',
+  },
+  {
+    id: 'endpoint-linux-002',
+    category: 'Endpoints',
+    type: 'server',
+    name: 'Linux Server (10G)',
+    manufacturer: 'Generic',
+    model: 'Linux Server 10G',
+    description: 'High-performance Linux server with 10G networking',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 2, speed: '1Gbps' }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['Linux OS', 'SSH', 'High Performance', 'Network Services'],
+      layer: 3
+    },
+    icon: 'server',
+    color: '#10B981',
+  },
+
+  // Raspberry Pi
+  {
+    id: 'endpoint-rpi4',
+    category: 'Endpoints',
+    type: 'sbc',
+    name: 'Raspberry Pi 4',
+    manufacturer: 'Raspberry Pi Foundation',
+    model: 'Pi 4 Model B',
+    description: 'Single-board computer with Gigabit Ethernet',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '1Gbps' } },
+      features: ['ARM Cortex-A72', 'WiFi', 'Bluetooth', 'GPIO'],
+      layer: 3
+    },
+    icon: 'cpu',
+    color: '#10B981',
+  },
+  {
+    id: 'endpoint-rpi5',
+    category: 'Endpoints',
+    type: 'sbc',
+    name: 'Raspberry Pi 5',
+    manufacturer: 'Raspberry Pi Foundation',
+    model: 'Pi 5',
+    description: 'Latest single-board computer with improved performance',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '1Gbps' } },
+      features: ['ARM Cortex-A76', 'WiFi 5', 'Bluetooth 5.0', 'PCIe', 'GPIO'],
+      layer: 3
+    },
+    icon: 'cpu',
+    color: '#10B981',
+  },
+  {
+    id: 'endpoint-rpizero',
+    category: 'Endpoints',
+    type: 'sbc',
+    name: 'Raspberry Pi Zero 2 W',
+    manufacturer: 'Raspberry Pi Foundation',
+    model: 'Pi Zero 2 W',
+    description: 'Compact single-board computer with WiFi',
+    viewType: 'physical',
+    specifications: {
+      ports: { usb: { count: 1 } },
+      features: ['ARM Cortex-A53', 'WiFi', 'Bluetooth', 'GPIO', 'Compact'],
+      layer: 3
+    },
+    icon: 'cpu',
+    color: '#10B981',
+  },
+
+  // Dell PowerEdge Servers
+  {
+    id: 'endpoint-dell-r430',
+    category: 'Endpoints',
+    type: 'server',
+    name: 'Dell PowerEdge R430',
+    manufacturer: 'Dell',
+    model: 'PowerEdge R430',
+    description: '1U rack server with dual Intel Xeon E5-2600 v3/v4',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 4, speed: '1Gbps' } },
+      features: ['Dual Xeon', 'iDRAC', 'RAID', 'Hot-swap Drives'],
+      layer: 3
+    },
+    icon: 'server',
+    color: '#10B981',
+  },
+  {
+    id: 'endpoint-dell-r630',
+    category: 'Endpoints',
+    type: 'server',
+    name: 'Dell PowerEdge R630',
+    manufacturer: 'Dell',
+    model: 'PowerEdge R630',
+    description: '1U rack server with dual Intel Xeon E5-2600 v3/v4, 10GbE options',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 4, speed: '1Gbps' }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['Dual Xeon', 'iDRAC', 'RAID', 'NVMe Support', 'Hot-swap'],
+      layer: 3
+    },
+    icon: 'server',
+    color: '#10B981',
+  },
+  {
+    id: 'endpoint-dell-r730',
+    category: 'Endpoints',
+    type: 'server',
+    name: 'Dell PowerEdge R730',
+    manufacturer: 'Dell',
+    model: 'PowerEdge R730',
+    description: '2U rack server with dual Intel Xeon E5-2600 v3/v4, high storage',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 4, speed: '1Gbps' }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['Dual Xeon', 'iDRAC', 'RAID', 'GPU Support', '16 Drive Bays'],
+      layer: 3
+    },
+    icon: 'server',
+    color: '#10B981',
+  },
+
+  // HP ProLiant Servers
+  {
+    id: 'endpoint-hp-dl360',
+    category: 'Endpoints',
+    type: 'server',
+    name: 'HP ProLiant DL360',
+    manufacturer: 'HP',
+    model: 'ProLiant DL360 Gen10',
+    description: '1U rack server optimized for density and performance',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 4, speed: '1Gbps' } },
+      features: ['Dual Xeon Scalable', 'iLO', 'Smart Array', 'Hot-swap'],
+      layer: 3
+    },
+    icon: 'server',
+    color: '#10B981',
+  },
+  {
+    id: 'endpoint-hp-dl380',
+    category: 'Endpoints',
+    type: 'server',
+    name: 'HP ProLiant DL380',
+    manufacturer: 'HP',
+    model: 'ProLiant DL380 Gen10',
+    description: '2U rack server with industry-leading expandability',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 4, speed: '1Gbps' }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['Dual Xeon Scalable', 'iLO', 'Smart Array', 'GPU Support'],
+      layer: 3
+    },
+    icon: 'server',
+    color: '#10B981',
+  },
+
+  // Supermicro Servers
+  {
+    id: 'endpoint-supermicro-1u',
+    category: 'Endpoints',
+    type: 'server',
+    name: 'Supermicro 1U Server',
+    manufacturer: 'Supermicro',
+    model: 'SYS-1029P',
+    description: '1U dual socket server with high memory capacity',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 2, speed: '1Gbps' }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['Dual Xeon', 'IPMI', 'RAID', 'Hot-swap', '24 DIMM Slots'],
+      layer: 3
+    },
+    icon: 'server',
+    color: '#10B981',
+  },
+  {
+    id: 'endpoint-supermicro-2u',
+    category: 'Endpoints',
+    type: 'server',
+    name: 'Supermicro 2U Server',
+    manufacturer: 'Supermicro',
+    model: 'SYS-2029P',
+    description: '2U dual socket server with GPU and storage options',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 2, speed: '1Gbps' }, sfpPlus: { count: 2, speed: '10Gbps' } },
+      features: ['Dual Xeon', 'IPMI', 'RAID', 'GPU Support', '8 PCIe Slots'],
+      layer: 3
+    },
+    icon: 'server',
+    color: '#10B981',
+  },
+
+  // Generic Workstation
+  {
+    id: 'endpoint-workstation-001',
+    category: 'Endpoints',
+    type: 'workstation',
+    name: 'Workstation',
+    manufacturer: 'Generic',
+    model: 'Desktop Workstation',
+    description: 'Desktop workstation with network connectivity',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '1Gbps' } },
+      features: ['Desktop', 'Network Client'],
+      layer: 3
+    },
+    icon: 'monitor',
+    color: '#10B981',
+  },
+  {
+    id: 'endpoint-workstation-002',
+    category: 'Endpoints',
+    type: 'workstation',
+    name: 'High-End Workstation',
+    manufacturer: 'Generic',
+    model: 'Pro Workstation',
+    description: 'Professional workstation with 10G networking',
+    viewType: 'physical',
+    specifications: {
+      ports: { ethernet: { count: 1, speed: '1Gbps' }, sfpPlus: { count: 1, speed: '10Gbps' } },
+      features: ['Workstation', 'High Performance', '10GbE'],
+      layer: 3
+    },
+    icon: 'monitor',
+    color: '#10B981',
+  },
+
+  // ==================== HYPERVISORS ====================
+  // VMware
+  {
+    id: 'hypervisor-vmware-esxi',
+    category: 'Hypervisors',
+    type: 'hypervisor',
+    name: 'VMware ESXi',
+    manufacturer: 'VMware',
+    model: 'ESXi 8.0',
+    description: 'Type-1 bare-metal hypervisor for enterprise virtualization',
+    viewType: 'logical',
+    specifications: {
+      features: ['Bare-metal', 'vMotion', 'HA', 'DRS', 'vSAN'],
+      layer: 1,
+      virtual: true,
+      vmCapacity: 'Unlimited',
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'layers',
+    color: '#6366F1',
+  },
+  {
+    id: 'hypervisor-vmware-vcenter',
+    category: 'Hypervisors',
+    type: 'management',
+    name: 'VMware vCenter',
+    manufacturer: 'VMware',
+    model: 'vCenter Server 8.0',
+    description: 'Centralized management for VMware vSphere environments',
+    viewType: 'logical',
+    specifications: {
+      features: ['Centralized Management', 'vMotion', 'HA', 'DRS', 'vSAN', 'NSX Integration'],
+      layer: 7,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'database',
+    color: '#6366F1',
+  },
+
+  // Proxmox VE
+  {
+    id: 'hypervisor-proxmox',
+    category: 'Hypervisors',
+    type: 'hypervisor',
+    name: 'Proxmox VE',
+    manufacturer: 'Proxmox',
+    model: 'Proxmox VE 8.x',
+    description: 'Open-source virtualization platform with KVM and LXC',
+    viewType: 'logical',
+    specifications: {
+      features: ['KVM', 'LXC Containers', 'Web UI', 'Clustering', 'Ceph Storage', 'ZFS'],
+      layer: 1,
+      virtual: true,
+      vmCapacity: 'Unlimited',
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'layers',
+    color: '#6366F1',
+  },
+
+  // XCP-NG
+  {
+    id: 'hypervisor-xcpng',
+    category: 'Hypervisors',
+    type: 'hypervisor',
+    name: 'XCP-ng',
+    manufacturer: 'XCP-ng',
+    model: 'XCP-ng 8.x',
+    description: 'Open-source Xen-based virtualization platform',
+    viewType: 'logical',
+    specifications: {
+      features: ['Xen Hypervisor', 'XOA Management', 'Live Migration', 'HA', 'Storage Repository'],
+      layer: 1,
+      virtual: true,
+      vmCapacity: 'Unlimited',
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'layers',
+    color: '#6366F1',
+  },
+
+  // Microsoft Hyper-V
+  {
+    id: 'hypervisor-hyperv',
+    category: 'Hypervisors',
+    type: 'hypervisor',
+    name: 'Microsoft Hyper-V',
+    manufacturer: 'Microsoft',
+    model: 'Hyper-V Server 2022',
+    description: 'Microsoft virtualization platform for Windows environments',
+    viewType: 'logical',
+    specifications: {
+      features: ['Windows Integration', 'Live Migration', 'Replica', 'Failover Clustering', 'SCVMM'],
+      layer: 1,
+      virtual: true,
+      vmCapacity: 'Unlimited',
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'layers',
+    color: '#6366F1',
+  },
+
+  // KVM/QEMU
+  {
+    id: 'hypervisor-kvm',
+    category: 'Hypervisors',
+    type: 'hypervisor',
+    name: 'KVM/QEMU',
+    manufacturer: 'Open Source',
+    model: 'KVM/QEMU',
+    description: 'Linux kernel-based virtualization with QEMU emulation',
+    viewType: 'logical',
+    specifications: {
+      features: ['Linux Kernel', 'libvirt', 'QEMU', 'virt-manager', 'Cockpit'],
+      layer: 1,
+      virtual: true,
+      vmCapacity: 'Unlimited',
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'layers',
+    color: '#6366F1',
+  },
+
+  // Citrix Hypervisor
+  {
+    id: 'hypervisor-citrix',
+    category: 'Hypervisors',
+    type: 'hypervisor',
+    name: 'Citrix Hypervisor',
+    manufacturer: 'Citrix',
+    model: 'Citrix Hypervisor 8.x',
+    description: 'Enterprise Xen-based virtualization (formerly XenServer)',
+    viewType: 'logical',
+    specifications: {
+      features: ['Xen Hypervisor', 'XenCenter', 'Live Migration', 'HA', 'IntelliCache'],
+      layer: 1,
+      virtual: true,
+      vmCapacity: 'Unlimited',
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'layers',
+    color: '#6366F1',
+  },
+
+  // ==================== VIRTUAL INFRASTRUCTURE ====================
+  // Generic VMs
+  {
+    id: 'vm-linux',
+    category: 'VirtualInfra',
+    type: 'vm',
+    name: 'Linux VM',
+    manufacturer: 'Virtual',
+    model: 'Linux Virtual Machine',
+    description: 'Generic Linux virtual machine',
+    viewType: 'logical',
+    specifications: {
+      features: ['Linux OS', 'SSH', 'Virtual NIC'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'box',
+    color: '#EC4899',
+  },
+  {
+    id: 'vm-windows',
+    category: 'VirtualInfra',
+    type: 'vm',
+    name: 'Windows VM',
+    manufacturer: 'Virtual',
+    model: 'Windows Virtual Machine',
+    description: 'Generic Windows virtual machine',
+    viewType: 'logical',
+    specifications: {
+      features: ['Windows OS', 'RDP', 'Virtual NIC'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'box',
+    color: '#EC4899',
+  },
+
+  // Container Host
+  {
+    id: 'vm-container-host',
+    category: 'VirtualInfra',
+    type: 'container',
+    name: 'Container Host',
+    manufacturer: 'Virtual',
+    model: 'Docker/Podman Host',
+    description: 'Host for running Docker or Podman containers',
+    viewType: 'logical',
+    specifications: {
+      features: ['Docker', 'Podman', 'Container Runtime', 'Overlay Networks'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'package',
+    color: '#EC4899',
+  },
+
+  // Kubernetes Node
+  {
+    id: 'vm-k8s-node',
+    category: 'VirtualInfra',
+    type: 'container',
+    name: 'Kubernetes Node',
+    manufacturer: 'Virtual',
+    model: 'K8s Worker Node',
+    description: 'Kubernetes worker node for container orchestration',
+    viewType: 'logical',
+    specifications: {
+      features: ['Kubernetes', 'kubelet', 'Container Runtime', 'CNI Networking'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'boxes',
+    color: '#EC4899',
+  },
+  {
+    id: 'vm-k8s-master',
+    category: 'VirtualInfra',
+    type: 'container',
+    name: 'Kubernetes Control Plane',
+    manufacturer: 'Virtual',
+    model: 'K8s Control Plane',
+    description: 'Kubernetes control plane node',
+    viewType: 'logical',
+    specifications: {
+      features: ['Kubernetes', 'API Server', 'etcd', 'Scheduler', 'Controller Manager'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'boxes',
+    color: '#EC4899',
+  },
+
+  // Cloud Instances
+  {
+    id: 'cloud-instance-aws',
+    category: 'VirtualInfra',
+    type: 'cloudinstance',
+    name: 'AWS EC2 Instance',
+    manufacturer: 'AWS',
+    model: 'EC2',
+    description: 'Amazon Web Services EC2 compute instance',
+    viewType: 'logical',
+    specifications: {
+      features: ['EC2', 'EBS', 'VPC Networking', 'Security Groups', 'IAM'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'cloud',
+    color: '#EC4899',
+  },
+  {
+    id: 'cloud-instance-azure',
+    category: 'VirtualInfra',
+    type: 'cloudinstance',
+    name: 'Azure VM',
+    manufacturer: 'Microsoft',
+    model: 'Azure Virtual Machine',
+    description: 'Microsoft Azure virtual machine instance',
+    viewType: 'logical',
+    specifications: {
+      features: ['Azure VM', 'Managed Disks', 'VNet', 'NSG', 'Azure AD'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'cloud',
+    color: '#EC4899',
+  },
+  {
+    id: 'cloud-instance-gcp',
+    category: 'VirtualInfra',
+    type: 'cloudinstance',
+    name: 'GCP Compute Engine',
+    manufacturer: 'Google',
+    model: 'Compute Engine',
+    description: 'Google Cloud Platform compute instance',
+    viewType: 'logical',
+    specifications: {
+      features: ['Compute Engine', 'Persistent Disk', 'VPC', 'Firewall Rules', 'IAM'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'cloud',
+    color: '#EC4899',
+  },
+  {
+    id: 'cloud-instance-oracle',
+    category: 'VirtualInfra',
+    type: 'cloudinstance',
+    name: 'Oracle Cloud Instance',
+    manufacturer: 'Oracle',
+    model: 'OCI Compute',
+    description: 'Oracle Cloud Infrastructure compute instance',
+    viewType: 'logical',
+    specifications: {
+      features: ['OCI Compute', 'Block Volume', 'VCN', 'Security Lists', 'IAM'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'cloud',
+    color: '#EC4899',
+  },
+  {
+    id: 'cloud-instance-vultr',
+    category: 'VirtualInfra',
+    type: 'cloudinstance',
+    name: 'Vultr Instance',
+    manufacturer: 'Vultr',
+    model: 'Cloud Compute',
+    description: 'Vultr cloud compute instance',
+    viewType: 'logical',
+    specifications: {
+      features: ['Cloud Compute', 'Block Storage', 'VPC', 'Firewall'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'cloud',
+    color: '#EC4899',
+  },
+  {
+    id: 'cloud-instance-generic',
+    category: 'VirtualInfra',
+    type: 'cloudinstance',
+    name: 'Cloud Instance',
+    manufacturer: 'Cloud Provider',
+    model: 'Generic Cloud Instance',
+    description: 'Generic cloud compute instance',
+    viewType: 'logical',
+    specifications: {
+      features: ['Cloud Compute', 'Virtual Networking', 'Cloud Storage'],
+      layer: 3,
+      virtual: true,
+      cloudProviderFields: ['provider', 'region', 'instanceType', 'assetLink']
+    },
+    icon: 'cloud',
+    color: '#EC4899',
   },
 ];
 
-// Helper function to get devices by category
+// Helper functions
 export function getDevicesByCategory(category) {
   return devices.filter(device => device.category === category);
 }
 
-// Helper function to get category info
+export function getDevicesByViewType(viewType) {
+  return devices.filter(device => device.viewType === viewType || device.viewType === 'both');
+}
+
+export function getDevicesByCategoryAndViewType(category, viewType) {
+  return devices.filter(device =>
+    device.category === category &&
+    (device.viewType === viewType || device.viewType === 'both')
+  );
+}
+
 export function getCategoryInfo(category) {
   return deviceCategories[category] || null;
 }
 
-// Helper function to get all categories
 export function getAllCategories() {
   return Object.keys(deviceCategories);
 }

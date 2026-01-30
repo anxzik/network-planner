@@ -1,13 +1,22 @@
-import {Network, Settings} from 'lucide-react';
+import {useState} from 'react';
+import {Calculator, ClipboardList, Cpu, GitBranch, Layers, List, Network, Settings, Share2} from 'lucide-react';
 import DeviceLibrary from './components/DeviceLibrary/DeviceLibrary';
 import NetworkCanvas from './components/Canvas/NetworkCanvas';
 import SettingsModal from './components/Settings/SettingsModal';
+import ListView from './components/ListView/ListView';
+import SubnetCalculator from './components/SubnetCalculator/SubnetCalculator';
+import VlanConfigPanel from './components/VlanConfig/VlanConfigPanel';
+import {Scratchpad} from './components/Scratchpad';
 import {useNetwork} from './context/NetworkContext';
 import {useSettings} from './context/SettingsContext';
+import {useScratchpad} from './context/ScratchpadContext';
 
 function App() {
-  const { getNodeCount, getEdgeCount } = useNetwork();
+  const { getNodeCount, getEdgeCount, viewMode, setViewMode, vlans } = useNetwork();
   const { openSettings, currentTheme } = useSettings();
+  const { isOpen: scratchpadOpen, toggleScratchpad, calculationCount } = useScratchpad();
+  const [activeView, setActiveView] = useState('topology'); // 'topology', 'list', or 'calculator'
+  const [vlanPanelOpen, setVlanPanelOpen] = useState(false);
 
   return (
     <div
@@ -23,25 +32,100 @@ function App() {
         }}
       >
         <div className="px-4 py-2 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div
-              className="p-1.5 rounded"
-              style={{ backgroundColor: currentTheme.primary }}
-            >
-              <Network size={20} className="text-white" />
-            </div>
-            <div>
-              <h1
-                className="text-lg font-bold leading-tight"
-                style={{ color: currentTheme.text }}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div
+                className="p-1.5 rounded"
+                style={{ backgroundColor: currentTheme.primary }}
               >
-                Network Planner
-              </h1>
+                <Network size={20} className="text-white" />
+              </div>
+              <div>
+                <h1
+                  className="text-lg font-bold leading-tight"
+                  style={{ color: currentTheme.text }}
+                >
+                  Network Planner
+                </h1>
+              </div>
+            </div>
+
+            {/* View Toggle Tabs */}
+            <div
+              className="flex rounded-lg p-0.5 gap-0.5"
+              style={{ backgroundColor: currentTheme.border }}
+            >
+              <button
+                onClick={() => setActiveView('topology')}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all"
+                style={{
+                  backgroundColor: activeView === 'topology' ? currentTheme.surface : 'transparent',
+                  color: activeView === 'topology' ? currentTheme.primary : currentTheme.textSecondary,
+                }}
+              >
+                <Share2 size={14} />
+                Topology
+              </button>
+              <button
+                onClick={() => setActiveView('list')}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all"
+                style={{
+                  backgroundColor: activeView === 'list' ? currentTheme.surface : 'transparent',
+                  color: activeView === 'list' ? currentTheme.primary : currentTheme.textSecondary,
+                }}
+              >
+                <List size={14} />
+                List
+              </button>
+              <button
+                onClick={() => setActiveView('calculator')}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all"
+                style={{
+                  backgroundColor: activeView === 'calculator' ? currentTheme.surface : 'transparent',
+                  color: activeView === 'calculator' ? currentTheme.primary : currentTheme.textSecondary,
+                }}
+              >
+                <Calculator size={14} />
+                Calculator
+              </button>
             </div>
           </div>
 
           {/* Stats and Actions */}
           <div className="flex items-center gap-4">
+            {/* Physical/Logical Toggle (only show in topology view) */}
+            {activeView === 'topology' && (
+              <div
+                className="flex rounded-lg p-0.5 gap-0.5"
+                style={{ backgroundColor: currentTheme.border }}
+              >
+                <button
+                  onClick={() => setViewMode('physical')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all"
+                  style={{
+                    backgroundColor: viewMode === 'physical' ? currentTheme.surface : 'transparent',
+                    color: viewMode === 'physical' ? currentTheme.primary : currentTheme.textSecondary,
+                  }}
+                  title="Physical View - Shows physical network connections"
+                >
+                  <Cpu size={13} />
+                  Physical
+                </button>
+                <button
+                  onClick={() => setViewMode('logical')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all"
+                  style={{
+                    backgroundColor: viewMode === 'logical' ? currentTheme.surface : 'transparent',
+                    color: viewMode === 'logical' ? currentTheme.primary : currentTheme.textSecondary,
+                  }}
+                  title="Logical View - Shows logical network topology with IP addressing"
+                >
+                  <GitBranch size={13} />
+                  Logical
+                </button>
+              </div>
+            )}
+
             <div className="text-center">
               <div
                 className="text-lg font-bold leading-tight"
@@ -71,6 +155,82 @@ function App() {
               </div>
             </div>
 
+            {/* VLAN Count (only show in topology view) */}
+            {activeView === 'topology' && (
+              <div className="text-center">
+                <div
+                  className="text-lg font-bold leading-tight"
+                  style={{ color: currentTheme.text }}
+                >
+                  {vlans.length}
+                </div>
+                <div
+                  className="text-[10px] leading-tight"
+                  style={{ color: currentTheme.textSecondary }}
+                >
+                  VLANs
+                </div>
+              </div>
+            )}
+
+            {/* VLAN Manager Button (only show in topology view) */}
+            {activeView === 'topology' && (
+              <button
+                onClick={() => setVlanPanelOpen(!vlanPanelOpen)}
+                className={`p-1.5 rounded transition-colors ${vlanPanelOpen ? 'ring-2' : ''}`}
+                style={{
+                  color: vlanPanelOpen ? currentTheme.primary : currentTheme.text,
+                  backgroundColor: vlanPanelOpen ? currentTheme.primary + '10' : 'transparent',
+                  borderColor: vlanPanelOpen ? currentTheme.primary : 'transparent'
+                }}
+                onMouseEnter={(e) => {
+                  if (!vlanPanelOpen) {
+                    e.currentTarget.style.backgroundColor = currentTheme.border;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!vlanPanelOpen) {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }
+                }}
+                title="VLAN Management"
+              >
+                <Layers size={18} />
+              </button>
+            )}
+
+            {/* Scratchpad Toggle Button */}
+            <button
+              onClick={toggleScratchpad}
+              className={`p-1.5 rounded transition-colors relative ${scratchpadOpen ? 'ring-2' : ''}`}
+              style={{
+                color: scratchpadOpen ? currentTheme.primary : currentTheme.text,
+                backgroundColor: scratchpadOpen ? currentTheme.primary + '10' : 'transparent',
+                borderColor: scratchpadOpen ? currentTheme.primary : 'transparent'
+              }}
+              onMouseEnter={(e) => {
+                if (!scratchpadOpen) {
+                  e.currentTarget.style.backgroundColor = currentTheme.border;
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!scratchpadOpen) {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }
+              }}
+              title="Scratchpad"
+            >
+              <ClipboardList size={18} />
+              {calculationCount > 0 && (
+                <span
+                  className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[10px] font-bold flex items-center justify-center text-white"
+                  style={{ backgroundColor: currentTheme.primary }}
+                >
+                  {calculationCount > 9 ? '9+' : calculationCount}
+                </span>
+              )}
+            </button>
+
             {/* Settings Button */}
             <button
               onClick={openSettings}
@@ -93,14 +253,39 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <main className="flex flex-1 overflow-hidden">
-        {/* Device Library Sidebar */}
-        <DeviceLibrary />
+      <main className="flex flex-col flex-1 overflow-hidden">
+        <div className="flex flex-1 overflow-hidden">
+          {activeView === 'topology' ? (
+            <>
+              {/* VLAN Config Panel (left side) */}
+              <VlanConfigPanel
+                isOpen={vlanPanelOpen}
+                onClose={() => setVlanPanelOpen(false)}
+              />
 
-        {/* Network Canvas */}
-        <div className="flex-1 relative">
-          <NetworkCanvas />
+              {/* Device Library Sidebar */}
+              <DeviceLibrary />
+
+              {/* Network Canvas */}
+              <div className="flex-1 relative">
+                <NetworkCanvas />
+              </div>
+            </>
+          ) : activeView === 'list' ? (
+            /* List View */
+            <div className="flex-1 relative">
+              <ListView />
+            </div>
+          ) : (
+            /* Calculator View */
+            <div className="flex-1 relative overflow-y-auto">
+              <SubnetCalculator />
+            </div>
+          )}
         </div>
+
+        {/* Scratchpad (bottom panel) */}
+        <Scratchpad />
       </main>
 
       {/* Settings Modal */}
