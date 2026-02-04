@@ -72,6 +72,9 @@ This document tracks known security vulnerabilities and build issues in the Netw
   - eslint-plugin-react-refresh
 - **Solution:** Simplified config to use only installed plugins
 - **Remaining Warnings:** 14 lint warnings from inline eslint-disable comments referencing removed rules
+  - These comments can be safely ignored or removed in future cleanup
+  - Files affected: DeviceCard.jsx, DeviceNode.jsx, NetworkContext.jsx, ScratchpadContext.jsx, SettingsContext.jsx
+- **Note:** The removed rules (react-hooks/static-components, react-refresh/only-export-components) were likely added by a different linter setup and are not critical to functionality
 
 #### 3. Node Version Mismatch
 - **Status:** 🟡 WARNING
