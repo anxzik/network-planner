@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {Cable, Network, Search, Wifi} from 'lucide-react';
 import {formatVlanList} from '../../utils/vlanFactory';
 
-function PortPanel({ node, title, selectedPort, onSelectPort, highlightAvailable = false }) {
+function PortPanel({ node, title, selectedPort, onSelectPort }) {
   const [filterText, setFilterText] = useState('');
   const [showOnlyAvailable, setShowOnlyAvailable] = useState(false);
 

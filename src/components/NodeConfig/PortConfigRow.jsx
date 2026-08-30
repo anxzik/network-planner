@@ -4,18 +4,10 @@ import {formatVlanList} from '../../utils/vlanFactory';
 import {useNetwork} from '../../context/NetworkContext';
 import {useSettings} from '../../context/SettingsContext';
 
-function PortConfigRow({ node, port, onUpdate }) {
+function PortConfigRow({ port, onUpdate }) {
   const { vlans } = useNetwork();
   const { currentTheme } = useSettings();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editValues, setEditValues] = useState({
-    mode: port.mode,
-    assignedVlans: port.assignedVlans,
-    nativeVlan: port.nativeVlan,
-    description: port.description,
-    enabled: port.enabled
-  });
 
   const handleModeChange = (newMode) => {
     const updates = { mode: newMode };

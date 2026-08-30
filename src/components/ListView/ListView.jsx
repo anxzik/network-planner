@@ -245,7 +245,7 @@ function ListView() {
               </tr>
             </thead>
             <tbody>
-              {filteredObjects.map((obj, index) => (
+              {filteredObjects.map((obj) => (
                 <tr
                   key={obj.id}
                   className="border-b transition-colors"
