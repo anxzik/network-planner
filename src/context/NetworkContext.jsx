@@ -1,9 +1,10 @@
-import {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
+import {createContext, useCallback, useContext, useMemo, useState} from 'react';
 import {useEdgesState, useNodesState} from 'reactflow';
 import {createDeviceNode, createEdge, createPortEdge} from '../utils/nodeFactory';
 import {getDefaultVlan} from '../utils/vlanFactory';
 import {determineVlanTransport, getPortById} from '../utils/portFactory';
-import {debounce, exportAll, importAll, loadData, saveData} from '../utils/storage';
+import {exportAll, importAll, loadData, saveData} from '../utils/storage';
+import {usePersist} from '../hooks/usePersist';
 import {
   applySelection,
   connectPorts,
@@ -49,18 +50,12 @@ export function NetworkProvider({ children }) {
   const [portSelectorOpen, setPortSelectorOpen] = useState(false);
   const [pendingConnection, setPendingConnection] = useState(null);
 
-  // Persistors (debounced)
-  const persistNodes = useMemo(() => debounce((value) => saveData('nodes', value), 300), []);
-  const persistEdges = useMemo(() => debounce((value) => saveData('edges', value), 300), []);
-  const persistObjects = useMemo(() => debounce((value) => saveData('networkObjects', value), 300), []);
-  const persistVlans = useMemo(() => debounce((value) => saveData('vlans', value), 300), []);
-  const persistViewMode = useMemo(() => debounce((value) => saveData('viewMode', value), 300), []);
-
-  useEffect(() => { persistNodes(nodes); }, [nodes, persistNodes]);
-  useEffect(() => { persistEdges(edges); }, [edges, persistEdges]);
-  useEffect(() => { persistObjects(networkObjects); }, [networkObjects, persistObjects]);
-  useEffect(() => { persistVlans(vlans); }, [vlans, persistVlans]);
-  useEffect(() => { persistViewMode(viewMode); }, [viewMode, persistViewMode]);
+  // Persist state changes, debounced
+  usePersist('nodes', nodes);
+  usePersist('edges', edges);
+  usePersist('networkObjects', networkObjects);
+  usePersist('vlans', vlans);
+  usePersist('viewMode', viewMode);
 
   // Add a new device node to the canvas
   const addNode = useCallback((deviceData, position, label = null) => {

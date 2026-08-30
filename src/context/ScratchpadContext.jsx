@@ -1,5 +1,6 @@
-import {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
-import {debounce, loadData, saveData} from '../utils/storage';
+import {createContext, useCallback, useContext, useState} from 'react';
+import {loadData} from '../utils/storage';
+import {usePersist} from '../hooks/usePersist';
 
 // Create the context
 const ScratchpadContext = createContext(null);
@@ -16,17 +17,12 @@ export function ScratchpadProvider({ children }) {
   // Saved calculations
   const [calculations, setCalculations] = useState(() => loadData('scratchpad_calculations', []));
 
-  // Persistors (debounced)
-  const persistIsOpen = useMemo(() => debounce((value) => saveData('scratchpad_isOpen', value), 300), []);
-  const persistHeight = useMemo(() => debounce((value) => saveData('scratchpad_height', value), 300), []);
-  const persistNotes = useMemo(() => debounce((value) => saveData('scratchpad_notes', value), 500), []);
-  const persistCalculations = useMemo(() => debounce((value) => saveData('scratchpad_calculations', value), 300), []);
-
-  // Persist state changes
-  useEffect(() => { persistIsOpen(isOpen); }, [isOpen, persistIsOpen]);
-  useEffect(() => { persistHeight(panelHeight); }, [panelHeight, persistHeight]);
-  useEffect(() => { persistNotes(notes); }, [notes, persistNotes]);
-  useEffect(() => { persistCalculations(calculations); }, [calculations, persistCalculations]);
+  // Persist state changes, debounced. Notes get a longer delay because they
+  // change on every keystroke.
+  usePersist('scratchpad_isOpen', isOpen);
+  usePersist('scratchpad_height', panelHeight);
+  usePersist('scratchpad_notes', notes, 500);
+  usePersist('scratchpad_calculations', calculations);
 
   // Toggle scratchpad visibility
   const toggleScratchpad = useCallback(() => {
