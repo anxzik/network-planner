@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState} from 'react';
+import {useMemo, useState} from 'react';
 import {AlertCircle, Cable, Cloud, Network as NetworkIcon, Save, Settings, X} from 'lucide-react';
 import {useSettings} from '../../context/SettingsContext';
 import {useNetwork} from '../../context/NetworkContext';
@@ -26,32 +26,38 @@ const CONNECTION_PATHWAY_OPTIONS = [
   { value: 'PrivateLink', label: 'Private Link / Endpoint' },
 ];
 
+// Form state for a node, with blanks when nothing is selected.
+function formStateFor(node) {
+  const data = node?.data ?? {};
+  return {
+    label: data.label || '',
+    ipv4: data.ipv4 || '',
+    subnet: data.subnet || '',
+    ipv6: data.ipv6 || '',
+    gateway: data.gateway || '',
+    dns1: data.dns1 || '',
+    dns2: data.dns2 || '',
+    fqdn: data.fqdn || '',
+    notes: data.notes || '',
+    // Cloud/Logical device fields
+    provider: data.provider || '',
+    region: data.region || '',
+    instanceType: data.instanceType || '',
+    cloudAssetLink: data.cloudAssetLink || '',
+    connectionPathway: data.connectionPathway || '',
+    vmHost: data.vmHost || '',
+  };
+}
+
 function NodeConfigPanel() {
   const {currentTheme} = useSettings();
   const {selectedNode, getNodeById, updateNode, clearSelection, updatePortConfig, nodes} = useNetwork();
+  const node = selectedNode ? getNodeById(selectedNode) : null;
   const [activeTab, setActiveTab] = useState('general'); // 'general', 'ports', or 'cloud'
-  const [formData, setFormData] = useState({
-    label: '',
-    ipv4: '',
-    subnet: '',
-    ipv6: '',
-    gateway: '',
-    dns1: '',
-    dns2: '',
-    fqdn: '',
-    notes: '',
-    // Cloud/Logical device fields
-    provider: '',
-    region: '',
-    instanceType: '',
-    cloudAssetLink: '',
-    connectionPathway: '',
-    vmHost: '',
-  });
+  const [formData, setFormData] = useState(() => formStateFor(node));
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
-  const node = selectedNode ? getNodeById(selectedNode) : null;
 
   // Check if device is logical/cloud type
   const isLogicalDevice = useMemo(() => {
@@ -68,32 +74,21 @@ function NodeConfigPanel() {
     );
   }, [nodes, node?.id]);
 
-  // Update form when node changes
-  useEffect(() => {
+  // Repopulate the form when a different node is selected. Keyed on the node
+  // id rather than the node object: ReactFlow replaces node objects on drag
+  // and selection, which would otherwise discard whatever is being typed.
+  // Adjusting state during render is React's recommended alternative to
+  // synchronising it from an effect.
+  const [prevNodeId, setPrevNodeId] = useState(node?.id);
+  if (node?.id !== prevNodeId) {
+    setPrevNodeId(node?.id);
     if (node) {
-      setFormData({
-        label: node.data.label || '',
-        ipv4: node.data.ipv4 || '',
-        subnet: node.data.subnet || '',
-        ipv6: node.data.ipv6 || '',
-        gateway: node.data.gateway || '',
-        dns1: node.data.dns1 || '',
-        dns2: node.data.dns2 || '',
-        fqdn: node.data.fqdn || '',
-        notes: node.data.notes || '',
-        // Cloud/Logical device fields
-        provider: node.data.provider || '',
-        region: node.data.region || '',
-        instanceType: node.data.instanceType || '',
-        cloudAssetLink: node.data.cloudAssetLink || '',
-        connectionPathway: node.data.connectionPathway || '',
-        vmHost: node.data.vmHost || '',
-      });
+      setFormData(formStateFor(node));
       setErrors({});
       setTouched({});
       setActiveTab('general'); // Reset to general tab when node changes
     }
-  }, [node]);
+  }
 
   if (!node) {
     return null;

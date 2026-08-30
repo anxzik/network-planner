@@ -1,13 +1,26 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {AlertCircle, Save, X} from 'lucide-react';
 import {useNetwork} from '../../context/NetworkContext';
 import {createVlan, validateVlanId} from '../../utils/vlanFactory';
 import {isValidIPv4, isValidSubnetMask, maskToCIDR} from '../../utils/ipValidation';
 
-function VlanEditor({ isOpen, onClose, vlan = null, mode = 'create' }) {
-  const { vlans, addVlan, updateVlan: updateExistingVlan } = useNetwork();
-
-  const [formData, setFormData] = useState({
+// Form state for a given editor mode: the VLAN's values when editing, blanks
+// when creating.
+function formStateFor(mode, vlan) {
+  if (mode === 'edit' && vlan) {
+    return {
+      vlanId: vlan.vlanId.toString(),
+      name: vlan.name,
+      description: vlan.description || '',
+      color: vlan.color,
+      hasSubnet: !!vlan.subnet,
+      network: vlan.subnet?.network || '',
+      cidr: vlan.subnet?.cidr ? vlan.subnet.cidr.toString() : '',
+      mask: vlan.subnet?.mask || '',
+      gateway: vlan.subnet?.gateway || ''
+    };
+  }
+  return {
     vlanId: '',
     name: '',
     description: '',
@@ -18,44 +31,30 @@ function VlanEditor({ isOpen, onClose, vlan = null, mode = 'create' }) {
     cidr: '',
     mask: '',
     gateway: ''
-  });
+  };
+}
+
+function VlanEditor({ isOpen, onClose, vlan = null, mode = 'create' }) {
+  const { vlans, addVlan, updateVlan: updateExistingVlan } = useNetwork();
+
+  const [formData, setFormData] = useState(() => formStateFor(mode, vlan));
 
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
-  // Populate form when editing
-  useEffect(() => {
+  // Repopulate the form whenever the editor is opened, or the VLAN it is
+  // editing changes. Adjusting state during render is React's recommended
+  // alternative to synchronising it from an effect.
+  const editorKey = `${isOpen}:${mode}:${vlan?.id ?? ''}`;
+  const [prevEditorKey, setPrevEditorKey] = useState(editorKey);
+  if (editorKey !== prevEditorKey) {
+    setPrevEditorKey(editorKey);
     if (isOpen) {
-      if (mode === 'edit' && vlan) {
-        setFormData({
-          vlanId: vlan.vlanId.toString(),
-          name: vlan.name,
-          description: vlan.description || '',
-          color: vlan.color,
-          hasSubnet: !!vlan.subnet,
-          network: vlan.subnet?.network || '',
-          cidr: vlan.subnet?.cidr ? vlan.subnet.cidr.toString() : '',
-          mask: vlan.subnet?.mask || '',
-          gateway: vlan.subnet?.gateway || ''
-        });
-      } else {
-        // Reset for create
-        setFormData({
-          vlanId: '',
-          name: '',
-          description: '',
-          color: '#3B82F6',
-          hasSubnet: false,
-          network: '',
-          cidr: '',
-          mask: '',
-          gateway: ''
-        });
-      }
+      setFormData(formStateFor(mode, vlan));
       setErrors({});
       setTouched({});
     }
-  }, [isOpen, mode, vlan]);
+  }
 
   const validateField = (name, value) => {
     let error = null;

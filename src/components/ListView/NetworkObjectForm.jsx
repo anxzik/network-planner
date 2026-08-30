@@ -1,37 +1,25 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {AlertCircle, Save, X} from 'lucide-react';
 import {useSettings} from '../../context/SettingsContext';
 import {getHostnameValidationError, getIPValidationError, getSubnetValidationError,} from '../../utils/ipValidation';
 
 function NetworkObjectForm({networkObject, onSave, onCancel}) {
   const {currentTheme} = useSettings();
-  const [formData, setFormData] = useState({
-    displayName: '',
-    ip: '',
-    subnet: '',
-    hostname: '',
-    nameserver1: '',
-    nameserver2: '',
-    notes: '',
-  });
+  // The parent renders this form only while it is open, and sets the object
+  // being edited in the same update, so the initial state is always correct
+  // and there is nothing to synchronise afterwards.
+  const [formData, setFormData] = useState(() => ({
+    displayName: networkObject?.displayName || '',
+    ip: networkObject?.ip || '',
+    subnet: networkObject?.subnet || '',
+    hostname: networkObject?.hostname || '',
+    nameserver1: networkObject?.nameserver1 || '',
+    nameserver2: networkObject?.nameserver2 || '',
+    notes: networkObject?.notes || '',
+  }));
 
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
-
-  // Populate form with existing data if editing
-  useEffect(() => {
-    if (networkObject) {
-      setFormData({
-        displayName: networkObject.displayName || '',
-        ip: networkObject.ip || '',
-        subnet: networkObject.subnet || '',
-        hostname: networkObject.hostname || '',
-        nameserver1: networkObject.nameserver1 || '',
-        nameserver2: networkObject.nameserver2 || '',
-        notes: networkObject.notes || '',
-      });
-    }
-  }, [networkObject]);
 
   // Validate field
   const validateField = (name, value) => {

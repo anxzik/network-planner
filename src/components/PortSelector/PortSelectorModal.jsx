@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {X} from 'lucide-react';
 import PortPanel from './PortPanel';
 import PortConnectionSummary from './PortConnectionSummary';
@@ -7,26 +7,24 @@ import {validatePortConnection} from '../../utils/portFactory';
 function PortSelectorModal({ isOpen, onClose, sourceNode, targetNode, onConfirm }) {
   const [selectedSourcePort, setSelectedSourcePort] = useState(null);
   const [selectedTargetPort, setSelectedTargetPort] = useState(null);
-  const [validationResult, setValidationResult] = useState(null);
 
-  // Reset selections when modal opens
-  useEffect(() => {
+  // Reset selections when the modal opens. Adjusting state during render is
+  // React's recommended alternative to synchronising it from an effect.
+  const [wasOpen, setWasOpen] = useState(isOpen);
+  if (isOpen !== wasOpen) {
+    setWasOpen(isOpen);
     if (isOpen) {
       setSelectedSourcePort(null);
       setSelectedTargetPort(null);
-      setValidationResult(null);
     }
-  }, [isOpen]);
+  }
 
-  // Validate connection when both ports are selected
-  useEffect(() => {
-    if (selectedSourcePort && selectedTargetPort) {
-      const result = validatePortConnection(selectedSourcePort, selectedTargetPort);
-      setValidationResult(result);
-    } else {
-      setValidationResult(null);
-    }
-  }, [selectedSourcePort, selectedTargetPort]);
+  // Validation is a pure function of the two selections, so derive it rather
+  // than mirroring it into state.
+  const validationResult =
+    selectedSourcePort && selectedTargetPort
+      ? validatePortConnection(selectedSourcePort, selectedTargetPort)
+      : null;
 
   const handleConfirm = () => {
     if (selectedSourcePort && selectedTargetPort && validationResult?.valid) {
@@ -38,7 +36,6 @@ function PortSelectorModal({ isOpen, onClose, sourceNode, targetNode, onConfirm 
   const handleCancel = () => {
     setSelectedSourcePort(null);
     setSelectedTargetPort(null);
-    setValidationResult(null);
     onClose();
   };
 
