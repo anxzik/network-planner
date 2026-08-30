@@ -39,14 +39,6 @@ export function loadData(key, fallback = null) {
   return Object.prototype.hasOwnProperty.call(root, key) ? root[key] : fallback;
 }
 
-export function clearData(key) {
-  const root = getRoot();
-  if (Object.prototype.hasOwnProperty.call(root, key)) {
-    delete root[key];
-    setRoot(root);
-  }
-}
-
 export function exportAll() {
   return getRoot();
 }

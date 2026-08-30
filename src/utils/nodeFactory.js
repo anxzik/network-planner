@@ -2,7 +2,7 @@
 import {generatePortsForDevice} from './portFactory';
 
 // Generate unique node ID
-export function generateNodeId() {
+function generateNodeId() {
   return `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
@@ -52,15 +52,6 @@ export function createDeviceNode(device, position, label = null) {
 }
 
 // Update node data
-export function updateNodeData(node, updates) {
-  return {
-    ...node,
-    data: {
-      ...node.data,
-      ...updates
-    }
-  };
-}
 
 // Create default edge (simple, no port info)
 export function createEdge(source, target) {
