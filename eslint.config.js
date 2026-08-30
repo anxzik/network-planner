@@ -2,12 +2,15 @@ import js from '@eslint/js'
 import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
+import tseslint from 'typescript-eslint'
 import {defineConfig, globalIgnores} from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', '.vite', 'out', 'networkplanner', 'dev-stuff']),
+
+  // React renderer sources
   {
-    files: ['**/*.{js,jsx}'],
+    files: ['src/**/*.{js,jsx}'],
     extends: [
       js.configs.recommended,
       reactHooks.configs.flat.recommended,
@@ -18,12 +21,28 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: {
         ecmaVersion: 'latest',
-        ecmaFeatures: { jsx: true },
+        ecmaFeatures: {jsx: true},
         sourceType: 'module',
       },
     },
     rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      'no-unused-vars': ['error', {varsIgnorePattern: '^[A-Z_]'}],
     },
+  },
+
+  // Electron main / preload / renderer entrypoints
+  {
+    files: ['**/*.{ts,tsx,mts}'],
+    extends: [js.configs.recommended, tseslint.configs.recommended],
+    languageOptions: {
+      globals: {...globals.node, ...globals.browser},
+      parserOptions: {sourceType: 'module'},
+    },
+  },
+
+  // Build and tooling config files run in Node
+  {
+    files: ['*.config.{js,ts,mts}', 'forge.config.ts', 'vitest.config.js'],
+    languageOptions: {globals: globals.node},
   },
 ])
