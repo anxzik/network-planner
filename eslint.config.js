@@ -2,9 +2,11 @@ import js from '@eslint/js'
 import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
-import tseslint from 'typescript-eslint'
 import {defineConfig, globalIgnores} from 'eslint/config'
 
+// The .ts entrypoints are type-checked by tsc (npm run typecheck) rather than
+// linted here: typescript-eslint does not support TypeScript 7, whose package
+// no longer exposes the JS compiler API it parses with.
 export default defineConfig([
   globalIgnores(['dist', '.vite', 'out', 'networkplanner', 'dev-stuff']),
 
@@ -30,19 +32,10 @@ export default defineConfig([
     },
   },
 
-  // Electron main / preload / renderer entrypoints
-  {
-    files: ['**/*.{ts,tsx,mts}'],
-    extends: [js.configs.recommended, tseslint.configs.recommended],
-    languageOptions: {
-      globals: {...globals.node, ...globals.browser},
-      parserOptions: {sourceType: 'module'},
-    },
-  },
-
   // Build and tooling config files run in Node
   {
-    files: ['*.config.{js,ts,mts}', 'forge.config.ts', 'vitest.config.js'],
-    languageOptions: {globals: globals.node},
+    files: ['*.config.js', 'vitest.config.js'],
+    extends: [js.configs.recommended],
+    languageOptions: {globals: globals.node, parserOptions: {sourceType: 'module'}},
   },
 ])

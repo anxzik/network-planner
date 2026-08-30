@@ -7,9 +7,21 @@
     "esModuleInterop": true,
     "noImplicitAny": true,
     "sourceMap": true,
-    "baseUrl": ".",
     "outDir": "dist",
     "moduleResolution": "bundler",
     "resolveJsonModule": true
-  }
+  },
+  "include": [
+    "src",
+    "forge.config.ts",
+    "forge.env.d.ts",
+    "vite.*.config.mts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".vite",
+    "out",
+    "networkplanner"
+  ]
 }
