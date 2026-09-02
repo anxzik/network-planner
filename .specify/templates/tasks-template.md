@@ -117,15 +117,16 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T018 [P] [US2] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T019 [P] [US2] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T018 [P] [US2] Unit test for [logic module] in src/utils/[name].test.js
+- [ ] T019 [P] [US2] Unit test for [factory/validator] in src/utils/[name]Factory.test.js
 
 ### Implementation for User Story 2
 
-- [ ] T020 [P] [US2] Create [Entity] model in src/models/[entity].py
-- [ ] T021 [US2] Implement [Service] in src/services/[service].py
-- [ ] T022 [US2] Implement [endpoint/feature] in src/[location]/[file].py
-- [ ] T023 [US2] Integrate with User Story 1 components (if needed)
+- [ ] T020 [P] [US2] Implement [logic] in src/utils/[name].js (pure, no React imports)
+- [ ] T021 [P] [US2] Implement [factory] in src/utils/[name]Factory.js
+- [ ] T022 [US2] Wire state transitions into src/context/[Name]Context.jsx (depends on T020, T021)
+- [ ] T023 [US2] Build [Component] in src/components/[Feature]/[Component].jsx
+- [ ] T024 [US2] Integrate with User Story 1 components (if needed)
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
@@ -139,14 +140,14 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T024 [P] [US3] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T025 [P] [US3] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T025 [P] [US3] Unit test for [logic module] in src/utils/[name].test.js
+- [ ] T026 [P] [US3] Unit test for [factory/validator] in src/utils/[name]Factory.test.js
 
 ### Implementation for User Story 3
 
-- [ ] T026 [P] [US3] Create [Entity] model in src/models/[entity].py
-- [ ] T027 [US3] Implement [Service] in src/services/[service].py
-- [ ] T028 [US3] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T027 [P] [US3] Implement [logic] in src/utils/[name].js (pure, no React imports)
+- [ ] T028 [US3] Wire state transitions into src/context/[Name]Context.jsx (depends on T027)
+- [ ] T029 [US3] Build [Component] in src/components/[Feature]/[Component].jsx
 
 **Checkpoint**: All user stories should now be independently functional
 
