@@ -1,5 +1,6 @@
 installed:
 - brownfield
+- product
 settings:
   auto_execute_hooks: true
 hooks:
@@ -11,4 +12,34 @@ hooks:
     priority: 10
     prompt: Scan this existing project to customize spec-kit configuration?
     description: Auto-scan project after spec-kit init to detect tech stack and conventions
+    condition: null
+  after_specify:
+  - extension: product
+    command: speckit.product.brief
+    enabled: true
+    optional: true
+    priority: 10
+    prompt: Generate the product brief (product/00-info.md + product/10-spec.md) from
+      the new spec.md?
+    description: Generate product/00-info.md and product/10-spec.md from spec.md (recommended
+      first artifacts)
+    condition: null
+  after_clarify:
+  - extension: product
+    command: speckit.product.brief
+    enabled: true
+    optional: true
+    priority: 10
+    prompt: Regenerate the product brief after clarification?
+    description: Update product/00-info.md and product/10-spec.md from the clarified
+      spec.md
+    condition: null
+  after_plan:
+  - extension: product
+    command: speckit.product.plan
+    enabled: true
+    optional: true
+    priority: 10
+    prompt: Generate the product-facing plan product/20-plan.md from plan.md?
+    description: Generate product/20-plan.md from plan.md
     condition: null
