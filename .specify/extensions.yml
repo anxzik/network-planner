@@ -1,6 +1,20 @@
 installed:
+- atlas
 - brownfield
+- diagram
+- doctor
+- extensify
+- fix-findings
+- github-issues
+- grill
 - product
+- spec-validate
+- status
+- status-report
+- time-machine
+- tldr
+- wiki
+- wireframe
 settings:
   auto_execute_hooks: true
 hooks:
@@ -24,6 +38,22 @@ hooks:
     description: Generate product/00-info.md and product/10-spec.md from spec.md (recommended
       first artifacts)
     condition: null
+  - extension: spec-validate
+    command: speckit.spec-validate.validate
+    enabled: true
+    optional: true
+    priority: 10
+    prompt: Spec generated. Run comprehension validation now?
+    description: Run spec validation after specification is generated
+    condition: null
+  - extension: wireframe
+    command: speckit.wireframe.generate
+    enabled: true
+    optional: true
+    priority: 10
+    prompt: Generate wireframes for this feature now?
+    description: Offer wireframe generation after spec creation
+    condition: null
   after_clarify:
   - extension: product
     command: speckit.product.brief
@@ -42,4 +72,81 @@ hooks:
     priority: 10
     prompt: Generate the product-facing plan product/20-plan.md from plan.md?
     description: Generate product/20-plan.md from plan.md
+    condition: null
+  - extension: wiki
+    command: speckit.wiki.ingest
+    enabled: true
+    optional: true
+    priority: 10
+    prompt: Ingest this feature's research and plan decisions into the project wiki?
+    description: Compound the feature's verified research into the wiki after planning
+    condition: null
+  after_tasks:
+  - extension: diagram
+    command: speckit.diagram.dependencies
+    enabled: true
+    optional: true
+    priority: 10
+    prompt: Generate task dependency diagram after task breakdown?
+    description: Auto-generate dependency DAG after tasks are created
+    condition: null
+  - extension: spec-validate
+    command: speckit.spec-validate.validate-tasks
+    enabled: true
+    optional: true
+    priority: 10
+    prompt: Tasks generated. Run task validation now?
+    description: Run task validation after tasks are generated
+    condition: null
+  after_implement:
+  - extension: fix-findings
+    command: speckit.fix-findings.run
+    enabled: true
+    optional: true
+    priority: 10
+    prompt: Run fix-findings to analyze and resolve spec findings automatically?
+    description: Post-implementation automated finding resolution
+    condition: null
+  - extension: time-machine
+    command: speckit.time-machine.next
+    enabled: true
+    optional: true
+    priority: 10
+    prompt: Feature implemented. Continue to the next feature in the queue?
+    description: ''
+    condition: null
+  - extension: wiki
+    command: speckit.wiki.ingest
+    enabled: true
+    optional: true
+    priority: 10
+    prompt: Record what this implementation taught into the project wiki?
+    description: Capture implementation learnings into the wiki after implementation
+    condition: null
+  - extension: wireframe
+    command: speckit.wireframe.screenshots
+    enabled: true
+    optional: true
+    priority: 10
+    prompt: Capture implementation screenshots and compare to signed-off wireframes?
+    description: 'Regression check: compare implementation to approved wireframes'
+    condition: null
+  before_implement:
+  - extension: spec-validate
+    command: speckit.spec-validate.gate
+    enabled: true
+    optional: false
+    priority: 10
+    prompt: Execute speckit.spec-validate.gate?
+    description: Hard gate implementation on validation and review policy
+    condition: null
+  before_plan:
+  - extension: wireframe
+    command: speckit.wireframe.review
+    enabled: true
+    optional: true
+    priority: 10
+    prompt: Review and sign off wireframes before planning? (signed-off wireframes
+      become spec constraints)
+    description: Ensure wireframes are reviewed and signed off before plan is written
     condition: null
