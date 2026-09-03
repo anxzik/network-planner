@@ -1,0 +1,16 @@
+{
+  "feature": "002-hardware-library",
+  "spec_hash": "sha256:1e9b9315d3fc20a40fc8298d92baf11898ecf6c3715669a11f8c720cc31f7aec",
+  "spec_self_validation": "stale",
+  "spec_validated_at": "2026-09-03T01:39:25Z",
+  "spec_critical_count": 8,
+  "spec_missed_items": [
+    "EC-1",
+    "EC-2",
+    "EC-5",
+    "EC-8"
+  ],
+  "review_status": "not-required",
+  "approval_status": "allowed",
+  "notes": "Run 2 against revised spec: 4/8, up from 1/7. Three misses are product preferences rather than misreadings: type versioning on edit (EC-1), a confirm prompt for portless types (EC-5), and access control as part of security (EC-8). EC-8 answers a question ADR 0010 left open. Superseded: spec revised again after run 2 to fold in EC-1 (plans snapshot types, ADR 0011), EC-5 (confirm portless type) and EC-8 (access control). Re-run validation before planning."
+}
