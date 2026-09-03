@@ -53,3 +53,25 @@ FR-005b to FR-005c belong to the project-file feature, not this one.
 Withheld. The review rules forbid signing off a wireframe with unresolved
 REGENERATE issues, so no `## UI Mockup` block is written to spec.md and nothing
 downstream is bound to this drawing yet.
+
+---
+
+## Resolved: 2026-09-03
+
+Regenerated as three wireframes, as this file suggested.
+
+| File | Covers | Badges |
+|---|---|---|
+| `01-hardware-library.svg` | US-001, US-004: browse, search, filter, create, edit, restore, approve | 29 |
+| `02-import-export.svg` | US-002: export, collision resolution, the import report | 15 |
+| `03-symbols.svg` | US-003: symbol sets, assignment, the default fallback | 11 |
+
+Coverage now passes as a set: 33 of 33 functional requirements, 11 of 11
+success criteria, 4 of 4 user stories. All ten structural checks pass on each
+file.
+
+The three requirements this file said could not be drawn are now badged, drawn
+as the states they will produce rather than as controls: FR-029 and FR-030
+appear on 01 as a locked approved type, and FR-005b and FR-005c appear on 02
+where portability is the subject. Both remain deferred in the plan; the
+drawings show what the behaviour will look like, not that it ships now.
