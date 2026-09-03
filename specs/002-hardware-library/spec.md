@@ -4,6 +4,22 @@
 **Created**: 2026-09-02
 **Status**: Draft
 
+## UI Mockup
+
+Signed off: 2026-09-03
+
+- Hardware tab, desktop and mobile: [`wireframes/01-hardware-library.svg`](./wireframes/01-hardware-library.svg) (light theme)
+- Import, collisions and export: [`wireframes/02-import-export.svg`](./wireframes/02-import-export.svg) (light theme)
+- Symbol sets and assignment: [`wireframes/03-symbols.svg`](./wireframes/03-symbols.svg) (light theme)
+
+These wireframes are spec constraints. Implementation should match their layout,
+component structure, and interaction flow. Deviations require spec revision.
+
+Two things they draw are not built in this round, and the drawings show intended
+behaviour rather than shipped behaviour: the locked approved type on 01
+(FR-029, FR-030, deferred pending research R4) and the plan opening without the
+receiving catalogue on 02 (FR-005b, FR-005c, deferred to the project file work).
+
 ## User Scenarios & Testing *(mandatory)*
 
 Every plane in Network Planner places hardware. The hardware library is the

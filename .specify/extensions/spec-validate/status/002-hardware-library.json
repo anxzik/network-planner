@@ -1,7 +1,7 @@
 {
   "feature": "002-hardware-library",
   "spec_hash": "sha256:4bf0964e0fab4f025e453c9c0c83f0eb37a43c5386d05c03881babcba98cea83",
-  "spec_self_validation": "passed",
+  "spec_self_validation": "stale",
   "spec_validated_at": "2026-09-03T03:22:29Z",
   "spec_critical_count": 10,
   "spec_missed_items": [
@@ -10,7 +10,7 @@
   ],
   "review_status": "not-required",
   "approval_status": "allowed",
-  "notes": "Run 3: 6/8 scored (runs were 1/7, 4/8, 6/8). Both misses are refinements rather than misreadings: an override on blocked deletion (EC-1), and offering to update a plan whose recorded definition has diverged (EC-9). EC-9 is the push-a-fix-forward mechanism ADR 0011 records as absent. Tasks edited after validation to wire FR-019 (plane membership) into T004, T005, T006, T013 and T014, found unimplemented by traceability checking.",
+  "notes": "Run 3: 6/8 scored (runs were 1/7, 4/8, 6/8). Both misses are refinements rather than misreadings: an override on blocked deletion (EC-1), and offering to update a plan whose recorded definition has diverged (EC-9). EC-9 is the push-a-fix-forward mechanism ADR 0011 records as absent. Tasks edited after validation to wire FR-019 (plane membership) into T004, T005, T006, T013 and T014, found unimplemented by traceability checking. Spec edited again by wireframe sign-off, which writes a UI Mockup block. Hash moved, validation stale.",
   "tasks_hash": "sha256:0918126a96f842fd5b607fb6eaa9aa686dbc4bb8b5d9ae4198ee85c1d86b16d6",
   "tasks_self_validation": "stale",
   "tasks_validated_at": "2026-09-03T03:16:33Z",
