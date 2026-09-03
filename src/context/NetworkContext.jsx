@@ -271,6 +271,30 @@ export function NetworkProvider({ children }) {
   // Derived state: auto-populated topology devices list
   const topologyDevices = useMemo(() => toTopologyDevices(nodes), [nodes]);
 
+  // Document seams (FR-001, FR-002). Capture and restore the canvas without
+  // touching persistence: the caller decides where a document goes, and the
+  // context knows nothing about files, localStorage or either one's lifecycle.
+  const serialiseToDocument = useCallback(
+    () => ({ appliances: nodes, connections: edges, vlans, networkObjects }),
+    [nodes, edges, vlans, networkObjects],
+  );
+
+  const loadFromDocument = useCallback(
+    (document) => {
+      const source = document ?? {};
+      setNodes(Array.isArray(source.appliances) ? source.appliances : []);
+      setEdges(Array.isArray(source.connections) ? source.connections : []);
+      setVlans(Array.isArray(source.vlans) && source.vlans.length
+        ? source.vlans : [getDefaultVlan()]);
+      setNetworkObjects(Array.isArray(source.networkObjects) ? source.networkObjects : []);
+      // Selection belongs to the window, not the plan; a restored document must
+      // not leave a selection pointing at a node that is no longer there.
+      setSelectedNode(null);
+      setSelectedDeviceType(null);
+    },
+    [setNodes, setEdges],
+  );
+
   // Project export/import helpers
   const exportProject = useCallback(() => {
     // Return entire namespaced snapshot
@@ -356,6 +380,8 @@ export function NetworkProvider({ children }) {
 
     // Persistence helpers
     exportProject,
+    serialiseToDocument,
+    loadFromDocument,
     importProject,
 
     // Utility getters

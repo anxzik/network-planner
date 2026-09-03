@@ -6,6 +6,7 @@ const plan = (extra = {}) => ({
   appliances: [{ id: 'n1', type: 'switch-24', position: { x: 10, y: 20 } }],
   connections: [{ id: 'e1', source: 'n1', target: 'n2' }],
   vlans: [{ id: 10, name: 'voice' }],
+  networkObjects: [{ id: 'o1', name: 'patch panel A', manual: true }],
   scratchpad: { notes: 'riser is on the north wall' },
   recordedDefinitions: { 'switch-24': { id: 'switch-24', name: 'Switch 24' } },
   declinedOffers: { 'switch-24': '2026-08-01T00:00:00Z' },
@@ -26,6 +27,7 @@ describe('serialisePlan', () => {
     expect(result.document.appliances).toEqual(source.appliances);
     expect(result.document.connections).toEqual(source.connections);
     expect(result.document.vlans).toEqual(source.vlans);
+    expect(result.document.networkObjects).toEqual(source.networkObjects);
     expect(result.document.scratchpad).toEqual(source.scratchpad);
     expect(result.document.recordedDefinitions).toEqual(source.recordedDefinitions);
     expect(result.document.declinedOffers).toEqual(source.declinedOffers);
@@ -156,6 +158,7 @@ describe('readPlanFile defaults', () => {
     expect(document.appliances).toEqual([]);
     expect(document.connections).toEqual([]);
     expect(document.vlans).toEqual([]);
+    expect(document.networkObjects).toEqual([]);
     expect(document.scratchpad).toEqual({});
     expect(document.recordedDefinitions).toEqual({});
     expect(document.declinedOffers).toEqual({});

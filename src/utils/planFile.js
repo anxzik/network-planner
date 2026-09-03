@@ -15,6 +15,7 @@ const KNOWN_FIELDS = [
   'appliances',
   'connections',
   'vlans',
+  'networkObjects',
   'scratchpad',
   'recordedDefinitions',
   'declinedOffers',
@@ -25,6 +26,7 @@ export function serialisePlan({
   appliances = [],
   connections = [],
   vlans = [],
+  networkObjects = [],
   scratchpad = {},
   recordedDefinitions = {},
   declinedOffers = {},
@@ -38,6 +40,7 @@ export function serialisePlan({
       appliances,
       connections,
       vlans,
+      networkObjects,
       scratchpad,
       recordedDefinitions,
       declinedOffers,
@@ -76,6 +79,9 @@ function readDocument(parsed) {
     appliances: list(parsed.appliances),
     connections: list(parsed.connections),
     vlans: list(parsed.vlans),
+    // The manually-entered device list, which is the person's work just as much
+    // as the canvas is — a plan that dropped it would lose content silently.
+    networkObjects: list(parsed.networkObjects),
     scratchpad: object(parsed.scratchpad),
     recordedDefinitions: object(parsed.recordedDefinitions),
     declinedOffers: object(parsed.declinedOffers),

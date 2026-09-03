@@ -14,6 +14,7 @@
  "appliances":   [ PlacedAppliance, ... ],
  "connections":  [ Connection, ... ],
  "vlans":        [ Vlan, ... ],
+ "networkObjects": [ NetworkObject, ... ],
  "scratchpad":   { ... as ScratchpadContext persists today ... },
  "recordedDefinitions": { "<typeId>": ApplianceType, ... },
  "declinedOffers": { "<typeId>": "<catalogue updatedAt declined>", ... }
@@ -23,6 +24,7 @@
 | Field | Notes |
 |---|---|
 | `appliances` | The ReactFlow node shape the canvas already uses, unchanged |
+| `networkObjects` | The manually-entered device list (ListView's "Manual" tab). Content the person typed, so it travels with the plan — found missing from this table while wiring the context seams in T008 |
 | `recordedDefinitions` | One full definition per distinct placed type (ADR 0011); the shape `shippedTypes.json` and the catalogue already share |
 | `declinedOffers` | FR-017's memory, travelling with the plan (R2); keyed by type, valued by the catalogue version declined, so a *newer* correction re-offers |
 

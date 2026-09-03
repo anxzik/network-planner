@@ -1,5 +1,6 @@
 // The context bridge: the renderer's only route to the main process. Exposes
-// the library surface from specs/002-hardware-library/contracts/preload-bridge.md.
+// the library surface from specs/002-hardware-library/contracts/preload-bridge.md
+// and the plans surface from specs/003-project-files/contracts/plans-bridge.md.
 // No paths, no handles, no Node APIs cross this line.
 import { contextBridge, ipcRenderer } from 'electron';
 
@@ -18,6 +19,21 @@ const library = {
   importSymbols: () => ipcRenderer.invoke('library:importSymbols'),
 };
 
-contextBridge.exposeInMainWorld('networkPlanner', { library });
+// Only the methods main actually handles. The contract names more, and they
+// appear here as their handlers are implemented: a bridge method that resolves
+// to nothing is worse than an absent one, because the renderer cannot tell the
+// difference between "not built yet" and "returned nothing".
+const plans = {
+  listRecents: () => ipcRenderer.invoke('plans:listRecents'),
+  removeRecent: (id: string) => ipcRenderer.invoke('plans:removeRecent', id),
+  openRecent: (id: string) => ipcRenderer.invoke('plans:openRecent', id),
+  recoverySlot: () => ipcRenderer.invoke('plans:recoverySlot'),
+  saveRecovery: (payload: { document: unknown; reason?: 'crash' | 'discarded' }) =>
+    ipcRenderer.invoke('plans:saveRecovery', payload),
+  clearRecovery: () => ipcRenderer.invoke('plans:clearRecovery'),
+};
+
+contextBridge.exposeInMainWorld('networkPlanner', { library, plans });
 
 export type LibraryBridge = typeof library;
+export type PlansBridge = typeof plans;

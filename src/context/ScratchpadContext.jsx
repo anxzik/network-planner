@@ -103,7 +103,23 @@ export function ScratchpadProvider({ children }) {
   }, []);
 
   // Context value
+  // Document seams (FR-001, FR-002). The scratchpad's content travels with the
+  // plan; its panel geometry does not — how tall someone left a panel is about
+  // this window, not about the plan, and would be noise in a diffed file.
+  const serialiseToDocument = useCallback(
+    () => ({ notes, calculations }),
+    [notes, calculations],
+  );
+
+  const loadFromDocument = useCallback((scratchpad) => {
+    const source = scratchpad ?? {};
+    setNotes(typeof source.notes === 'string' ? source.notes : '');
+    setCalculations(Array.isArray(source.calculations) ? source.calculations : []);
+  }, []);
+
   const value = {
+    serialiseToDocument,
+    loadFromDocument,
     // State
     isOpen,
     panelHeight,
