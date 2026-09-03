@@ -1,6 +1,6 @@
 # 0002. Persist to `localStorage` under one namespaced, versioned key
 
-**Status:** Accepted
+**Status:** Superseded by [0008](0008-project-files-on-disk.md)
 **Date:** 2026-09-02
 
 ## Context
@@ -34,3 +34,10 @@ parse error, logs to the console, and returns an empty root, after which the
 next write overwrites what could not be read. A user whose stored data is
 damaged, or whose shape this app changes without a migration path, loses their
 saved topologies with only a console line as evidence.
+
+## Superseded
+
+[ADR 0008](0008-project-files-on-disk.md) moves topologies to project files on
+disk. The two defects recorded above remain real and unfixed — a version that is
+written but never read, and unreadable data being silently overwritten — but
+they now apply to the project file format rather than to `localStorage`.

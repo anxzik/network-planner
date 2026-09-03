@@ -2,9 +2,12 @@
 
 ## Project Identity
 
-**network-planner** is an Electron desktop application for designing and
-documenting network topologies: placing devices on a canvas, wiring ports
-between them, assigning VLANs, and calculating subnets.
+**network-planner** is an Electron desktop application for planning complex
+networks across five planes — physical, logical, cloud, RF and alarm. See
+`CONTEXT.md` for the domain, its vocabulary, and the build order.
+
+The current code covers part of the logical plane: placing devices on a canvas,
+wiring ports between them, assigning VLANs, and calculating subnets.
 
 - **Architecture**: Electron three-process desktop app (main / preload / renderer)
 - **Renderer**: React 19 SPA built on ReactFlow, styled with TailwindCSS 4
@@ -118,10 +121,9 @@ are not rules, and should be resolved rather than guessed at:
    Whether it remains the long-term position is undecided.
 2. **Continuous integration** — no CI exists. The quality gates above are
    defined but unenforced.
-3. **Documentation root** — `CLAUDE.md` references `CONTEXT.md`, which does not
-   exist. `docs/adr/` now does. `ARCHITECTURE.md` and `README.md` live under
-   `dev-stuff/`. This constitution overlaps with what `CONTEXT.md` was intended
-   to hold; the relationship between the two should be settled.
+3. **`dev-stuff/`** — `ARCHITECTURE.md` and `README.md` live there rather than
+   at the repository root, and predate `CONTEXT.md`. Whether they are superseded
+   or moved is undecided.
 
 ## Governance
 
