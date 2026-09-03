@@ -9,6 +9,9 @@
    quit, reopen via recents — identical canvas, title shows name, no dirty mark.
 2. **Unsaved-changes guard** (FR-006): modify, then File > New — prompt appears;
    Cancel loses nothing.
+2b. **Unsaved prompt outcomes** (FR-006): modify, then File > New — Save writes
+    and proceeds; Discard proceeds and loses the changes; Cancel and Escape both
+    leave the canvas exactly as it was and abandon the New.
 3. **Migration** (US2): with a pre-feature localStorage topology, first start
    offers migration; accept → named file opens; old storage still present,
    marked.
@@ -16,6 +19,10 @@
    preview, accept or decline; raw content untouched either way.
 5. **Travels complete** (US3): plan placing a local-only type; delete the type
    from the catalogue; reopen plan — renders fully from recorded definitions.
+5b. **Adopt a plan's types** (FR-025): with that same plan open and rendering
+    from recorded definitions, adopt one of its types — it appears in the
+    catalogue as locally-created; the plan file is byte-identical afterwards.
+    Adopt again — the type is skipped, not duplicated or overwritten.
 6. **Divergence offer** (FR-016/017): edit a placed type in the library, reopen
    plan — which-is-shown clear, offer once; decline, reopen — not re-asked.
 7. **Broad apply** (FR-018): after a correction, run apply-to-recents — list

@@ -16,6 +16,11 @@ layout, component structure, and interaction flow. Deviations require spec
 revision. Drawing 02 reflects the folded FR-021: a newer-format plan opens
 read-only and is never written back.
 
+**Open against this sign-off**: FR-025 (adopting a plan's recorded definitions
+into the catalogue) was folded after these drawings were approved, and drawing
+02 shows no adopt surface. The sign-off stands for everything it depicts; the
+adopt offer needs a wireframe pass before its UI is built.
+
 ## User Scenarios & Testing *(mandatory)*
 
 A plan is the most valuable thing a person makes in this application, and today
@@ -114,6 +119,10 @@ the library, reopen — the divergence is shown and the offer appears.
    copy, **When** the person chooses to apply it broadly, **Then** they are
    shown which plans would change and choose all, some, or none before
    anything is written.
+5. **Given** an opened plan carrying types the local catalogue lacks, **When**
+   the person wants to keep those types, **Then** they can adopt any or all of
+   them into their catalogue after the plan has opened; the plan is unchanged
+   by adopting, and unaffected by declining.
 
 ### User Story 4 - Old and damaged files are handled safely (Priority: P2)
 
@@ -170,7 +179,13 @@ is nothing to upgrade from later.
 - **FR-005**: The application MUST always show which plan is open and whether
   it has unsaved changes.
 - **FR-006**: Closing, opening or starting a new plan with unsaved changes MUST
-  prompt to save, and nothing is lost until the person chooses.
+  prompt to save, and nothing is lost until the person chooses. The prompt
+  offers exactly three outcomes: **Save** (write, then proceed), **Discard**
+  (proceed without writing, losing the changes), and **Cancel** (do nothing —
+  the pending action is abandoned and the canvas is left as it was). Dismissing
+  the prompt by any other means — window close, Escape, clicking away — MUST be
+  treated as **Cancel**, never as Discard. Discarding MUST be an act the person
+  took deliberately, never the consequence of getting rid of a dialog.
 - **FR-007**: The application MUST list recently opened plans; an entry whose
   file has vanished is offered for removal, never silently dropped.
 - **FR-008**: A failed or interrupted save MUST leave the previous file content
@@ -219,6 +234,15 @@ is nothing to upgrade from later.
   to those chosen; a plan it cannot reach is listed as unreachable, not
   guessed at.
 
+- **FR-025**: When a plan carries recorded definitions the local catalogue does
+  not have, the person MUST be able to adopt those definitions into their own
+  catalogue. The offer comes *after* the plan has opened and rendered — it is
+  never a precondition of opening (FR-015 stands unchanged). Adoption is
+  per-type and optional: the person chooses which, if any. An adopted type
+  enters the catalogue as a locally-created type recording that it came from a
+  plan. Adopting MUST NOT alter the plan, and declining MUST NOT impede it;
+  both continue to render from the recorded definitions either way.
+
 **Format lifecycle**
 
 - **FR-019**: Every plan file MUST record the format version it was written in.
@@ -231,8 +255,10 @@ is nothing to upgrade from later.
 - **FR-021**: A file recording a newer format MUST open read-only, showing
   what this version can read, with a clear notice of both the newer format and
   anything not understood. The application MUST NEVER write back to that file.
-  Keeping an editable copy is an explicit Save As, warned that content this
-  version cannot read is not carried into the copy.
+  Keeping an editable copy is an explicit Save As, warned on two counts: that
+  content this version cannot read is not carried into the copy, and that the
+  copy is therefore not a substitute for the original file, which remains the
+  only complete version and must be kept.
 - **FR-022**: A file that cannot be read MUST be left untouched and reported;
   nothing MUST ever overwrite it.
 - **FR-023**: Bringing a file forward MUST be deterministic, depending only on
@@ -315,7 +341,9 @@ is nothing to upgrade from later.
 - **SC-005**: A correction in the library can reach every reachable plan built
   on the old definition, without any plan changing on its own.
 - **SC-006**: Every upgrade path from every released format version to the
-  current one is covered by an automated test.
+  current one is covered by an automated test. This is a standing obligation,
+  not a one-time task: it is satisfied trivially while one format version
+  exists, and every future change to the format adds a test before it ships.
 - **SC-007**: A first-time user sees no migration prompts, warnings or errors.
 
 ## Assumptions
@@ -354,6 +382,13 @@ Decided rather than left open; each is challengeable.
   `.bak`, because it holds an interrupted write: newer than the plan file but
   possibly incomplete. A `.bak` name would invite restoring from it as though it
   were the good copy, which is precisely backwards.
+
+- **Adoption is an offer that follows opening, never a gate on it.** A plan
+  must open complete on a stranger's machine with no ceremony (FR-015) — that
+  is the whole point of recorded definitions. But a person who likes the
+  equipment in a plan they were sent has, until now, had no way to keep it.
+  FR-025 adds that path without letting it become a precondition: open first,
+  render everything, then offer.
 
 - **The library remains app-level** (002's assumption stands); recorded
   definitions make plans self-contained without bundling the catalogue.

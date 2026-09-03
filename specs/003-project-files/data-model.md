@@ -46,6 +46,15 @@ request after a successful US2 migration. Presence suppresses re-offers
 
 `{ pid, hostname, openedAt }` — advisory, stale-tolerant (R6).
 
+## Adopted type (FR-025)
+
+A recorded definition promoted into the catalogue. It enters as a
+locally-created type (`origin: 'local'`, the shape 002 already stores) with
+`adoptedFromPlan` recording the plan name it came from. The plan is not
+modified by adoption; the catalogue gains a row, and subsequent opens of that
+plan simply find the type present. A type whose id already exists is skipped,
+never overwritten.
+
 ## Preserved artifacts (FR-024)
 
 One predictably named slot per plan per kind. A repeat occurrence **replaces**

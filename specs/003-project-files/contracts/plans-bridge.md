@@ -24,6 +24,8 @@ call async, failure is a returned envelope.
 | `applyUpdate(document, typeId)` | — | updated document | FR-016 |
 | `broadApplyPreview(typeId)` | — | `{ reachable:[{id,name}], unreachable:[{name,reason}] }` | FR-018 |
 | `broadApply(typeId, ids)` | chosen recents | per-plan results | FR-018 |
+| `adoptable(document)` | open plan | `[ { typeId, name, inCatalogue } ]` | FR-025 |
+| `adopt(document, typeIds)` | chosen types | `{ adopted:[typeId], skipped:[{typeId,reason}] }` | FR-025 |
 | `listPreserved(planId)` | — | `[ { kind, name, redundant } ]` | FR-024 |
 | `clearPreserved(planId, kind)` | — | `{ cleared }` | FR-024 |
 
@@ -42,3 +44,7 @@ call async, failure is a returned envelope.
 - Preserved artifacts (FR-024) are listed by kind, never by path. `redundant`
   says clearing may be *offered*; nothing is cleared without `clearPreserved`.
 - Divergence math is pure (`planDivergence.js`) and identical on both sides.
+- `adopt` writes to the catalogue, never to the plan: the document passed in is
+  read-only input, and the response says what entered the catalogue. A type
+  already present is `skipped`, not overwritten — adoption never silently
+  replaces a definition the person already has.

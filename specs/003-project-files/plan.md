@@ -25,7 +25,7 @@ co-located tests, per Principle I.
 **Constraints**: renderer sees names and opaque ids, never reusable paths;
 read-only enforced in main (R5); saves atomic (R1); SC-003 is the spine.
 
-**Scale/Scope**: ~6 new pure modules + tests, one main-process module
+**Scale/Scope**: ~7 new pure modules + tests, one main-process module
 (`src/plans/`), bridge additions, and renderer surfaces (title state, prompts,
 migration/salvage/divergence/broad-apply panels, recents).
 
@@ -55,7 +55,8 @@ src/
 │   ├── planDivergence.js     recorded vs current, offer/decline logic
 │   ├── storageSalvage.js     FR-012 best-effort recovery of old storage
 │   ├── recentsPrune.js       FR-007 decisions
-│   └── preservedArtifacts.js FR-024 slot naming + retention decisions
+│   ├── preservedArtifacts.js FR-024 slot naming + retention decisions
+│   └── typeAdoption.js       FR-025 adoptable/skipped decisions
 ├── context/PlanContext.jsx   NEW: open-plan state, dirty flag, bridge calls
 └── components/Plans/         NEW: prompts, migration & salvage, divergence,
                               broad-apply, recents surfaces

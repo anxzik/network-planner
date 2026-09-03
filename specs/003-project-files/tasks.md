@@ -77,7 +77,7 @@ are binding layout constraints on every renderer task.
 - [ ] T012 [US1] Implement `listRecents`, `openRecent`, `removeRecent` handlers in `src/plans/ipc.ts` using `src/utils/recentsPrune.js` and `src/plans/recents.ts`; ids are opaque, existence checked at list time (FR-007)
 - [ ] T013 [US1] Implement `recoverySlot`, `saveRecovery`, `clearRecovery` handlers in `src/plans/ipc.ts` over `src/plans/recents.ts`; `PlanContext` captures unsaved work to the slot continuously (debounced) and clears it on clean save (FR-009)
 - [ ] T014 [P] [US1] Create `src/components/Plans/PlanMenu.jsx`: New / Open / Save / Save As / recents entries per wireframe 01; disabled states follow `readOnly` and `dirty` from `src/context/PlanContext.jsx`
-- [ ] T015 [P] [US1] Create `src/components/Plans/UnsavedPrompt.jsx`: the save-first prompt intercepting New, Open, open-recent and window close; Cancel loses nothing (FR-006)
+- [ ] T015 [P] [US1] Create `src/components/Plans/UnsavedPrompt.jsx`: the save-first prompt intercepting New, Open, open-recent and window close, with exactly three outcomes — Save (write then proceed), Discard (proceed, losing changes), Cancel (abandon the pending action, canvas untouched). Every other dismissal — window close, Escape, click-away — maps to Cancel, never Discard (FR-006)
 - [ ] T016 [P] [US1] Create `src/components/Plans/RecentsPanel.jsx`: recent plans with vanished entries marked and removable, never auto-dropped, per wireframe 01 (FR-007)
 - [ ] T017 [P] [US1] Create `src/components/Plans/RecoveryPrompt.jsx`: on-start offer to restore the recovery slot — restore or discard, nothing silent (FR-009)
 - [ ] T018 [US1] Surface open-plan identity in the app chrome: plan name + dirty marker wired from `src/context/PlanContext.jsx` into `src/App.jsx` (and window title via the bridge), per wireframe 01 (FR-005, SC-004)
@@ -118,7 +118,10 @@ are binding layout constraints on every renderer task.
 - [ ] T031 [US3] Create `src/components/Plans/DivergencePanel.jsx`: which-definition-is-shown made clear, per-type update offer, decline recorded into the document's `declinedOffers`, per wireframe 02 (FR-016, FR-017)
 - [ ] T032 [US3] Implement `broadApplyPreview` and `broadApply` handlers in `src/plans/ipc.ts`: reach is the recents list only; each reachable plan goes through the ordinary read-classify path, gets the update, and saves atomically with a per-file original copied aside into the `<plan>.preapply.original` slot; locked or missing files are reported unreachable, never queued (R7, FR-018, FR-024)
 - [ ] T033 [US3] Create `src/components/Plans/BroadApplyPanel.jsx`: which plans would change, choose all/some/none, per-plan results with unreachable entries listed honestly, per wireframe 02 (FR-018, SC-005)
-- [ ] T034 [US3] Verify quickstart 5, 6 and 7 (5–7 automated where pure, panels by hand) and gates green
+- [ ] T034 [P] [US3] Create `src/utils/typeAdoption.js` + `src/utils/typeAdoption.test.js`: pure decisions for FR-025 — which recorded definitions are absent from the catalogue and therefore adoptable, which are already present and must be skipped rather than overwritten, and the locally-created catalogue row an adopted definition becomes (`origin: 'local'`, `adoptedFromPlan`)
+- [ ] T035 [US3] Implement `adoptable` and `adopt` handlers in `src/plans/ipc.ts` over `src/utils/typeAdoption.js`, writing through the existing catalogue store in `src/library/catalogueStore.ts`; the plan document is read-only input and MUST be byte-identical after an adopt (FR-025)
+- [ ] T036 [US3] Create `src/components/Plans/AdoptTypesPanel.jsx`: the after-open, per-type adopt offer — never a precondition of opening, declining changes nothing. **Wireframe pass needed first**: drawing 02 was signed off before FR-025 and shows no adopt surface (FR-025)
+- [ ] T037 [US3] Verify quickstart 5, 5b, 6 and 7 (pure logic automated, panels by hand) and gates green
 
 **Checkpoint**: A plan is self-contained and truthful; corrections travel only by consent.
 
@@ -130,13 +133,13 @@ are binding layout constraints on every renderer task.
 
 **Independent Test**: Lower a file's formatVersion → upgraded with original beside it. Raise to 99.0 → read-only with notice, save refused in main. Corrupt it → reported, untouched (quickstart 8, 9, 10).
 
-- [ ] T035 [US4] Add the upgrade path to `src/utils/planFile.js` + tests: deterministic `older(version)` → current transform depending only on file content, one test per released format version as the standing SC-006 obligation begins (FR-020, FR-023, SC-006)
-- [ ] T036 [US4] Copy-aside on upgrade in `src/plans/planStore.ts`: before an upgraded document is first saved, the original is copied into the `<plan>.<fromVersion>.original` slot and kept until the person removes it. One copy per plan — reopening an older file whose slot is already occupied leaves the existing (older, more valuable) copy alone rather than creating a second (FR-020, FR-024)
-- [ ] T037 [US4] Enforce read-only in main in `src/plans/ipc.ts`: a plan opened as `newer(version)` or lock-fallback sets `readOnly` in the open envelope, and `save` for a read-only plan is refused in the main process regardless of renderer state; `saveAs` is the sole exit (R5, FR-021)
-- [ ] T038 [P] [US4] Create `src/components/Plans/ReadOnlyNotice.jsx`: the newer-format notice per wireframe 02 — what this version can read, what it cannot, and the warned Save As explaining that unread content is not carried into the copy (FR-021)
-- [ ] T039 [US4] Handle `unreadable` end to end: `FILE_UNREADABLE` envelope from `src/plans/ipc.ts`, the file left untouched, and a clear report in the renderer through `src/context/PlanContext.jsx` (FR-022, SC-003)
-- [ ] T040 [US4] Surface failed saves: `SAVE_FAILED` envelope names the preserved `<plan>.partial`; renderer message in `src/components/Plans/SaveFailedNotice.jsx` tells the person the previous file survived, where the partial is, and which content each one holds — the plan file is the last content written whole, the partial is what they were saving (FR-008)
-- [ ] T041 [US4] Verify quickstart 8, 9, 10 and 11 (upgrade, classification and retention decisions automated; dialog flows by hand) and gates green
+- [ ] T038 [US4] Add the upgrade path to `src/utils/planFile.js` + tests: deterministic `older(version)` → current transform depending only on file content, one test per released format version as the standing SC-006 obligation begins (FR-020, FR-023, SC-006)
+- [ ] T039 [US4] Copy-aside on upgrade in `src/plans/planStore.ts`: before an upgraded document is first saved, the original is copied into the `<plan>.<fromVersion>.original` slot and kept until the person removes it. One copy per plan — reopening an older file whose slot is already occupied leaves the existing (older, more valuable) copy alone rather than creating a second (FR-020, FR-024)
+- [ ] T040 [US4] Enforce read-only in main in `src/plans/ipc.ts`: a plan opened as `newer(version)` or lock-fallback sets `readOnly` in the open envelope, and `save` for a read-only plan is refused in the main process regardless of renderer state; `saveAs` is the sole exit (R5, FR-021)
+- [ ] T041 [P] [US4] Create `src/components/Plans/ReadOnlyNotice.jsx`: the newer-format notice per wireframe 02 — what this version can read, what it cannot, and the warned Save As on both counts: unread content is not carried into the copy, and the copy is therefore not a substitute for the original, which stays the only complete version (FR-021)
+- [ ] T042 [US4] Handle `unreadable` end to end: `FILE_UNREADABLE` envelope from `src/plans/ipc.ts`, the file left untouched, and a clear report in the renderer through `src/context/PlanContext.jsx` (FR-022, SC-003)
+- [ ] T043 [US4] Surface failed saves: `SAVE_FAILED` envelope names the preserved `<plan>.partial`; renderer message in `src/components/Plans/SaveFailedNotice.jsx` tells the person the previous file survived, where the partial is, and which content each one holds — the plan file is the last content written whole, the partial is what they were saving (FR-008)
+- [ ] T044 [US4] Verify quickstart 8, 9, 10 and 11 (upgrade, classification and retention decisions automated; dialog flows by hand) and gates green
 
 **Checkpoint**: SC-003 holds — no failure mode destroys a byte the person had not chosen to discard.
 
@@ -144,12 +147,12 @@ are binding layout constraints on every renderer task.
 
 ## Phase 7: Polish & Cross-Cutting Concerns
 
-- [ ] T042 [P] Create `src/utils/preservedArtifacts.js` + `src/utils/preservedArtifacts.test.js`: pure naming and retention decisions for FR-024 — the slot name for each kind, whether an occurrence replaces or leaves an existing slot alone, and whether a given artifact has become redundant (upgraded plan saved whole, salvage accepted and written) and may therefore be *offered* for clearing
-- [ ] T043 List and clear preserved artifacts: `listPreserved(planId)` / `clearPreserved(planId, kind)` handlers in `src/plans/ipc.ts` over `src/utils/preservedArtifacts.js`, and `src/components/Plans/PreservedArtifactsPanel.jsx` showing what exists for a plan with a clear action — offered when redundant, never performed unasked (FR-024)
-- [ ] T044 [P] Two-instance behaviour: wire the lock sidecar from `src/plans/planStore.ts` into `open` so a second opener gets `LOCKED` → read-only with notice; stale locks (dead pid or aged) are ignored; verify quickstart 13 by hand (R6)
-- [ ] T045 [P] Edge-case sweep with tests where pure: save onto a path holding a different plan (ordinary overwrite after the dialog's own confirm), open-plan file renamed/moved/deleted externally (surfaced on next save as `SAVE_FAILED`-style report, not a crash), and a recorded definition failing today's validation rules (rendered anyway per FR-015, flagged in the divergence panel) in `src/utils/planFile.test.js` / `src/utils/planDivergence.test.js`
-- [ ] T046 Keep files under 500 lines: check `src/plans/ipc.ts` and `src/context/PlanContext.jsx` sizes; split if breached
-- [ ] T047 Run the full quickstart (all 13 scenarios), confirm `npm run lint && npm test && npm run typecheck` green by exit code, and mark completed tasks here
+- [ ] T045 [P] Create `src/utils/preservedArtifacts.js` + `src/utils/preservedArtifacts.test.js`: pure naming and retention decisions for FR-024 — the slot name for each kind, whether an occurrence replaces or leaves an existing slot alone, and whether a given artifact has become redundant (upgraded plan saved whole, salvage accepted and written) and may therefore be *offered* for clearing
+- [ ] T046 List and clear preserved artifacts: `listPreserved(planId)` / `clearPreserved(planId, kind)` handlers in `src/plans/ipc.ts` over `src/utils/preservedArtifacts.js`, and `src/components/Plans/PreservedArtifactsPanel.jsx` showing what exists for a plan with a clear action — offered when redundant, never performed unasked (FR-024)
+- [ ] T047 [P] Two-instance behaviour: wire the lock sidecar from `src/plans/planStore.ts` into `open` so a second opener gets `LOCKED` → read-only with notice; stale locks (dead pid or aged) are ignored; verify quickstart 13 by hand (R6)
+- [ ] T048 [P] Edge-case sweep with tests where pure: save onto a path holding a different plan (ordinary overwrite after the dialog's own confirm), open-plan file renamed/moved/deleted externally (surfaced on next save as `SAVE_FAILED`-style report, not a crash), and a recorded definition failing today's validation rules (rendered anyway per FR-015, flagged in the divergence panel) in `src/utils/planFile.test.js` / `src/utils/planDivergence.test.js`
+- [ ] T049 Keep files under 500 lines: check `src/plans/ipc.ts` and `src/context/PlanContext.jsx` sizes; split if breached
+- [ ] T050 Run the full quickstart (all 13 scenarios), confirm `npm run lint && npm test && npm run typecheck` green by exit code, and mark completed tasks here
 
 ---
 
@@ -159,18 +162,18 @@ are binding layout constraints on every renderer task.
 - **Phase 2 blocks all stories**. Within it: T003 first (plan.md: everything trusts classification); T004, T005 parallel after; T006 needs T004+T005; T007 needs T006; T008 parallel with T004–T007; T009 needs T007+T008.
 - **US1 (Phase 3)** needs Phase 2 only. T010 → T012/T013; T011 parallel; T014–T017 parallel after T009; T018–T019 last.
 - **US2 (Phase 4)** needs Phase 2 + T010 (a migration writes a plan file). T020 parallel; T021 → T022; T023/T024 parallel; T025 after T022.
-- **US3 (Phase 5)** needs Phase 2 + T010; T032 also needs T012 (reach = recents). T027/T028/T029 can start together; T030 needs T029; T031 needs T030; T033 needs T032.
-- **US4 (Phase 6)** needs Phase 2 + T010. T035 → T036; T037 independent after T010; T038–T040 parallel after T037.
+- **US3 (Phase 5)** needs Phase 2 + T010; T032 also needs T012 (reach = recents). T027/T028/T029 can start together; T030 needs T029; T031 needs T030; T033 needs T032. The FR-025 adopt path (T034–T036) needs T028 (rendering from recorded definitions) and the catalogue store from 002; T036 is blocked on a wireframe pass, since drawing 02 predates FR-025.
+- **US4 (Phase 6)** needs Phase 2 + T010. T038 → T039; T040 independent after T010; T041–T043 parallel after T040.
 - **Story order**: US1 → US2 ship together (both P1); US3 and US4 are independent of each other after US1.
-- **FR-024 (preserved artifacts)** is cross-cutting: T042's naming decisions are consumed by T004, T032 and T036, so land T042 early if those are being written in parallel — it is placed in polish only because its own surface (T043) is not needed to make any story testable.
+- **FR-024 (preserved artifacts)** is cross-cutting: T045's naming decisions are consumed by T004, T032 and T039, so land T045 early if those are being written in parallel — it is placed in polish only because its own surface (T046) is not needed to make any story testable.
 
 ### Parallel opportunities
 
 - Phase 2: T004 ∥ T005 ∥ T008 after T003.
 - US1: T011 ∥ T010; then T014 ∥ T015 ∥ T016 ∥ T017.
 - US2: T020 ∥ T023 ∥ T024 once the contract shape from T021 is agreed.
-- US3: T027 ∥ T028 ∥ T029.
-- US4: T038 ∥ T039 ∥ T040 after T037.
+- US3: T027 ∥ T028 ∥ T029; then T034 ∥ T030 (adoption and divergence are independent).
+- US4: T041 ∥ T042 ∥ T043 after T040.
 - Cross-story: after US1, one track can take US3 while another takes US4.
 
 ## Implementation Strategy
@@ -179,6 +182,12 @@ are binding layout constraints on every renderer task.
 guards, recents and recovery. **US2 must ship in the same release** — an
 existing user updating to file-plans without the migration is the
 destroyed-work scenario SC-002 forbids. US3 and US4 then land as independent
-increments; US4's T035 (format versioning) is cheap insurance worth pulling
+increments; US4's T038 (format versioning) is cheap insurance worth pulling
 forward if release timing threatens to slip, since FR-019 is already satisfied
 by T003 writing `formatVersion` from the first file.
+
+**One blocked task**: T036 (AdoptTypesPanel) cannot be built to a signed-off
+drawing — FR-025 was folded after wireframe 02 was approved, and the drawing
+shows no adopt surface. Run a wireframe pass for it before that task, or build
+T034/T035 (the pure logic and the handlers, both fully testable without UI) and
+leave the panel until the drawing catches up.
