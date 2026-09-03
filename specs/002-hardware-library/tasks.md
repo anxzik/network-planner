@@ -111,16 +111,16 @@ behavioural module in `src/utils/` to carry a co-located test.
 
 ### Tests for User Story 3
 
-- [ ] T032 [P] [US3] Write src/utils/symbolValidation.test.js covering well-formed SVG, malformed input, and oversized content
+- [x] T032 [P] [US3] Write src/utils/symbolValidation.test.js covering well-formed SVG, malformed input, and oversized content
 
 ### Implementation for User Story 3
 
-- [ ] T033 [P] [US3] Implement src/utils/symbolValidation.js for FR-014, rejecting anything that is not a usable symbol
-- [ ] T034 [US3] Add symbol and symbol-set tables to src/library/schema.ts and their access to src/library/catalogueStore.ts
-- [ ] T035 [US3] Implement `importSymbols` and `listSymbols` in src/library/ipc.ts
-- [ ] T036 [US3] Add symbol selection to src/components/Hardware/ApplianceEditor.jsx
-- [ ] T037 [US3] Resolve symbols when drawing in src/components/nodes/DeviceNode.jsx, falling back to a default for FR-015
-- [ ] T038 [US3] Assign the shipped industry-standard symbols to the 131 seeded types for FR-016 in src/library/seed.ts
+- [x] T033 [P] [US3] Implement src/utils/symbolValidation.js for FR-014, rejecting anything that is not a usable symbol
+- [x] T034 [US3] Add symbol and symbol-set tables to src/library/schema.ts and their access to src/library/catalogueStore.ts
+- [x] T035 [US3] Implement `importSymbols` and `listSymbols` in src/library/ipc.ts
+- [x] T036 [US3] Add symbol selection to src/components/Hardware/ApplianceEditor.jsx
+- [x] T037 [US3] Resolve symbols when drawing in src/components/nodes/DeviceNode.jsx, falling back to a default for FR-015
+- [x] T038 [US3] Assign the shipped industry-standard symbols to the 131 seeded types for FR-016 in src/library/seed.ts
 
 **Checkpoint**: User Stories 1, 2 and 3 all work independently.
 
