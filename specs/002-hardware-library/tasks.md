@@ -38,9 +38,9 @@ behavioural module in `src/utils/` to carry a co-located test.
 
 **Purpose**: The catalogue, the bridge, and the shipped data. No user story can proceed until these exist.
 
-- [ ] T004 [P] Transcribe the 131 shipped appliance types from src/data/devices.js into src/utils/shippedTypes.js, preserving every id, category, viewType and port group
-- [ ] T005 [P] Write src/utils/shippedTypes.test.js asserting 131 types, 19 categories, ids unchanged, and all 16 port kinds still representable
-- [ ] T006 Define the catalogue schema and its schema version in src/library/schema.ts per data-model.md
+- [ ] T004 [P] Transcribe the 131 shipped appliance types from src/data/devices.js into src/utils/shippedTypes.js, preserving every id, category and port group, and mapping the existing physical and logical viewType values onto plane membership for FR-019
+- [ ] T005 [P] Write src/utils/shippedTypes.test.js asserting 131 types, 19 categories, ids unchanged, all 16 port kinds still representable, and every type carrying at least one plane
+- [ ] T006 Define the catalogue schema and its schema version in src/library/schema.ts per data-model.md, including the required `planes` field for FR-019
 - [ ] T007 Implement the SQLite-backed store in src/library/catalogueStore.ts, confining every `node:sqlite` call to this file
 - [ ] T008 Implement first-run seeding in src/library/seed.ts, loading src/utils/shippedTypes.js into the catalogue
 - [ ] T009 Create the context bridge in src/preload.ts exposing `window.networkPlanner.library` per contracts/preload-bridge.md
@@ -60,11 +60,11 @@ behavioural module in `src/utils/` to carry a co-located test.
 
 ### Tests for User Story 1
 
-- [ ] T013 [P] [US1] Write src/utils/applianceValidation.test.js covering required fields, portless types, and the port-count limit
+- [ ] T013 [P] [US1] Write src/utils/applianceValidation.test.js covering required fields, plane membership, portless types, and the port-count limit
 
 ### Implementation for User Story 1
 
-- [ ] T014 [P] [US1] Implement src/utils/applianceValidation.js for FR-001, FR-020 and FR-024, pure, no React imports
+- [ ] T014 [P] [US1] Implement src/utils/applianceValidation.js for FR-001, FR-019, FR-020 and FR-024, pure, no React imports
 - [ ] T015 [US1] Add create, update and delete to src/library/catalogueStore.ts (depends on T007, T014)
 - [ ] T016 [US1] Add `restoreShipped` to src/library/catalogueStore.ts using the stored `shippedDefinition` for FR-003
 - [ ] T017 [US1] Add `usage(id)` to src/library/catalogueStore.ts so FR-005 can refuse deletion and name the plans

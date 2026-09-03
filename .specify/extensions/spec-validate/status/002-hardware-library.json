@@ -1,20 +1,18 @@
 {
   "feature": "002-hardware-library",
-  "spec_hash": "sha256:1e9b9315d3fc20a40fc8298d92baf11898ecf6c3715669a11f8c720cc31f7aec",
-  "spec_self_validation": "stale",
-  "spec_validated_at": "2026-09-03T01:39:25Z",
-  "spec_critical_count": 8,
+  "spec_hash": "sha256:4bf0964e0fab4f025e453c9c0c83f0eb37a43c5386d05c03881babcba98cea83",
+  "spec_self_validation": "passed",
+  "spec_validated_at": "2026-09-03T03:22:29Z",
+  "spec_critical_count": 10,
   "spec_missed_items": [
     "EC-1",
-    "EC-2",
-    "EC-5",
-    "EC-8"
+    "EC-9"
   ],
   "review_status": "not-required",
   "approval_status": "allowed",
-  "notes": "Run 2 against revised spec: 4/8, up from 1/7. Three misses are product preferences rather than misreadings: type versioning on edit (EC-1), a confirm prompt for portless types (EC-5), and access control as part of security (EC-8). EC-8 answers a question ADR 0010 left open. Superseded: spec revised again after run 2 to fold in EC-1 (plans snapshot types, ADR 0011), EC-5 (confirm portless type) and EC-8 (access control). Re-run validation before planning. Tasks validated: 4/8 scored of 13 critical. Misses were about rationale (why T004 leads, why node:sqlite is confined) and two factual points (filtering happens in SQL per FR-026; T022 ships the flag but no enforcement).",
+  "notes": "Run 3: 6/8 scored (runs were 1/7, 4/8, 6/8). Both misses are refinements rather than misreadings: an override on blocked deletion (EC-1), and offering to update a plan whose recorded definition has diverged (EC-9). EC-9 is the push-a-fix-forward mechanism ADR 0011 records as absent. Tasks edited after validation to wire FR-019 (plane membership) into T004, T005, T006, T013 and T014, found unimplemented by traceability checking.",
   "tasks_hash": "sha256:0918126a96f842fd5b607fb6eaa9aa686dbc4bb8b5d9ae4198ee85c1d86b16d6",
-  "tasks_self_validation": "passed",
+  "tasks_self_validation": "stale",
   "tasks_validated_at": "2026-09-03T03:16:33Z",
   "tasks_critical_count": 13,
   "tasks_missed_items": [

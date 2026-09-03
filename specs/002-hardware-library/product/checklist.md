@@ -65,7 +65,29 @@
 
 ## Plan (`product/20-plan.md`)
 
-> Not yet generated. Run `/speckit.product.plan` to validate this section.
+**Validated**: 2026-09-02 · 21/21 items
+
+- [x] Summary present with at least one paragraph
+- [x] Summary is one approach paragraph, no restated spec fields
+- [x] Goals and Non-Goals present, six goals and five non-goals
+- [x] Delivery Phases present, three phases each with bullets
+- [x] Delivery Phases contain no time estimates or temporal framing
+- [x] Written entirely in English
+- [x] No em dash
+- [x] No AI tells
+- [x] Bullets are short (12 words or fewer)
+- [x] No code or file paths
+- [x] Diagram correctly omitted (phases form a straight chain, value gate)
+- [x] Mermaid blocks valid and on-style (none emitted)
+- [x] Diagrams earn their place (none emitted)
+- [x] No time estimates anywhere
+- [x] Technical terms glossed on first use
+- [x] No invented content, phases match the source plan
+- [x] Risks include probability and impact
+- [x] Risks are delivery-scoped, not restated from spec or design
+- [x] No architecture, principles or decisions sections
+- [x] Optional sections present only where the source warrants
+- [x] Header has real Feature and Created values
 
 ---
 
