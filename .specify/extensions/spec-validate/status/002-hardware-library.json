@@ -12,5 +12,15 @@
   ],
   "review_status": "not-required",
   "approval_status": "allowed",
-  "notes": "Run 2 against revised spec: 4/8, up from 1/7. Three misses are product preferences rather than misreadings: type versioning on edit (EC-1), a confirm prompt for portless types (EC-5), and access control as part of security (EC-8). EC-8 answers a question ADR 0010 left open. Superseded: spec revised again after run 2 to fold in EC-1 (plans snapshot types, ADR 0011), EC-5 (confirm portless type) and EC-8 (access control). Re-run validation before planning."
+  "notes": "Run 2 against revised spec: 4/8, up from 1/7. Three misses are product preferences rather than misreadings: type versioning on edit (EC-1), a confirm prompt for portless types (EC-5), and access control as part of security (EC-8). EC-8 answers a question ADR 0010 left open. Superseded: spec revised again after run 2 to fold in EC-1 (plans snapshot types, ADR 0011), EC-5 (confirm portless type) and EC-8 (access control). Re-run validation before planning. Tasks validated: 4/8 scored of 13 critical. Misses were about rationale (why T004 leads, why node:sqlite is confined) and two factual points (filtering happens in SQL per FR-026; T022 ships the flag but no enforcement).",
+  "tasks_hash": "sha256:0918126a96f842fd5b607fb6eaa9aa686dbc4bb8b5d9ae4198ee85c1d86b16d6",
+  "tasks_self_validation": "passed",
+  "tasks_validated_at": "2026-09-03T03:16:33Z",
+  "tasks_critical_count": 13,
+  "tasks_missed_items": [
+    "T004",
+    "T007",
+    "T041",
+    "T022"
+  ]
 }
