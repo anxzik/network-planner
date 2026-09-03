@@ -1,0 +1,8 @@
+{
+  "name": "physical-plane-poc",
+  "private": true,
+  "description": "EXPERIMENTAL - disposable proof of concept for the physical plane rendering engine. Not production code.",
+  "dependencies": {
+    "maplibre-gl": "6.7.0"
+  }
+}
