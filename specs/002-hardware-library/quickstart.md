@@ -116,8 +116,8 @@ applied or without it, never half-written.
 
 ## Not verifiable here
 
-- **SC-007** (start not noticeably slower) has no baseline. Measure current
-  start time before implementing, or this cannot be evaluated.
+- **SC-007** was withdrawn. Start time is no longer a criterion; FR-026 carries
+  the property that protects it, by not loading the whole catalogue.
 - **FR-029, FR-030** (restricting approved equipment) are deferred pending R4 in
   `research.md`.
 - **FR-005a to FR-005c** (plans recording their own definitions) move to the

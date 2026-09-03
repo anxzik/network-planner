@@ -38,9 +38,11 @@ domain vocabulary in networking, not implementation detail, and the requirement
 exists because the port generator already supports exactly this set — a library
 that could not express them would silently lose capability.
 
-**SC-007** ("start is not noticeably slower") has no baseline. Application start
-time should be measured before planning, or the criterion cannot be evaluated.
-The same gap was recorded against SC-005 of feature 001.
+**SC-007 was withdrawn** after a fifth validation run. It required application
+start to be no slower with a large catalogue, and no baseline was ever measured,
+so it could never be judged. An unjudgeable criterion is worse than none.
+FR-026 carries the property that actually protects start, by requiring the
+catalogue be searchable without loading all of it.
 
 **The most challengeable assumption** is that the library belongs to the person
 rather than to a topology. It follows the pattern of component libraries in

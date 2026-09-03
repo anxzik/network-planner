@@ -146,7 +146,7 @@ manufacturer, by category, and by searching for its model.
 - A port layout is entered that would generate an unreasonable number of ports.
 - Editing a shipped type, then a later application release changes that same
   type.
-- The library grows large enough that loading it delays application start.
+- A library file written by an older version of this application is imported.
 - A plan is opened whose recorded definition of a type differs from the
   library's current one, and the person declines the offer to update it.
 - Someone without permission attempts to change equipment marked approved.
@@ -174,6 +174,10 @@ manufacturer, by category, and by searching for its model.
 - **FR-005d**: When a placed appliance's recorded definition differs from the
   library's current one, the application MUST offer to update the plan's copy to
   the current definition, and MUST NOT change it unless the person accepts.
+- **FR-005e**: The application MUST be able to apply a corrected definition to
+  every plan carrying an older copy of that type, as one action. It MUST show
+  which plans would change before anything is written, and MUST allow applying
+  to all, some, or none.
 - **FR-006**: The application MUST be able to export appliance types to a file,
   either the whole library or a selection.
 - **FR-007**: An export MUST contain everything needed to recreate the types
@@ -190,6 +194,10 @@ manufacturer, by category, and by searching for its model.
   not recognise, the application MUST import what it can read, MUST warn the
   person that the file came from a version it does not fully understand, and
   MUST NOT silently discard the file.
+- **FR-013a**: When a library file declares an older format version the
+  application does understand, it MUST bring those entries forward to the
+  current format as they are imported, so that an old file does not stay old
+  once it is in the catalogue.
 - **FR-014**: A person MUST be able to import a symbol set and assign symbols to
   appliance types.
 - **FR-015**: An appliance type with no assigned symbol MUST still draw as
@@ -306,16 +314,14 @@ manufacturer, by category, and by searching for its model.
   plan.
 - **SC-006**: A person can locate a specific appliance type in a library of
   several hundred within a few seconds.
-- **SC-007**: Application start is not noticeably slower with a library of
-  several thousand types than with the shipped 131.
 - **SC-008**: An interrupted write never damages the catalogue.
 - **SC-009**: A plan opens correctly on a machine that has never seen the
   equipment it places.
 - **SC-010**: Editing a type in the library never alters a plan made earlier.
 - **SC-011**: Equipment marked approved cannot be changed by someone without
   permission.
-- **SC-012**: A correction made in the library can reach a plan built on the old
-  definition, without that plan changing on its own.
+- **SC-012**: A correction made in the library can reach every plan built on the
+  old definition, without any plan changing on its own.
 
 ## Assumptions
 
@@ -351,6 +357,12 @@ challenged.
   control are recorded as undecided in [ADR 0010](../../docs/adr/0010-hardware-library-database.md),
   because the right answer depends on the threat being defended against, which
   has not been stated.
+- **Application start time is deliberately not a criterion.** An earlier
+  criterion required start to be no slower with a large catalogue. It was
+  withdrawn: no baseline was ever measured, so it could not be judged, and
+  holding an unjudgeable criterion is worse than holding none. FR-026 still
+  requires the catalogue to be searchable without loading all of it, which is
+  the property that actually protects start.
 - Extending toward GNU Radio, GNS3 and similar tooling is out of scope here.
   This feature is the foundation those integrations would later import into.
 

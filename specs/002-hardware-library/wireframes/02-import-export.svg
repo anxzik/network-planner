@@ -21,7 +21,7 @@
     <text x="34" y="124" font-size="14" fill="#4b5563">acme-standard-kit  -  47 appliance types, 2 symbol sets</text>
     <rect x="34" y="140" width="580" height="52" rx="6" fill="#f7ecd9" stroke="#8a5a0c"/>
     <text x="48" y="162" font-size="14" font-weight="bold" fill="#8a5a0c">Written by a newer version</text>
-    <text x="48" y="182" font-size="14" fill="#8a5a0c">Format 2.1 is not fully understood. Readable entries will still import.</text>
+    <text x="48" y="182" font-size="14" fill="#8a5a0c">Format 2.1 is not understood. Readable entries still import. Older files are brought forward.</text>
     <text x="34" y="220" font-size="14" font-weight="bold" fill="#1f2937">3 collisions need a decision</text>
     <g font-size="14" fill="#1f2937">
       <text x="34" y="248">Catalyst 9300-48P</text><text x="34" y="278">EdgeRouter 4</text><text x="34" y="308">PA-3220</text>
@@ -120,10 +120,11 @@
       <rect x="0" width="62" height="20" rx="10" fill="#2563eb"/><text x="31" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-009</text>
     </g>
     <text x="956" y="30" font-size="14" font-weight="bold" fill="#1f2937">3. An unrecognised format version</text>
-    <text x="956" y="51" font-size="14" fill="#374151">Imports what it can read and warns. The file is never discarded.</text>
+    <text x="956" y="51" font-size="14" fill="#374151">An older format is brought forward. An unknown one imports what it can, and warns.</text>
     <g transform="translate(956, 61)">
       <rect x="0" width="62" height="20" rx="10" fill="#2563eb"/><text x="31" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-012</text>
       <rect x="69" width="62" height="20" rx="10" fill="#2563eb"/><text x="100" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-013</text>
+      <rect x="138" width="70" height="20" rx="10" fill="#2563eb"/><text x="173" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-013a</text>
     </g>
     <text x="1422" y="30" font-size="14" font-weight="bold" fill="#1f2937">4. An export is self-contained</text>
     <text x="1422" y="51" font-size="14" fill="#374151">Carries every symbol and the format version it was written in.</text>
@@ -139,14 +140,15 @@
       <rect x="138" width="62" height="20" rx="10" fill="#ea580c"/><text x="169" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-003</text>
     </g>
     <text x="490" y="126" font-size="14" font-weight="bold" fill="#1f2937">6. Plans travel without the catalogue</text>
-    <text x="490" y="147" font-size="14" fill="#374151">A plan carries its own copy, and is offered the current one when they differ.</text>
+    <text x="490" y="147" font-size="14" fill="#374151">A plan carries its own copy. A correction can reach one plan, or all of them.</text>
     <g transform="translate(490, 157)">
       <rect x="0" width="70" height="20" rx="10" fill="#2563eb"/><text x="35" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-005b</text>
       <rect x="77" width="70" height="20" rx="10" fill="#2563eb"/><text x="112" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-005c</text>
       <rect x="154" width="70" height="20" rx="10" fill="#2563eb"/><text x="189" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-005d</text>
-      <rect x="231" width="62" height="20" rx="10" fill="#ea580c"/><text x="262" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-009</text>
-      <rect x="300" width="62" height="20" rx="10" fill="#ea580c"/><text x="331" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-010</text>
-      <rect x="369" width="62" height="20" rx="10" fill="#ea580c"/><text x="400" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-012</text>
+      <rect x="231" width="70" height="20" rx="10" fill="#2563eb"/><text x="266" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-005e</text>
+      <rect x="308" width="62" height="20" rx="10" fill="#ea580c"/><text x="339" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-009</text>
+      <rect x="377" width="62" height="20" rx="10" fill="#ea580c"/><text x="408" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-010</text>
+      <rect x="446" width="62" height="20" rx="10" fill="#ea580c"/><text x="477" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-012</text>
     </g>
     <text x="956" y="126" font-size="14" font-weight="bold" fill="#1f2937">7. Deferred to the project file work</text>
     <text x="956" y="147" font-size="14" fill="#374151">The copies above need a plan format that does not exist yet.</text>

@@ -48,3 +48,7 @@ decision is remembered, and remembering it is not specified here.
 
 Updating one plan says nothing about the others. There is still no way to push a
 correction across every plan at once, and that remains unaddressed.
+
+> Since resolved: [ADR 0013](0013-propagating-a-correction.md) adds a bulk apply
+> across plans carrying an old copy. The per-plan offer described here stays as
+> the on-open path.

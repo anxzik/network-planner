@@ -40,8 +40,8 @@ does not change them.
 **Project Type**: Electron desktop application (main, preload, renderer)
 
 **Performance Goals**: browsing and filtering stay responsive at several
-thousand appliance types. Application start no slower than today, though there
-is no baseline yet (SC-007).
+thousand appliance types, which FR-026 requires by not loading the whole
+catalogue. Application start time is deliberately not a criterion.
 
 **Constraints**: the renderer must not use Node APIs directly, must not receive
 reusable filesystem paths, and must not hold a database handle. Map tiles aside
@@ -152,10 +152,10 @@ Recorded so they are not mistaken for oversights:
   there is no established identity in a single-user desktop application, and the
   three possible mechanisms differ enormously in cost. FR-028, marking equipment
   approved, still ships, and the flag is designed so a mechanism attaches later.
-- **FR-005a to FR-005d** (a plan recording the definition it was placed with,
-  and being offered the current one when they diverge). Blocked on R5: the
-  project file format does not exist yet. Until this lands, editing a type still
-  changes what existing plans resolve, which is exactly what ADR 0011 exists to
-  prevent.
-- **SC-007** cannot be evaluated without a start-time baseline. Measure before
-  implementing.
+- **FR-005a to FR-005e** (a plan recording the definition it was placed with,
+  being offered the current one when they diverge, and a correction applied
+  across every plan carrying an old copy). Blocked on R5: the project file
+  format does not exist yet. Until this lands, editing a type still changes what
+  existing plans resolve, which is exactly what ADR 0011 exists to prevent.
+- **SC-007** was withdrawn. It required application start to be no slower with a
+  large catalogue, and no baseline was ever measured, so it could not be judged.

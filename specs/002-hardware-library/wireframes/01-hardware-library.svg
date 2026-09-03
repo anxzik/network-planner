@@ -176,7 +176,6 @@
       <rect x="0" width="62" height="20" rx="10" fill="#2563eb"/><text x="31" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-022</text>
       <rect x="69" width="62" height="20" rx="10" fill="#2563eb"/><text x="100" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-002</text>
       <rect x="138" width="62" height="20" rx="10" fill="#ea580c"/><text x="169" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-004</text>
-      <rect x="207" width="62" height="20" rx="10" fill="#ea580c"/><text x="238" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-007</text>
     </g>
     <text x="1422" y="30" font-size="14" font-weight="bold" fill="#1f2937">4. Editing and restoring</text>
     <text x="1422" y="51" font-size="14" fill="#374151">Edit any type. Restore returns the shipped definition.</text>

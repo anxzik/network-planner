@@ -29,7 +29,7 @@ behavioural module in `src/utils/` to carry a co-located test.
 **Purpose**: Establish a known-good starting point and settle the two facts the plan could not.
 
 - [ ] T001 Verify baseline is green: `npm run lint && npm test && npm run typecheck`
-- [ ] T002 Measure and record current application start time in specs/002-hardware-library/research.md, so SC-007 becomes evaluable
+- [ ] T002 Export the current catalogue and keep it in specs/002-hardware-library/ as an older-format fixture, so FR-013a can be tested against a real file
 - [ ] T003 [P] Confirm `node:sqlite` loads in a packaged build, not only under `npm start`, using `npm run package` on one target
 
 ---
@@ -86,12 +86,12 @@ behavioural module in `src/utils/` to carry a co-located test.
 
 ### Tests for User Story 2
 
-- [ ] T023 [P] [US2] Write src/utils/libraryFile.test.js covering format version reading, malformed input, and round-trip serialisation
+- [ ] T023 [P] [US2] Write src/utils/libraryFile.test.js covering format version reading, upgrading an older format, malformed input, and round-trip serialisation
 - [ ] T024 [P] [US2] Write src/utils/importMerge.test.js covering collision detection, all three resolutions, skip reasons, and the report shape
 
 ### Implementation for User Story 2
 
-- [ ] T025 [P] [US2] Implement src/utils/libraryFile.js to read `formatVersion` before parsing, per FR-012 and FR-013
+- [ ] T025 [P] [US2] Implement src/utils/libraryFile.js to read `formatVersion` before parsing, and to bring an older known format forward, per FR-012, FR-013 and FR-013a
 - [ ] T026 [P] [US2] Implement src/utils/importMerge.js as a pure function from incoming, existing and strategy to apply, skip and report, per FR-009 to FR-011
 - [ ] T027 [US2] Implement export with a save dialog in src/library/ipc.ts for FR-006 and FR-007, returning no reusable path to the renderer
 - [ ] T028 [US2] Implement `previewImport` in src/library/ipc.ts so collisions are shown before anything is written
@@ -232,7 +232,7 @@ Deferred in plan.md and deliberately absent here:
 
 - **FR-029 and FR-030**, restricting change to approved equipment. Blocked on R4
   in research.md. T022 ships the flag only.
-- **FR-005a to FR-005d**, plans recording the definition they were placed with,
-  and being offered the library's current one when the two diverge. Blocked on
-  R5: project files do not exist yet.
-- **SC-007** cannot be judged until T002 records a baseline.
+- **FR-005a to FR-005e**, plans recording the definition they were placed with,
+  being offered the library's current one when the two diverge, and having a
+  correction applied across every plan that carries an old copy. Blocked on R5:
+  project files do not exist yet.
