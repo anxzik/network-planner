@@ -2,6 +2,7 @@ installed:
 - atlas
 - brownfield
 - diagram
+- discovery
 - extensify
 - fix-findings
 - github-issues

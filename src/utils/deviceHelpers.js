@@ -1,8 +1,7 @@
 import * as LucideIcons from 'lucide-react';
 
 // Map device icon names to Lucide icon components
-export function getDeviceIcon(iconName) {
-  const iconMap = {
+const iconMap = {
     router: LucideIcons.Router,
     switch: LucideIcons.Network,
     network: LucideIcons.Network,
@@ -39,7 +38,11 @@ export function getDeviceIcon(iconName) {
     globe: LucideIcons.Globe,
     'arrow-left-right': LucideIcons.ArrowLeftRight,
     cdn: LucideIcons.Zap,
-  };
+};
 
+// The standard symbol vocabulary, for pickers (FR-016).
+export const STANDARD_ICON_NAMES = Object.keys(iconMap);
+
+export function getDeviceIcon(iconName) {
   return iconMap[iconName] || LucideIcons.Box;
 }

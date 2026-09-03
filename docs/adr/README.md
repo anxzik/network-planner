@@ -20,8 +20,17 @@ behind both were arrived at.
 | [0007](0007-single-object-many-planes.md) | An appliance is one object with a facet per plane | Accepted |
 | [0008](0008-project-files-on-disk.md) | Store topologies as project files on disk | Accepted |
 | [0009](0009-map-data-source.md) | Geographic maps use online tiles and degrade offline | Accepted |
+| [0010](0010-hardware-library-database.md) | Keep the hardware library in a local database | Accepted |
+| [0011](0011-plans-snapshot-appliance-types.md) | A plan keeps its own copy of every appliance type it places | Accepted |
+| [0012](0012-updating-a-diverged-plan.md) | A plan can be offered the library's current definition | Accepted |
+| [0013](0013-propagating-a-correction.md) | A correction can be pushed to every plan carrying an old copy | Accepted |
 
 ## Open
+
+- How a bulk apply across plans is reversed (see 0013)
+
+- Whether the hardware catalogue needs encryption at rest (see 0010; integrity
+  and access control are settled)
 
 These are recorded in the constitution as undecided. Each needs a record here
 once settled:

@@ -1,0 +1,25 @@
+{
+  "feature": "002-hardware-library",
+  "spec_hash": "sha256:cbfa7a9f261b04cd34852a1ad570020bc8c2aff2b07594e62890331ecb07575b",
+  "spec_self_validation": "stale",
+  "spec_validated_at": "2026-09-03T12:21:48Z",
+  "spec_critical_count": 10,
+  "spec_missed_items": [
+    "EC-2",
+    "EC-8",
+    "SC-012-reach"
+  ],
+  "review_status": "not-required",
+  "approval_status": "allowed",
+  "notes": "Run 5: 5/8. Runs 1/7, 4/8, 6/8, 5/8, 5/8. FR-005d scored correct on its first outing, confirming the EC-9 fold-in landed. All three misses are repeated preferences rather than misreadings: upgrade-on-import (EC-2, twice), start time out of scope (EC-8, twice), and bulk propagation of a corrected definition (new, consistent with the EC-9 pattern). Spec revised after run 5 to fold in all three repeated answers: FR-013a upgrade-on-import, FR-005e bulk propagation, and the withdrawal of SC-007.",
+  "tasks_hash": "sha256:0918126a96f842fd5b607fb6eaa9aa686dbc4bb8b5d9ae4198ee85c1d86b16d6",
+  "tasks_self_validation": "stale",
+  "tasks_validated_at": "2026-09-03T03:16:33Z",
+  "tasks_critical_count": 13,
+  "tasks_missed_items": [
+    "T004",
+    "T007",
+    "T041",
+    "T022"
+  ]
+}

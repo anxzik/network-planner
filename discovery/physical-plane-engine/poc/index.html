@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<!-- EXPERIMENTAL - disposable PoC page. Not production code. -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="node_modules/maplibre-gl/dist/maplibre-gl.css">
+  <style>html,body,#map{margin:0;height:100%;width:100%}</style>
+</head>
+<body>
+<div id="map"></div>
+<script type="module">
+import * as maplibregl from './node_modules/maplibre-gl/dist/maplibre-gl.mjs';
+(async function () {
+  const R = { checks: {}, metrics: {}, library: (maplibregl.getVersion && maplibregl.getVersion()) || maplibregl.version || '6.x' };
+  const fail = (m) => window.poc.fatal(String(m));
+  window.addEventListener('error', (e) => fail(e.message));
+
+  // ---- geography: 30m x 20m building at Denver-ish coordinates ----
+  const lat0 = 39.7392, lng0 = -104.9903;
+  const mLat = 1 / 111320;                                  // deg per metre
+  const mLng = 1 / (111320 * Math.cos(lat0 * Math.PI / 180));
+  const W = 30, H = 20;
+  const tl = [lng0, lat0];
+  const tr = [lng0 + W * mLng, lat0];
+  const br = [lng0 + W * mLng, lat0 - H * mLat];
+  const bl = [lng0, lat0 - H * mLat];
+  const centre = [lng0 + (W / 2) * mLng, lat0 - (H / 2) * mLat];
+  const rack = [lng0 + 24 * mLng, lat0 - 7 * mLat];          // east wing rack
+
+  // ---- synthetic floorplan: distinct fill so S2 can pixel-sample ----
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800">
+    <rect width="1200" height="800" fill="#f2e2c0"/>
+    <rect x="8" y="8" width="1184" height="784" fill="none" stroke="#b03030" stroke-width="16"/>
+    <line x1="700" y1="8" x2="700" y2="792" stroke="#b03030" stroke-width="10"/>
+    <rect x="920" y="240" width="60" height="200" fill="#3a5f8a"/>
+    <text x="600" y="420" font-size="60" text-anchor="middle" fill="#7a6a4a">FLOOR 2</text>
+  </svg>`;
+  // MapLibre image sources decode raster formats; rasterise the SVG to PNG first.
+  const floorplan = await new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = 1200; c.height = 800;
+      c.getContext('2d').drawImage(img, 0, 0);
+      resolve(c.toDataURL('image/png'));
+    };
+    img.onerror = () => reject(new Error('svg rasterise failed'));
+    img.src = 'data:image/svg+xml;base64,' + btoa(svg);
+  });
+
+  const map = new maplibregl.Map({
+    container: 'map',
+    style: { version: 8, sources: {}, layers: [
+      { id: 'bg', type: 'background', paint: { 'background-color': '#dfe8dc' } } ] },
+    center: centre, zoom: 3, maxZoom: 23,
+    preserveDrawingBuffer: true, attributionControl: false, fadeDuration: 0,
+  });
+
+  const idle = () => new Promise(r => map.once('idle', r));
+  const t0 = performance.now();
+
+  map.on('load', async () => {
+    try {
+      R.checks.S1_load = true;
+      R.metrics.msToLoad = Math.round(performance.now() - t0);
+
+      map.addSource('floorplan', { type: 'image', url: floorplan,
+        coordinates: [tl, tr, br, bl] });
+      map.addLayer({ id: 'floorplan', type: 'raster', source: 'floorplan',
+        paint: { 'raster-fade-duration': 0 } });
+
+      // A custom centre-anchored element makes the anchor test exact: the
+      // default pin's shadow padding put ~6px of its own geometry into the
+      // bounding rect on the first run, which measured the pin, not the map.
+      const el = document.createElement('div');
+      el.style.cssText = 'width:14px;height:14px;border-radius:50%;' +
+        'background:#b03030;border:2px solid #fff;box-sizing:border-box';
+      const marker = new maplibregl.Marker({ element: el, anchor: 'center',
+        draggable: true }).setLngLat(rack).addTo(map);
+
+      const px = (lnglat) => map.project(lnglat);
+      const samplePixel = (lnglat) => {
+        const c = document.createElement('canvas');
+        const gl = map.getCanvas();
+        c.width = gl.width; c.height = gl.height;
+        const ctx = c.getContext('2d');
+        ctx.drawImage(gl, 0, 0);
+        const p = px(lnglat);
+        const dpr = window.devicePixelRatio || 1;
+        const d = ctx.getImageData(Math.round(p.x * dpr), Math.round(p.y * dpr), 1, 1).data;
+        return [d[0], d[1], d[2]];
+      };
+      const markerScreenError = () => {
+        const r = marker.getElement().getBoundingClientRect();
+        const anchor = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+        const p = px(marker.getLngLat());
+        return Math.hypot(anchor.x - p.x, anchor.y - p.y);
+      };
+
+      // ---- stage 1: region ----
+      map.jumpTo({ center: centre, zoom: 3 }); await idle();
+      await window.poc.capture('1-region');
+
+      // ---- stage 2: building ----
+      map.jumpTo({ center: centre, zoom: 18 }); await idle();
+      const bgSample = samplePixel([lng0 - 300 * mLng, lat0]); // well outside building
+      const floorSample = samplePixel(centre);
+      R.metrics.floorSample = floorSample; R.metrics.bgSample = bgSample;
+      R.checks.S2_imageRenders =
+        Math.abs(floorSample[0] - bgSample[0]) + Math.abs(floorSample[1] - bgSample[1]) +
+        Math.abs(floorSample[2] - bgSample[2]) > 30;
+      const span18 = Math.hypot(px(tr).x - px(tl).x, px(tr).y - px(tl).y);
+      R.metrics.markerErrZ18 = +markerScreenError().toFixed(2);
+      await window.poc.capture('2-building');
+
+      // ---- stage 3: rack ----
+      map.jumpTo({ center: rack, zoom: 21 }); await idle();
+      const span21 = Math.hypot(px(tr).x - px(tl).x, px(tr).y - px(tl).y);
+      R.metrics.span18 = +span18.toFixed(1); R.metrics.span21 = +span21.toFixed(1);
+      R.metrics.scaleRatio = +(span21 / span18).toFixed(3);      // expect 2^3 = 8
+      R.checks.S3_scaleContinuous = Math.abs(R.metrics.scaleRatio / 8 - 1) < 0.05;
+      map.jumpTo({ center: rack, zoom: 22 }); await idle();
+      R.metrics.zoomReached = map.getZoom();
+      R.checks.S3_zoom22 = Math.abs(map.getZoom() - 22) < 0.01;
+      map.jumpTo({ center: rack, zoom: 21 }); await idle();
+      R.metrics.markerErrZ21 = +markerScreenError().toFixed(2);
+      R.checks.S4_anchored = R.metrics.markerErrZ18 < 3 && R.metrics.markerErrZ21 < 3;
+      await window.poc.capture('3-rack');
+
+      // ---- S5: drag 2 m east (programmatic; drag-feel is a human question) ----
+      // Measured synchronously: the previous form spanned an await between the
+      // two project() calls, and the second run showed the camera can move in
+      // that window, turning a projection test into a race.
+      const startLL = marker.getLngLat();
+      const targetLL = [startLL.lng + 2 * mLng, startLL.lat];
+      const before = px(startLL);
+      const after = px(targetLL);
+      marker.setLngLat(targetLL);
+      const landed = marker.getLngLat();
+      R.metrics.dragCoordErrDeg = Math.abs(landed.lng - targetLL[0]) + Math.abs(landed.lat - targetLL[1]);
+      // Expected displacement derived from the map's own rendered scale: the
+      // building is 30 m wide and spans span21 px at this zoom, so 2 m is
+      // 2/30 of that. Self-consistent, and independent of devicePixelRatio,
+      // which the Mercator-constant version silently assumed to be 1.
+      R.metrics.devicePixelRatio = window.devicePixelRatio;
+      R.metrics.dragPx = +(after.x - before.x).toFixed(2);
+      R.metrics.expectedPx = +(2 * span21 / 30).toFixed(2);
+      R.checks.S5_drag = marker.isDraggable() &&
+        R.metrics.dragCoordErrDeg < 1e-9 &&
+        Math.abs(R.metrics.dragPx / R.metrics.expectedPx - 1) < 0.2;
+
+      R.metrics.msTotal = Math.round(performance.now() - t0);
+      R.allPassed = Object.values(R.checks).every(Boolean);
+      await window.poc.done(R);
+    } catch (err) { fail(err && err.stack || err); }
+  });
+  map.on('error', (e) => fail('map error: ' + (e.error && e.error.message || e)));
+})();
+</script>
+</body>
+</html>

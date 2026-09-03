@@ -1,7 +1,8 @@
 import {useSettings} from '../../context/SettingsContext';
-import {deviceCategories} from '../../data/devices';
+import {useLibrary} from '../../context/LibraryContext';
 
 function DeviceLibrarySettings() {
+  const { categories: categoryRows } = useLibrary();
   const { settings, updateSetting, updateNestedSetting } = useSettings();
   const { deviceLibrary } = settings;
 
@@ -18,8 +19,8 @@ function DeviceLibrarySettings() {
           <p className="text-sm text-gray-500 mb-3">Choose which device categories to display in the library</p>
 
           <div className="space-y-2">
-            {Object.keys(deviceCategories).map(categoryKey => {
-              const category = deviceCategories[categoryKey];
+            {categoryRows.map(category => {
+              const categoryKey = category.id;
               return (
                 <div
                   key={categoryKey}

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <defs><linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#c7ddf5"/><stop offset="100%" stop-color="#b8d4f0"/></linearGradient></defs>
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <text x="960" y="28" text-anchor="middle" font-family="system-ui, sans-serif"
+        font-size="18" font-weight="700" fill="#4b5563" letter-spacing="1">HARDWARE LIBRARY - SYMBOL SETS AND ASSIGNMENT</text>
+  <text x="40" y="52" fill="#8b5cf6" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">DESKTOP (16:9)</text>
+  <text x="1500" y="52" fill="#d946ef" font-family="system-ui, sans-serif" font-size="15" font-weight="bold">MOBILE</text>
+  <g id="desktop" transform="translate(40, 60)" font-family="system-ui, sans-serif">
+    <rect width="1280" height="720" rx="8" fill="#e8d4b8" stroke="#b8a080"/>
+    <rect x="0" y="0" width="1280" height="48" rx="8" fill="#dcc8a8" stroke="#b8a080"/>
+    <rect x="0" y="24" width="1280" height="24" fill="#dcc8a8"/>
+    <text x="20" y="31" font-size="15" font-weight="bold" fill="#1f2937">Network Planner</text>
+    <rect x="488" y="10" width="96" height="28" rx="6" fill="#8b5cf6"/>
+    <text x="536" y="29" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">Hardware</text>
+    <text x="700" y="31" font-size="14" fill="#4b5563">Symbols</text>
+
+    <rect x="20" y="72" width="300" height="628" rx="6" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="34" y="98" font-size="14" font-weight="bold" fill="#1f2937">Symbol sets</text>
+    <rect x="30" y="112" width="280" height="56" rx="6" fill="#f5f0e6" stroke="#8b5cf6" stroke-width="2"/>
+    <text x="44" y="136" font-size="14" font-weight="bold" fill="#1f2937">Standard</text>
+    <text x="44" y="158" font-size="14" fill="#4b5563">Shipped - 214 symbols</text>
+    <rect x="30" y="180" width="280" height="56" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
+    <text x="44" y="204" font-size="14" font-weight="bold" fill="#1f2937">Acme house style</text>
+    <text x="44" y="226" font-size="14" fill="#4b5563">Imported - 38 symbols</text>
+    <rect x="30" y="252" width="280" height="44" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
+    <text x="170" y="279" font-size="14" fill="#1f2937" text-anchor="middle">Import a symbol set</text>
+    <text x="34" y="330" font-size="14" fill="#4b5563">Symbols are vector drawings, so</text>
+    <text x="34" y="352" font-size="14" fill="#4b5563">they stay sharp from a site map</text>
+    <text x="34" y="374" font-size="14" fill="#4b5563">down to a floorplan.</text>
+    <rect x="30" y="400" width="280" height="80" rx="6" fill="#f7ecd9" stroke="#8a5a0c"/>
+    <text x="44" y="424" font-size="14" font-weight="bold" fill="#8a5a0c">2 symbols skipped</text>
+    <text x="44" y="446" font-size="14" fill="#8a5a0c">firewall-alt: markup unreadable</text>
+    <text x="44" y="468" font-size="14" fill="#8a5a0c">router-xl: not a symbol file</text>
+
+    <rect x="344" y="72" width="916" height="380" rx="6" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="358" y="98" font-size="14" font-weight="bold" fill="#1f2937">Acme house style</text>
+    <text x="1246" y="98" font-size="14" fill="#4b5563" text-anchor="end">38 symbols</text>
+    <rect x="358" y="118" width="134" height="112" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
+    <rect x="401" y="140" width="48" height="36" rx="4" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="425" y="206" font-size="14" fill="#1f2937" text-anchor="middle">Router</text>
+    <rect x="508" y="118" width="134" height="112" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
+    <rect x="551" y="140" width="48" height="36" rx="4" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="575" y="206" font-size="14" fill="#1f2937" text-anchor="middle">Switch</text>
+    <rect x="658" y="118" width="134" height="112" rx="6" fill="#f5f0e6" stroke="#8b5cf6" stroke-width="2"/>
+    <rect x="701" y="140" width="48" height="36" rx="4" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="725" y="206" font-size="14" fill="#1f2937" text-anchor="middle">Firewall</text>
+    <rect x="808" y="118" width="134" height="112" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
+    <rect x="851" y="140" width="48" height="36" rx="4" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="875" y="206" font-size="14" fill="#1f2937" text-anchor="middle">Access point</text>
+    <rect x="958" y="118" width="134" height="112" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
+    <rect x="1001" y="140" width="48" height="36" rx="4" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="1025" y="206" font-size="14" fill="#1f2937" text-anchor="middle">Server</text>
+    <rect x="1108" y="118" width="134" height="112" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
+    <rect x="1151" y="140" width="48" height="36" rx="4" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="1175" y="206" font-size="14" fill="#1f2937" text-anchor="middle">Load balancer</text>
+    <rect x="358" y="248" width="134" height="112" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
+    <rect x="401" y="270" width="48" height="36" rx="4" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="425" y="336" font-size="14" fill="#1f2937" text-anchor="middle">Gateway</text>
+    <rect x="508" y="248" width="134" height="112" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
+    <rect x="551" y="270" width="48" height="36" rx="4" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="575" y="336" font-size="14" fill="#1f2937" text-anchor="middle">Storage</text>
+    <rect x="658" y="248" width="134" height="112" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
+    <rect x="701" y="270" width="48" height="36" rx="4" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="725" y="336" font-size="14" fill="#1f2937" text-anchor="middle">Controller</text>
+    <rect x="808" y="248" width="134" height="112" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
+    <rect x="851" y="270" width="48" height="36" rx="4" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="875" y="336" font-size="14" fill="#1f2937" text-anchor="middle">Cloud</text>
+    <rect x="958" y="248" width="134" height="112" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
+    <rect x="1001" y="270" width="48" height="36" rx="4" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="1025" y="336" font-size="14" fill="#1f2937" text-anchor="middle">Modem</text>
+    <rect x="1108" y="248" width="134" height="112" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
+    <rect x="1151" y="270" width="48" height="36" rx="4" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="1175" y="336" font-size="14" fill="#1f2937" text-anchor="middle">Repeater</text>
+    <rect x="344" y="472" width="916" height="228" rx="6" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="358" y="498" font-size="14" font-weight="bold" fill="#1f2937">Assigned to</text>
+    <text x="358" y="526" font-size="14" fill="#4b5563">PA-3220, ASA 5516-X, FortiGate 60F and 6 more firewall types.</text>
+    <rect x="358" y="546" width="180" height="34" rx="6" fill="#8b5cf6"/>
+    <text x="448" y="568" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">Assign to a type</text>
+    <text x="358" y="612" font-size="14" font-weight="bold" fill="#1f2937">Types with no symbol assigned</text>
+    <text x="358" y="640" font-size="14" fill="#4b5563">Draw a recognisable default rather than nothing at all.</text>
+    <rect x="358" y="656" width="60" height="44" rx="4" fill="#f5f0e6" stroke="#b8a080" stroke-dasharray="4 3"/>
+    <text x="440" y="683" font-size="14" fill="#4b5563">Default box symbol</text>
+    <g class="callout" transform="translate(170, 279)"><circle r="14" fill="#dc2626"/><text y="5" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">1</text></g>
+    <g class="callout" transform="translate(602, 180)"><circle r="14" fill="#dc2626"/><text y="5" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">2</text></g>
+    <g class="callout" transform="translate(448, 568)"><circle r="14" fill="#dc2626"/><text y="5" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">3</text></g>
+    <g class="callout" transform="translate(388, 678)"><circle r="14" fill="#dc2626"/><text y="5" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">4</text></g>
+    <g class="callout" transform="translate(44, 428)"><circle r="14" fill="#dc2626"/><text y="5" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">5</text></g>
+  </g>
+  <g id="mobile" transform="translate(1360, 60)" font-family="system-ui, sans-serif">
+    <rect width="360" height="720" rx="12" fill="#e8d4b8" stroke="#b8a080"/>
+    <rect x="0" y="0" width="360" height="48" rx="12" fill="#dcc8a8" stroke="#b8a080"/>
+    <rect x="0" y="26" width="360" height="22" fill="#dcc8a8"/>
+    <text x="16" y="31" font-size="15" font-weight="bold" fill="#1f2937">Symbols</text>
+    <rect x="16" y="62" width="328" height="44" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
+    <text x="180" y="89" font-size="14" fill="#1f2937" text-anchor="middle">Import a symbol set</text>
+    <g font-size="14">
+      <rect x="16" y="120" width="328" height="56" rx="6" fill="#f5f0e6" stroke="#8b5cf6" stroke-width="2"/>
+      <text x="30" y="144" font-weight="bold" fill="#1f2937">Standard</text><text x="30" y="166" fill="#4b5563">Shipped - 214 symbols</text>
+      <rect x="16" y="188" width="328" height="56" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
+      <text x="30" y="212" font-weight="bold" fill="#1f2937">Acme house style</text><text x="30" y="234" fill="#4b5563">Imported - 38 symbols</text>
+    </g>
+    <rect x="16" y="260" width="328" height="200" rx="8" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="30" y="286" font-size="14" font-weight="bold" fill="#1f2937">Firewall</text>
+    <rect x="30" y="300" width="60" height="44" rx="4" fill="#f5f0e6" stroke="#b8a080"/>
+    <text x="110" y="327" font-size="14" fill="#4b5563">Acme house style</text>
+    <text x="30" y="372" font-size="14" fill="#4b5563">Assigned to 9 types</text>
+    <rect x="30" y="392" width="300" height="44" rx="6" fill="#8b5cf6"/>
+    <text x="180" y="419" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">Assign to a type</text>
+    <rect x="16" y="476" width="328" height="132" rx="8" fill="#f7ecd9" stroke="#8a5a0c"/>
+    <text x="30" y="502" font-size="14" font-weight="bold" fill="#8a5a0c">2 symbols skipped</text>
+    <g font-size="14" fill="#8a5a0c"><text x="30" y="528">firewall-alt could not</text><text x="30" y="550">be read.</text>
+      <text x="30" y="578">router-xl is not a</text><text x="30" y="600">symbol file.</text></g>
+    <g class="callout" transform="translate(180, 89)"><circle r="14" fill="#dc2626"/><text y="5" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">1</text></g>
+    <g class="callout" transform="translate(180, 419)"><circle r="14" fill="#dc2626"/><text y="5" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">3</text></g>
+    <g class="callout" transform="translate(330, 502)"><circle r="14" fill="#dc2626"/><text y="5" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">5</text></g>
+  </g>
+  <g id="annotations" transform="translate(40, 800)" font-family="system-ui, sans-serif">
+    <rect width="1840" height="220" rx="8" fill="#e8d4b8" stroke="#b8a080"/>
+    <text x="24" y="30" font-size="14" font-weight="bold" fill="#1f2937">1. US-003 Using an organisation's own symbols</text>
+    <text x="24" y="51" font-size="14" fill="#374151">Import a set, assign symbols, and plans follow the house style.</text>
+    <g transform="translate(24, 61)">
+      <rect x="0" width="62" height="20" rx="10" fill="#0891b2"/><text x="31" y="14" font-size="14" fill="#fff" text-anchor="middle">US-003</text>
+      <rect x="69" width="62" height="20" rx="10" fill="#2563eb"/><text x="100" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-014</text>
+    </g>
+    <text x="620" y="30" font-size="14" font-weight="bold" fill="#1f2937">2. The shipped set is already assigned</text>
+    <text x="620" y="51" font-size="14" fill="#374151">Industry-standard networking symbols ship attached to all 131 types.</text>
+    <g transform="translate(620, 61)">
+      <rect x="0" width="62" height="20" rx="10" fill="#2563eb"/><text x="31" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-016</text>
+      <rect x="69" width="62" height="20" rx="10" fill="#2563eb"/><text x="100" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-022</text>
+    </g>
+    <text x="1216" y="30" font-size="14" font-weight="bold" fill="#1f2937">3. Assignment is per appliance type</text>
+    <text x="1216" y="51" font-size="14" fill="#374151">One symbol can serve many types. Changing it redraws them all.</text>
+    <g transform="translate(1216, 61)">
+      <rect x="0" width="62" height="20" rx="10" fill="#2563eb"/><text x="31" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-014</text>
+      <rect x="69" width="62" height="20" rx="10" fill="#2563eb"/><text x="100" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-018</text>
+    </g>
+    <text x="24" y="126" font-size="14" font-weight="bold" fill="#1f2937">4. A type with no symbol still draws</text>
+    <text x="24" y="147" font-size="14" fill="#374151">A recognisable default appears rather than an empty space on the canvas.</text>
+    <g transform="translate(24, 157)">
+      <rect x="0" width="62" height="20" rx="10" fill="#2563eb"/><text x="31" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-015</text>
+    </g>
+    <text x="620" y="126" font-size="14" font-weight="bold" fill="#1f2937">5. A bad symbol does not stop the import</text>
+    <text x="620" y="147" font-size="14" fill="#374151">Unreadable entries are skipped and named, the rest are applied.</text>
+    <g transform="translate(620, 157)">
+      <rect x="0" width="62" height="20" rx="10" fill="#2563eb"/><text x="31" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-010</text>
+      <rect x="69" width="62" height="20" rx="10" fill="#2563eb"/><text x="100" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-011</text>
+      <rect x="138" width="62" height="20" rx="10" fill="#ea580c"/><text x="169" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-003</text>
+    </g>
+    <text x="1216" y="126" font-size="14" font-weight="bold" fill="#1f2937">6. Symbols travel with an export</text>
+    <text x="1216" y="147" font-size="14" fill="#374151">A colleague importing the set sees the same drawings.</text>
+    <g transform="translate(1216, 157)">
+      <rect x="0" width="62" height="20" rx="10" fill="#2563eb"/><text x="31" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-007</text>
+      <rect x="69" width="62" height="20" rx="10" fill="#ea580c"/><text x="100" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-002</text>
+    </g>
+  </g>
+  <text x="960" y="1060" text-anchor="middle" font-family="system-ui, sans-serif"
+        font-size="18" font-weight="bold" fill="#4b5563">002:03 | Hardware Library | SpecKit</text>
+</svg>
