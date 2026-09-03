@@ -1,7 +1,7 @@
 {
   "feature": "003-project-files",
   "spec_hash": "sha256:5e829fada63b152f6156013c43ee77eecaac376f8c1d2db6effa7d6ff1613b80",
-  "spec_self_validation": "passed",
+  "spec_self_validation": "stale",
   "spec_validated_at": "2026-09-03T15:34:31Z",
   "spec_critical_count": 8,
   "spec_missed_items": [
@@ -11,5 +11,5 @@
   ],
   "review_status": "not-required",
   "approval_status": "allowed",
-  "notes": "Run 1 for 003: 5/8. All three misses are recovery-richer-than-specified preferences, one of them (best-effort on unknown versions) now expressed for the third time across two features. Candidates to fold: attempt salvage before an empty start (FR-012), surface the prior-version copy after a failed save (FR-008), and open a newer-format plan read-only best-effort instead of refusing (FR-021, with never-write-back protecting SC-003)."
+  "notes": "Run 1 for 003: 5/8. All three misses are recovery-richer-than-specified preferences, one of them (best-effort on unknown versions) now expressed for the third time across two features. Candidates to fold: attempt salvage before an empty start (FR-012), surface the prior-version copy after a failed save (FR-008), and open a newer-format plan read-only best-effort instead of refusing (FR-021, with never-write-back protecting SC-003). Folded after run 1: salvage attempt, partial kept aside, newer-format read-only with never-write-back."
 }

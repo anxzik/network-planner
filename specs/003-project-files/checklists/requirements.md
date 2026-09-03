@@ -53,6 +53,14 @@ surface rather than mechanism.
 - *One plan open at a time.* Matches the current single-canvas reality;
   multi-window is a future feature, not an omission.
 
+**Folded after validation run 1** (5/8, all misses preferences): FR-012 gains a
+salvage attempt before the empty start; FR-008 keeps atomicity and additionally
+preserves and reports the interrupted partial; FR-021 becomes read-only
+best-effort viewing of newer formats — the third expression of the same
+preference across two features — with never-write-back as the line that keeps
+SC-003 true, and an explicit warned Save As as the only path to an editable
+copy.
+
 **History this spec knowingly carries:** validation of feature 002 established
 this product owner prefers offers over silence and preservation over tidiness
 (five folded answers). FR-016/FR-017's remembered decline answers the noise

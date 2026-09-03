@@ -66,9 +66,10 @@ storage preserved until the person confirms the migration succeeded.
 2. **Given** the person accepts, **Then** the topology becomes a named file,
    opens on the canvas, and the old storage is kept, marked migrated, until
    they choose to clear it.
-3. **Given** the old storage cannot be read, **Then** its raw content is
-   preserved untouched, the person is told a copy was kept, and the application
-   starts with an empty canvas rather than destroying anything.
+3. **Given** the old storage cannot be read, **Then** a salvage attempt shows
+   the person what could be recovered, to accept or decline; the raw content is
+   preserved untouched either way, they are told a copy was kept, and nothing
+   is ever destroyed.
 4. **Given** a first-run with no old storage, **Then** no migration prompt, no
    warning — an ordinary empty start.
 
@@ -118,12 +119,14 @@ is nothing to upgrade from later.
    opens, **Then** it is brought forward to the current form and a copy of the
    original file is kept beside it until the person removes it.
 2. **Given** a plan recording a version newer than the application understands,
-   **Then** it is not opened, not modified, and the person is told it needs a
-   newer application.
+   **Then** it opens read-only, showing what this version can read with a
+   notice; the file itself is never written to, and an editable copy is an
+   explicit, warned Save As.
 3. **Given** a file that cannot be read at all, **Then** it is left untouched,
    the person is told what happened, and nothing overwrites it.
 4. **Given** a save that fails partway — disk full, permission lost — **Then**
-   the previous file content survives intact.
+   the previous file content survives intact, the interrupted partial is kept
+   aside, and the person is told.
 
 ### Edge Cases
 
@@ -159,7 +162,8 @@ is nothing to upgrade from later.
 - **FR-007**: The application MUST list recently opened plans; an entry whose
   file has vanished is offered for removal, never silently dropped.
 - **FR-008**: A failed or interrupted save MUST leave the previous file content
-  intact.
+  intact, MUST preserve the interrupted partial write aside rather than
+  discarding it silently, and MUST tell the person what happened.
 - **FR-009**: The application MUST recover unsaved work after a crash or
   force-quit, offering it on next start.
 
@@ -170,8 +174,10 @@ is nothing to upgrade from later.
   silently.
 - **FR-011**: The old storage MUST be preserved, marked migrated, after a
   successful migration, until the person chooses to clear it.
-- **FR-012**: Old storage that cannot be read MUST be preserved untouched, with
-  the person told a copy was kept; the application MUST NOT overwrite it.
+- **FR-012**: Old storage that cannot be read MUST first be offered a salvage
+  attempt, recovering what is readable for the person to inspect and accept or
+  decline. Whatever the outcome, the original MUST be preserved untouched, the
+  person told a copy was kept, and the application MUST NOT overwrite it.
 - **FR-013**: A first run with no old storage MUST show no migration prompt and
   no warning.
 
@@ -197,8 +203,11 @@ is nothing to upgrade from later.
 - **FR-020**: A file in an older format the application understands MUST be
   brought forward on open, with the original file copied aside first and kept
   until the person removes it.
-- **FR-021**: A file recording a newer format MUST NOT be opened or modified;
-  the person MUST be told it needs a newer application.
+- **FR-021**: A file recording a newer format MUST open read-only, showing
+  what this version can read, with a clear notice of both the newer format and
+  anything not understood. The application MUST NEVER write back to that file.
+  Keeping an editable copy is an explicit Save As, warned that content this
+  version cannot read is not carried into the copy.
 - **FR-022**: A file that cannot be read MUST be left untouched and reported;
   nothing MUST ever overwrite it.
 - **FR-023**: Bringing a file forward MUST be deterministic, depending only on
@@ -287,6 +296,11 @@ Decided rather than left open; each is challengeable.
 - **Two instances on one file**: second opener gets read-only with a notice.
   Detected best-effort; cloud-sync conflicts surface as ordinary conflicting
   copies (edge case), not corruption, because saves are atomic.
+- **Recovery is offered, not just performed.** Three validation answers across
+  two features chose richer recovery over tidy refusal: salvage before an empty
+  start, the partial write kept visible, a newer file readable rather than
+  refused. The one hard line kept is that nothing best-effort may ever write
+  back to a file it only partly understood — that is where SC-003 lives.
 - **The library remains app-level** (002's assumption stands); recorded
   definitions make plans self-contained without bundling the catalogue.
 

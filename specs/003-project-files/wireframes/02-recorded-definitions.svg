@@ -49,8 +49,8 @@
     <rect x="460" y="490" width="360" height="170" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
     <text x="476" y="516" font-size="14" fill="#1f2937" font-weight="bold">future-site.netplan</text>
     <text x="476" y="540" font-size="14" fill="#4b5563">Written by a newer version.</text>
-    <text x="476" y="562" font-size="14" fill="#4b5563">Not opened, not modified. This plan</text>
-    <text x="476" y="584" font-size="14" fill="#4b5563">needs a newer application.</text>
+    <text x="476" y="562" font-size="14" fill="#4b5563">Opens read-only; this file is never</text>
+    <text x="476" y="584" font-size="14" fill="#4b5563">written to. Save As makes an editable copy.</text>
     <rect x="860" y="490" width="360" height="170" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
     <text x="876" y="516" font-size="14" fill="#1f2937" font-weight="bold">corrupted.netplan</text>
     <text x="876" y="540" font-size="14" fill="#4b5563">Could not be read.</text>
@@ -116,7 +116,7 @@
       <rect x="276" width="62" height="20" rx="10" fill="#ea580c"/><text x="307" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-006</text>
     </g>
     <text x="560" y="126" font-size="14" font-weight="bold" fill="#1f2937">5. Newer and damaged files</text>
-    <text x="560" y="147" font-size="14" fill="#374151">A newer format is refused unopened; damage is never overwritten.</text>
+    <text x="560" y="147" font-size="14" fill="#374151">A newer format opens read-only, never written; damage never overwritten.</text>
     <g transform="translate(560, 157)">
       <rect x="0" width="62" height="20" rx="10" fill="#2563eb"/><text x="31" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-021</text>
       <rect x="69" width="62" height="20" rx="10" fill="#2563eb"/><text x="100" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-022</text>
