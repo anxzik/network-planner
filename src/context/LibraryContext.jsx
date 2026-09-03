@@ -14,6 +14,7 @@ const bridgeAvailable = () => Boolean(window.networkPlanner?.library);
 export function LibraryProvider({ children }) {
   const [types, setTypes] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [symbolSets, setSymbolSets] = useState([]);
   // 'loading' | 'ready' | 'error' | 'unavailable'
   const [status, setStatus] = useState(() => (bridgeAvailable() ? 'loading' : 'unavailable'));
   const [error, setError] = useState(null);
@@ -22,6 +23,7 @@ export function LibraryProvider({ children }) {
     if (result.ok) {
       setTypes(result.value.types);
       setCategories(result.value.categories);
+      setSymbolSets(result.value.symbolSets ?? []);
       setError(null);
       setStatus('ready');
     } else {
@@ -124,6 +126,24 @@ export function LibraryProvider({ children }) {
     return bridge.previewImport();
   }, []);
 
+  const importSymbols = useCallback(async () => {
+    const bridge = window.networkPlanner?.library;
+    if (!bridge) return { ok: false, error: { code: 'STORAGE_FAILED', message: 'The catalogue is not available here.' } };
+    const result = await bridge.importSymbols();
+    if (result.ok) await refresh();
+    return result;
+  }, [refresh]);
+
+  // Imported symbol content by id, for the canvas to draw (FR-015 falls back
+  // to the built-in mapping when this returns nothing).
+  const symbolById = useCallback((id) => {
+    for (const set of symbolSets) {
+      const found = set.symbols.find((sym) => sym.id === id && sym.content !== '');
+      if (found) return found;
+    }
+    return null;
+  }, [symbolSets]);
+
   const importLibrary = useCallback(async (payload) => {
     const bridge = window.networkPlanner?.library;
     if (!bridge) return { ok: false, error: { code: 'STORAGE_FAILED', message: 'The catalogue is not available here.' } };
@@ -134,13 +154,13 @@ export function LibraryProvider({ children }) {
 
   const value = useMemo(
     () => ({
-      types, categories, status, error, refresh,
+      types, categories, symbolSets, status, error, refresh,
       createType, updateType, removeType, restoreShipped, markApproved, placementsOf,
-      exportLibrary, previewImport, importLibrary,
+      exportLibrary, previewImport, importLibrary, importSymbols, symbolById,
     }),
-    [types, categories, status, error, refresh,
+    [types, categories, symbolSets, status, error, refresh,
      createType, updateType, removeType, restoreShipped, markApproved, placementsOf,
-     exportLibrary, previewImport, importLibrary],
+     exportLibrary, previewImport, importLibrary, importSymbols, symbolById],
   );
 
   return <LibraryContext.Provider value={value}>{children}</LibraryContext.Provider>;

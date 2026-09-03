@@ -261,6 +261,74 @@ export class CatalogueStore {
     }
   }
 
+  countSymbolSets(): number {
+    const row = this.db.prepare('SELECT COUNT(*) AS n FROM symbol_sets').get() as SqlRow;
+    return Number(row.n);
+  }
+
+  listSymbolSets(): Array<{
+    id: string; name: string; origin: string;
+    symbols: Array<{ id: string; name: string; origin: string; content: string }>;
+  }> {
+    const sets = this.db.prepare('SELECT * FROM symbol_sets ORDER BY name').all() as SqlRow[];
+    const bySet = this.db.prepare(
+      'SELECT * FROM symbols WHERE set_id = ? ORDER BY name');
+    return sets.map((set) => ({
+      id: String(set.id), name: String(set.name), origin: String(set.origin),
+      symbols: (bySet.all(String(set.id)) as SqlRow[]).map((r) => ({
+        id: String(r.id), name: String(r.name), origin: String(r.origin),
+        content: String(r.content),
+      })),
+    }));
+  }
+
+  // FR-016: the standard set, one entry per icon name the shipped types use.
+  // Content is empty: shipped symbols draw through the built-in icon mapping,
+  // and only imported symbols carry markup.
+  seedStandardSymbols(iconNames: readonly string[]): void {
+    this.db.exec('BEGIN');
+    try {
+      this.db.prepare(
+        `INSERT INTO symbol_sets (id, name, origin) VALUES ('set-standard', 'Standard', 'shipped')`,
+      ).run();
+      const insert = this.db.prepare(
+        `INSERT INTO symbols (id, set_id, name, content, origin)
+         VALUES (?, 'set-standard', ?, '', 'shipped')`,
+      );
+      for (const name of iconNames) insert.run(`sym-std-${name}`, name);
+      this.db.exec('COMMIT');
+    } catch (err) {
+      this.db.exec('ROLLBACK');
+      throw err;
+    }
+  }
+
+  importSymbolSet(
+    name: string,
+    symbols: ReadonlyArray<{ name: string; content: string }>,
+  ): { setId: string; added: number } {
+    const setId = `set-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    this.db.exec('BEGIN');
+    try {
+      this.db.prepare(
+        `INSERT INTO symbol_sets (id, name, origin) VALUES (?, ?, 'imported')`,
+      ).run(setId, name);
+      const insert = this.db.prepare(
+        `INSERT INTO symbols (id, set_id, name, content, origin)
+         VALUES (?, ?, ?, ?, 'imported')`,
+      );
+      let n = 0;
+      for (const sym of symbols) {
+        insert.run(`sym-${setId}-${n++}`, setId, sym.name, sym.content);
+      }
+      this.db.exec('COMMIT');
+      return { setId, added: symbols.length };
+    } catch (err) {
+      this.db.exec('ROLLBACK');
+      throw err;
+    }
+  }
+
   close(): void {
     this.db.close();
   }

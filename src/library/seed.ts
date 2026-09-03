@@ -5,12 +5,18 @@ import type { CatalogueStore } from './catalogueStore';
 import catalogue from '../utils/shippedTypes.json';
 
 export function seedIfEmpty(store: CatalogueStore): { seeded: boolean; count: number } {
-  if (store.countTypes() > 0) {
-    return { seeded: false, count: store.countTypes() };
+  const seededTypes = store.countTypes() === 0;
+  if (seededTypes) {
+    store.insertSeed(
+      catalogue.types,
+      catalogue.categories as Record<string, { label: string; color: string; subcategories: string[] }>,
+    );
   }
-  store.insertSeed(
-    catalogue.types,
-    catalogue.categories as Record<string, { label: string; color: string; subcategories: string[] }>,
-  );
-  return { seeded: true, count: store.countTypes() };
+  // Checked separately from types so catalogues created before symbols existed
+  // gain the standard set on next start without reseeding anything else.
+  if (store.countSymbolSets() === 0) {
+    const iconNames = [...new Set(catalogue.types.map((t) => t.icon).filter(Boolean))].sort();
+    store.seedStandardSymbols(iconNames);
+  }
+  return { seeded: seededTypes, count: store.countTypes() };
 }

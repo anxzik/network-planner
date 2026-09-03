@@ -16,6 +16,9 @@ import { readLibraryFile, serialiseLibrary } from '../utils/libraryFile.js';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- plain JS module, typed loosely on purpose
 import { detectCollisions, mergeImport } from '../utils/importMerge.js';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore -- plain JS module, typed loosely on purpose
+import { validateSymbolSvg } from '../utils/symbolValidation.js';
 import { seedIfEmpty } from './seed';
 
 type Envelope<T> =
@@ -45,7 +48,11 @@ export function initLibrary(): void {
   ipcMain.handle('library:list', () => {
     if (!store) return fail('STORAGE_FAILED', 'The catalogue is not open.');
     try {
-      return ok({ types: store.listTypes(), categories: store.listCategories() });
+      return ok({
+        types: store.listTypes(),
+        categories: store.listCategories(),
+        symbolSets: store.listSymbolSets(),
+      });
     } catch (err) {
       return fail('STORAGE_FAILED', `The catalogue could not be read: ${String(err)}`);
     }
@@ -220,6 +227,44 @@ export function initLibrary(): void {
       skipped,
       report: { ...merged.report, skipped: skipped.length },
     });
+  });
+
+  // FR-014: each chosen file is validated as untrusted markup before anything
+  // is stored; unreadable or unsafe files are skipped and named.
+  ipcMain.handle('library:importSymbols', async () => {
+    if (!store) return fail('STORAGE_FAILED', 'The catalogue is not open.');
+    const picked = await dialog.showOpenDialog({
+      title: 'Import symbols',
+      properties: ['openFile', 'multiSelections'],
+      filters: [{ name: 'SVG symbols', extensions: ['svg'] }],
+    });
+    if (picked.canceled || picked.filePaths.length === 0) {
+      return fail('CANCELLED', 'No symbols were imported.');
+    }
+    const good: Array<{ name: string; content: string }> = [];
+    const skipped: Array<{ name: string; reason: string }> = [];
+    for (const filePath of picked.filePaths) {
+      const name = (filePath.split(/[\\/]/).pop() ?? 'symbol').replace(/\.svg$/i, '');
+      let content: string;
+      try {
+        content = fs.readFileSync(filePath, 'utf8');
+      } catch (err) {
+        skipped.push({ name, reason: `The file could not be read: ${String(err)}` });
+        continue;
+      }
+      const verdict = validateSymbolSvg(content) as {
+        valid: boolean; errors: Array<{ message: string }>;
+      };
+      if (verdict.valid) good.push({ name, content });
+      else skipped.push({ name, reason: verdict.errors.map((e) => e.message).join(' ') });
+    }
+    if (good.length === 0) {
+      return fail('FILE_UNREADABLE',
+        `No symbol could be imported. ${skipped.map((s) => `${s.name}: ${s.reason}`).join(' ')}`);
+    }
+    const setName = `Imported ${new Date().toISOString().slice(0, 10)}`;
+    const result = store.importSymbolSet(setName, good);
+    return ok({ setId: result.setId, setName, added: result.added, skipped });
   });
 }
 

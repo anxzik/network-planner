@@ -6,22 +6,24 @@
 // remounts it with fresh initial state.
 import {useState} from 'react';
 import {KNOWN_PLANES, KNOWN_PORT_KINDS, PORT_LIMIT, validateApplianceType} from '../../utils/applianceValidation';
+import {STANDARD_ICON_NAMES} from '../../utils/deviceHelpers';
 import {useLibrary} from '../../context/LibraryContext';
 import {useSettings} from '../../context/SettingsContext';
 
 const EMPTY = {
   name: '', manufacturer: '', model: '', category: 'Generic',
-  description: '', planes: ['physical'], specifications: { ports: {} },
+  description: '', planes: ['physical'], icon: 'network',
+  specifications: { ports: {} },
 };
 
 const draftFrom = (type) => (type ? {
   name: type.name, manufacturer: type.manufacturer, model: type.model,
-  category: type.category, description: type.description,
+  category: type.category, description: type.description, icon: type.icon,
   planes: [...type.planes], specifications: JSON.parse(JSON.stringify(type.specifications || { ports: {} })),
 } : { ...EMPTY, specifications: { ports: {} } });
 
 function ApplianceEditor({ type, onDone }) {
-  const { createType, updateType, removeType, restoreShipped, markApproved, categories } = useLibrary();
+  const { createType, updateType, removeType, restoreShipped, markApproved, categories, symbolSets, importSymbols } = useLibrary();
   const { currentTheme } = useSettings();
   const [draft, setDraft] = useState(() => draftFrom(type));
   const [confirmPortless, setConfirmPortless] = useState(false);
@@ -106,6 +108,29 @@ function ApplianceEditor({ type, onDone }) {
           );
         })}
       </div>
+
+      <label className="block text-xs mb-2">
+        <span style={{ color: currentTheme.textSecondary }}>Symbol</span>
+        <div className="flex gap-1.5 mt-0.5">
+          <select value={draft.icon} onChange={(e) => setField('icon', e.target.value)}
+            className="flex-1 rounded border px-2 py-1 text-sm"
+            style={{ borderColor: currentTheme.border, backgroundColor: currentTheme.background, color: currentTheme.text }}>
+            <optgroup label="Standard">
+              {STANDARD_ICON_NAMES.map((n) => <option key={n} value={n}>{n}</option>)}
+            </optgroup>
+            {symbolSets.filter((set) => set.origin === 'imported').map((set) => (
+              <optgroup key={set.id} label={set.name}>
+                {set.symbols.map((sym) => <option key={sym.id} value={sym.id}>{sym.name}</option>)}
+              </optgroup>
+            ))}
+          </select>
+          <button onClick={async () => { const r = await importSymbols(); if (!r.ok && r.error.code !== 'CANCELLED') setMessage(r.error.message); }}
+            className="px-2 py-1 rounded border text-xs"
+            style={{ borderColor: currentTheme.border, color: currentTheme.textSecondary }}>
+            Import symbols
+          </button>
+        </div>
+      </label>
 
       <div className="text-xs mb-1" style={{ color: currentTheme.textSecondary }}>
         Port layout <span>(limit {PORT_LIMIT} per type)</span>

@@ -15,6 +15,7 @@ const library = {
   exportLibrary: (ids?: string[]) => ipcRenderer.invoke('library:export', ids),
   previewImport: () => ipcRenderer.invoke('library:previewImport'),
   importLibrary: (payload: unknown) => ipcRenderer.invoke('library:import', payload),
+  importSymbols: () => ipcRenderer.invoke('library:importSymbols'),
 };
 
 contextBridge.exposeInMainWorld('networkPlanner', { library });
