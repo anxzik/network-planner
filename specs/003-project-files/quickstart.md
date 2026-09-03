@@ -10,8 +10,12 @@
 2. **Unsaved-changes guard** (FR-006): modify, then File > New — prompt appears;
    Cancel loses nothing.
 2b. **Unsaved prompt outcomes** (FR-006): modify, then File > New — Save writes
-    and proceeds; Discard proceeds and loses the changes; Cancel and Escape both
-    leave the canvas exactly as it was and abandon the New.
+    and proceeds; Discard and Escape both proceed, setting the changes aside;
+    Cancel, closing the dialog and clicking outside it all leave the canvas
+    exactly as it was and abandon the New.
+2c. **A discard is recoverable** (FR-006a): discard via Escape, then restart —
+    the work is offered back from the recovery slot. Decline the offer and it
+    is gone; that decline is the only thing that clears it.
 3. **Migration** (US2): with a pre-feature localStorage topology, first start
    offers migration; accept → named file opens; old storage still present,
    marked.

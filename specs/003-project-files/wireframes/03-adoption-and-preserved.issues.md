@@ -44,3 +44,22 @@ gap rather than amending an already-approved drawing.
   not a substitute for the original.
 - **Unsaved prompt** (FR-006): Save / Discard / Cancel, with the dismissal rule
   stated on the drawing.
+
+---
+
+## Re-review 2026-09-03 (post FR-006a fold)
+
+**Status:** PASS
+**Trigger:** FR-006 was amended after this drawing was signed off — Escape now
+maps to Discard, and the new FR-006a makes a discard recoverable. The drawing
+stated the superseded rule ("Escape... means Cancel - never Discard") on its
+face, which would have made an approved drawing actively contradict the spec.
+
+**Changed:** the caveat line under the three buttons; the Discard button now
+carries its `Esc` accelerator; the mobile note; annotation 5 retitled and
+re-badged with FR-006a and FR-009.
+
+**Checks:** STR-001…010 PASS (0 fonts below 14px; badges within bounds — column
+5 ends at x=910 of 1840). VIS-001…007 PASS. COV-002 PASS — FR-006a badged here.
+
+Sign-off carried forward: 2026-09-03.

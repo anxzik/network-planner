@@ -80,14 +80,14 @@
     <!-- Unsaved prompt, three outcomes -->
     <rect x="40" y="570" width="1200" height="126" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
     <text x="60" y="598" font-size="15" font-weight="bold" fill="#1f2937">Unsaved changes to denver-site.netplan</text>
-    <text x="60" y="622" font-size="14" fill="#374151">Three outcomes, and only one of them loses work.</text>
+    <text x="60" y="622" font-size="14" fill="#374151">Three outcomes. Escape is a fourth way to reach Discard - and Discard is recoverable.</text>
     <rect x="60" y="638" width="110" height="36" rx="6" fill="#2563eb"/>
     <text x="115" y="661" font-size="14" fill="#fff" font-weight="bold" text-anchor="middle">Save</text>
     <rect x="182" y="638" width="110" height="36" rx="6" fill="#dcc8a8" stroke="#b8a080"/>
-    <text x="237" y="661" font-size="14" fill="#b91c1c" text-anchor="middle">Discard</text>
+    <text x="237" y="661" font-size="14" fill="#b91c1c" text-anchor="middle">Discard  Esc</text>
     <rect x="304" y="638" width="110" height="36" rx="6" fill="#dcc8a8" stroke="#b8a080"/>
     <text x="359" y="661" font-size="14" fill="#1f2937" text-anchor="middle">Cancel</text>
-    <text x="434" y="661" font-size="14" fill="#9a6b2f">Escape, window close and clicking away all mean Cancel - never Discard.</text>
+    <text x="434" y="661" font-size="14" fill="#9a6b2f">Escape discards. Closing this dialog or clicking away means Cancel.</text>
   </g>
 
   <g id="mobile" transform="translate(1360, 60)" font-family="system-ui, sans-serif">
@@ -133,8 +133,8 @@
     <text x="177" y="612" font-size="14" fill="#b91c1c" text-anchor="middle">Discard</text>
     <rect x="232" y="590" width="96" height="34" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
     <text x="280" y="612" font-size="14" fill="#1f2937" text-anchor="middle">Cancel</text>
-    <text x="32" y="648" font-size="14" fill="#9a6b2f">Dismissing means Cancel,</text>
-    <text x="32" y="668" font-size="14" fill="#9a6b2f">never Discard.</text>
+    <text x="32" y="648" font-size="14" fill="#9a6b2f">Escape discards; it is kept</text>
+    <text x="32" y="668" font-size="14" fill="#9a6b2f">in recovery until you decline.</text>
   </g>
 
   <g id="annotations" transform="translate(40, 800)" font-family="system-ui, sans-serif">
@@ -171,12 +171,14 @@
       <rect x="138" width="62" height="20" rx="10" fill="#2563eb"/><text x="169" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-020</text>
     </g>
 
-    <text x="560" y="126" font-size="14" font-weight="bold" fill="#1f2937">5. US-001 Discarding is deliberate</text>
-    <text x="560" y="147" font-size="14" fill="#374151">Save, Discard, Cancel. Every other dismissal means Cancel.</text>
+    <text x="560" y="126" font-size="14" font-weight="bold" fill="#1f2937">5. US-001 A fast answer is not a final one</text>
+    <text x="560" y="147" font-size="14" fill="#374151">Escape discards; the discard stays in recovery until declined.</text>
     <g transform="translate(560, 157)">
       <rect x="0" width="62" height="20" rx="10" fill="#0891b2"/><text x="31" y="14" font-size="14" fill="#fff" text-anchor="middle">US-001</text>
       <rect x="69" width="62" height="20" rx="10" fill="#2563eb"/><text x="100" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-006</text>
-      <rect x="138" width="62" height="20" rx="10" fill="#ea580c"/><text x="169" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-003</text>
+      <rect x="138" width="72" height="20" rx="10" fill="#2563eb"/><text x="174" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-006a</text>
+      <rect x="219" width="62" height="20" rx="10" fill="#2563eb"/><text x="250" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-009</text>
+      <rect x="288" width="62" height="20" rx="10" fill="#ea580c"/><text x="319" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-003</text>
     </g>
 
     <text x="1096" y="126" font-size="14" font-weight="bold" fill="#1f2937">6. A readable copy is not the original</text>

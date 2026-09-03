@@ -29,7 +29,9 @@
 ## RecoverySlot (`recovery-slot.json`, userData)
 
 The unsaved-changes capture (FR-009): the same document shape as PlanFile plus
-`sourcePath` (null for untitled) and `capturedAt`. Cleared on clean save/exit.
+`sourcePath` (null for untitled), `capturedAt`, and `reason` (`crash` |
+`discarded`). Cleared by a successful save or by the person declining the
+restore offer — never by a discard, which is what makes Escape safe (FR-006a).
 
 ## RecentsList (`recents.json`, userData)
 

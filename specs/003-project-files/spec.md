@@ -183,11 +183,20 @@ is nothing to upgrade from later.
 - **FR-006**: Closing, opening or starting a new plan with unsaved changes MUST
   prompt to save, and nothing is lost until the person chooses. The prompt
   offers exactly three outcomes: **Save** (write, then proceed), **Discard**
-  (proceed without writing, losing the changes), and **Cancel** (do nothing —
-  the pending action is abandoned and the canvas is left as it was). Dismissing
-  the prompt by any other means — window close, Escape, clicking away — MUST be
-  treated as **Cancel**, never as Discard. Discarding MUST be an act the person
-  took deliberately, never the consequence of getting rid of a dialog.
+  (proceed without writing, setting the changes aside), and **Cancel** (do
+  nothing — the pending action is abandoned and the canvas is left as it was).
+  **Escape maps to Discard**: a person who triggered an action, read the
+  prompt, and pressed Escape has answered it, and being made to hunt for the
+  right button to proceed is its own cost. The prompt's other dismissals —
+  closing the dialog's window, clicking outside it — MUST map to **Cancel**,
+  because those are reachable by accident in a way a deliberate keypress is
+  not.
+- **FR-006a**: Because Escape discards, a discard MUST be recoverable. Work
+  dropped by Discard MUST remain in the recovery slot (FR-009) and be offered
+  back, rather than being cleared as though it had been saved. The slot is
+  cleared by a successful save or by the person declining the offer — never by
+  a discard. This is what makes the fast gesture safe: the quick answer stops
+  being irreversible.
 - **FR-007**: The application MUST list recently opened plans; an entry whose
   file has vanished is offered for removal, never silently dropped.
 - **FR-008**: A failed or interrupted save MUST leave the previous file content
@@ -197,7 +206,9 @@ is nothing to upgrade from later.
   (newer, possibly incomplete) while the plan file holds the last content
   written whole. The partial occupies one predictable slot per plan (FR-024).
 - **FR-009**: The application MUST recover unsaved work after a crash or
-  force-quit, offering it on next start.
+  force-quit, offering it on next start. The same slot holds work dropped by a
+  Discard (FR-006a); it is cleared by a successful save or an explicit
+  declining of the offer, never silently.
 
 **Migration from browser storage**
 
@@ -338,7 +349,9 @@ is nothing to upgrade from later.
   the old storage remains recoverable until they clear it.
 - **SC-003**: No failure mode — failed save, damaged file, newer format, crash
   — destroys a byte the person had not already chosen to discard, and no
-  recovery leaves behind a copy the person cannot see and clear.
+  recovery leaves behind a copy the person cannot see and clear. Work a person
+  *did* choose to discard survives in the recovery slot until they save or
+  decline it (FR-006a), so no single keypress is terminal.
 - **SC-004**: A person always knows which plan is open and whether it is saved.
 - **SC-005**: A correction in the library can reach every reachable plan built
   on the old definition, without any plan changing on its own.
@@ -368,6 +381,12 @@ Decided rather than left open; each is challengeable.
 - **Two instances on one file**: second opener gets read-only with a notice.
   Detected best-effort; cloud-sync conflicts surface as ordinary conflicting
   copies (edge case), not corruption, because saves are atomic.
+- **Escape is a decision, not an accident.** A keypress made while reading a
+  prompt is deliberate in a way that closing a window or clicking away is not,
+  so Escape proceeds and the other two dismissals do not. The asymmetry is the
+  point: the gesture that is fast to make is also the gesture whose result
+  FR-006a keeps recoverable.
+
 - **Recovery is offered, not just performed.** Three validation answers across
   two features chose richer recovery over tidy refusal: salvage before an empty
   start, the partial write kept visible, a newer file readable rather than
