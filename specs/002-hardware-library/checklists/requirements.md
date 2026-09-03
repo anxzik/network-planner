@@ -51,6 +51,19 @@ price of duplicating the catalogue everywhere and losing a single place to
 curate it. Worth confirming before planning, because it shapes the project file
 format that ADR 0008 introduces.
 
+**Revised after comprehension validation.** The first validation run scored
+1 of 7 on the Edge Cases section. The misses were not misreadings: every one was
+a defensible product choice the spec had decided differently. Six requirements
+were rewritten to match, and two edge cases that no requirement covered (port
+count limits, and a release changing an edited type) gained FR-024 and FR-025.
+The catalogue also moved to a local database, recorded as ADR 0010.
+
+Two consequences of those revisions are worth watching. Imports are now
+permissive rather than atomic, so the library can reach a state the person did
+not review record by record; FR-011 compensates by requiring a report. And
+"secure" is adopted only as integrity, with encryption and access control left
+open in ADR 0010 until a threat model exists.
+
 **Deliberately out of scope**: integration with GNU Radio, GNS3 and similar
 tooling, named in CONTEXT.md as item 12. This feature is the foundation those
 would import into.

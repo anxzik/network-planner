@@ -20,8 +20,12 @@ behind both were arrived at.
 | [0007](0007-single-object-many-planes.md) | An appliance is one object with a facet per plane | Accepted |
 | [0008](0008-project-files-on-disk.md) | Store topologies as project files on disk | Accepted |
 | [0009](0009-map-data-source.md) | Geographic maps use online tiles and degrade offline | Accepted |
+| [0010](0010-hardware-library-database.md) | Keep the hardware library in a local database | Accepted |
 
 ## Open
+
+- What "secure" requires of the hardware library: integrity is adopted,
+  encryption at rest and access control are undecided (see 0010)
 
 These are recorded in the constitution as undecided. Each needs a record here
 once settled:
