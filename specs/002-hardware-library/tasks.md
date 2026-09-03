@@ -29,7 +29,7 @@ behavioural module in `src/utils/` to carry a co-located test.
 **Purpose**: Establish a known-good starting point and settle the two facts the plan could not.
 
 - [x] T001 Verify baseline is green: `npm run lint && npm test && npm run typecheck`
-- [ ] T002 Export the current catalogue and keep it in specs/002-hardware-library/ as an older-format fixture, so FR-013a can be tested against a real file
+- [x] T002 Export the current catalogue and keep it in specs/002-hardware-library/ as an older-format fixture, so FR-013a can be tested against a real file
 - [ ] T003 [P] Confirm `node:sqlite` loads in a packaged build, not only under `npm start`, using `npm run package` on one target
 
 ---
@@ -38,8 +38,8 @@ behavioural module in `src/utils/` to carry a co-located test.
 
 **Purpose**: The catalogue, the bridge, and the shipped data. No user story can proceed until these exist.
 
-- [ ] T004 [P] Transcribe the 131 shipped appliance types from src/data/devices.js into src/utils/shippedTypes.js, preserving every id, category and port group, and mapping the existing physical and logical viewType values onto plane membership for FR-019
-- [ ] T005 [P] Write src/utils/shippedTypes.test.js asserting 131 types, 19 categories, ids unchanged, all 16 port kinds still representable, and every type carrying at least one plane
+- [x] T004 [P] Transcribe the 131 shipped appliance types from src/data/devices.js into src/utils/shippedTypes.js, preserving every id, category and port group, and mapping the existing physical and logical viewType values onto plane membership for FR-019
+- [x] T005 [P] Write src/utils/shippedTypes.test.js asserting 131 types, 19 categories, ids unchanged, all 16 port kinds still representable, and every type carrying at least one plane
 - [ ] T006 Define the catalogue schema and its schema version in src/library/schema.ts per data-model.md, including the required `planes` field for FR-019
 - [ ] T007 Implement the SQLite-backed store in src/library/catalogueStore.ts, confining every `node:sqlite` call to this file
 - [ ] T008 Implement first-run seeding in src/library/seed.ts, loading src/utils/shippedTypes.js into the catalogue
