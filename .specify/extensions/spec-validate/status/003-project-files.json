@@ -9,7 +9,20 @@
     "failed-save",
     "newer-format"
   ],
-  "review_status": "not-required",
+  "review_status": "required",
   "approval_status": "allowed",
-  "notes": "Run 1 for 003: 5/8. All three misses are recovery-richer-than-specified preferences, one of them (best-effort on unknown versions) now expressed for the third time across two features. Candidates to fold: attempt salvage before an empty start (FR-012), surface the prior-version copy after a failed save (FR-008), and open a newer-format plan read-only best-effort instead of refusing (FR-021, with never-write-back protecting SC-003). Folded after run 1: salvage attempt, partial kept aside, newer-format read-only with never-write-back."
+  "notes": "Run 1 for 003: 5/8. All three misses are recovery-richer-than-specified preferences, one of them (best-effort on unknown versions) now expressed for the third time across two features. Candidates to fold: attempt salvage before an empty start (FR-012), surface the prior-version copy after a failed save (FR-008), and open a newer-format plan read-only best-effort instead of refusing (FR-021, with never-write-back protecting SC-003). Folded after run 1: salvage attempt, partial kept aside, newer-format read-only with never-write-back. | Tasks run 1 for 003: 5/12. Four misses share one shape: bounded, conventionally-named preserved artifacts instead of accumulating timestamped ones (.bak over .partial-<ts>; storage consolidated after salvage; upgrade original not kept indefinitely; autosave over a separate recovery slot). Candidate to fold as a retention/naming requirement - SC-003 needs the copy to exist when needed, not forever. Separately, the decline-memory answer (boolean) conflicts with FR-016/017 as already approved: a boolean decline silences a type permanently, so a later genuine correction never re-offers. Flagged, not folded.",
+  "tasks_hash": "sha256:1375f4f9f810548938e683aec6dca73879d41f3bca44e39600d663982f41244e",
+  "tasks_self_validation": "failed",
+  "tasks_validated_at": "2026-09-03T18:12:00Z",
+  "tasks_critical_count": 12,
+  "tasks_missed_items": [
+    "failed-save-artifact-name",
+    "context-seam-rationale",
+    "salvage-preserves-original",
+    "post-migration-autosave",
+    "decline-memory-shape",
+    "read-only-authority",
+    "upgrade-original-retention"
+  ]
 }
