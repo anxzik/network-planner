@@ -114,18 +114,14 @@ Consistently applied across recent history and expected going forward.
 These are recorded because the codebase has **no** established convention. They
 are not rules, and should be resolved rather than guessed at:
 
-1. **Branch naming** — existing branches follow no prefix scheme (`electron`,
-   `ip-functions`, `dynamic-linking-and-scratchpad`) and casing is inconsistent
-   on the remote (`Electron-Wrapper` alongside `electron-wrapper`). Spec-kit
-   generates feature branches; a scheme should be chosen before it does.
-2. **Component testing** — Principle I and II describe the current strategy.
+1. **Component testing** — Principle I and II describe the current strategy.
    Whether it remains the long-term position is undecided.
-3. **Continuous integration** — no CI exists. The quality gates above are
+2. **Continuous integration** — no CI exists. The quality gates above are
    defined but unenforced.
-4. **Documentation root** — `CLAUDE.md` references `CONTEXT.md` and
-   `docs/adr/`, neither of which exists. `ARCHITECTURE.md` and `README.md` live
-   under `dev-stuff/`. This constitution overlaps with what `CONTEXT.md` was
-   intended to hold; the relationship between the two should be settled.
+3. **Documentation root** — `CLAUDE.md` references `CONTEXT.md`, which does not
+   exist. `docs/adr/` now does. `ARCHITECTURE.md` and `README.md` live under
+   `dev-stuff/`. This constitution overlaps with what `CONTEXT.md` was intended
+   to hold; the relationship between the two should be settled.
 
 ## Governance
 

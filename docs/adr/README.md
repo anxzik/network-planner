@@ -15,13 +15,13 @@ records explain how those rules were arrived at.
 | [0003](0003-commonjs-main-process.md) | Build the Electron main process as CommonJS despite `"type": "module"` | Accepted |
 | [0004](0004-adopt-spec-kit.md) | Adopt spec-kit and commit `.specify/` to the repository | Accepted |
 | [0005](0005-private-extension-catalog.md) | Install vetted extensions from a private catalog | Accepted |
+| [0006](0006-feature-branch-naming.md) | Name feature branches `NNN-slug`, matching their spec directory | Accepted |
 
 ## Open
 
 These are recorded in the constitution as undecided. Each needs a record here
 once settled:
 
-- Branch naming — three competing conventions currently exist on `origin`
 - Whether components stay untested long term (see 0001)
 - Continuous integration — the quality gates are defined but unenforced
 - Whether `CONTEXT.md` exists alongside the constitution, or is replaced by it
