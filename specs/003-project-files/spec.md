@@ -175,7 +175,10 @@ is nothing to upgrade from later.
   file has vanished is offered for removal, never silently dropped.
 - **FR-008**: A failed or interrupted save MUST leave the previous file content
   intact, MUST preserve the interrupted partial write aside rather than
-  discarding it silently, and MUST tell the person what happened.
+  discarding it silently, and MUST tell the person what happened — naming the
+  preserved partial and explaining that it holds the content they were saving
+  (newer, possibly incomplete) while the plan file holds the last content
+  written whole. The partial occupies one predictable slot per plan (FR-024).
 - **FR-009**: The application MUST recover unsaved work after a crash or
   force-quit, offering it on next start.
 
@@ -189,7 +192,10 @@ is nothing to upgrade from later.
 - **FR-012**: Old storage that cannot be read MUST first be offered a salvage
   attempt, recovering what is readable for the person to inspect and accept or
   decline. Whatever the outcome, the original MUST be preserved untouched, the
-  person told a copy was kept, and the application MUST NOT overwrite it.
+  person told a copy was kept, and the application MUST NOT overwrite it. Once
+  a salvage has been accepted and its plan saved, the preserved original MUST
+  be offered for clearing like any other preserved artifact (FR-024) — offered,
+  never cleared unasked.
 - **FR-013**: A first run with no old storage MUST show no migration prompt and
   no warning.
 
@@ -203,7 +209,11 @@ is nothing to upgrade from later.
   one, the application MUST make clear which is shown and MUST offer to update
   the plan's copy; nothing changes unless the person accepts.
 - **FR-017**: A declined update offer MUST be remembered per plan and per type,
-  and not re-asked on every open.
+  and not re-asked on every open. The memory MUST record *which version of the
+  definition* was declined, so that a later, genuinely different correction to
+  the same type is offered again. A decline silences one answered question, not
+  the type forever — without this, a corrected definition could never reach a
+  plan that once said no, and SC-005 would not hold.
 - **FR-018**: The application MUST be able to apply a corrected definition
   across the plans it knows about, showing which would change and applying only
   to those chosen; a plan it cannot reach is listed as unreachable, not
@@ -214,7 +224,10 @@ is nothing to upgrade from later.
 - **FR-019**: Every plan file MUST record the format version it was written in.
 - **FR-020**: A file in an older format the application understands MUST be
   brought forward on open, with the original file copied aside first and kept
-  until the person removes it.
+  until the person removes it. One copy is kept per plan, not one per open
+  (FR-024): reopening an older file that already has its original preserved
+  MUST NOT create a second copy. Once the upgraded plan has been saved whole,
+  the application MUST offer to clear the preserved original.
 - **FR-021**: A file recording a newer format MUST open read-only, showing
   what this version can read, with a clear notice of both the newer format and
   anything not understood. The application MUST NEVER write back to that file.
@@ -224,6 +237,19 @@ is nothing to upgrade from later.
   nothing MUST ever overwrite it.
 - **FR-023**: Bringing a file forward MUST be deterministic, depending only on
   the file's content.
+
+**Preserved artifacts**
+
+- **FR-024**: Every copy the application preserves on the person's behalf — the
+  partial from a failed save, the original kept beside an upgraded file, the
+  per-plan copy taken before a broad apply — MUST occupy a single, predictably
+  named slot per plan. A repeat occurrence MUST replace that slot rather than
+  accumulate a new file, so a folder never fills with timestamped debris the
+  person did not ask for. The application MUST be able to show the person which
+  preserved artifacts exist for a plan and clear them on request, and MUST NOT
+  remove one without being asked. Where a preserved artifact has become
+  redundant — the upgraded plan saved whole, the salvage accepted and written —
+  clearing MUST be offered, never performed silently.
 
 ### Key Entities
 
@@ -236,6 +262,9 @@ is nothing to upgrade from later.
   which is also the reach of a broad update (FR-018).
 - **Migration marker**: what the old storage becomes after its content moves to
   a file — preserved, labelled, clearable.
+- **Preserved artifact**: any copy the application kept on the person's behalf —
+  a partial write, an upgrade original, a pre-broad-apply copy. One slot per
+  plan per kind, listable, clearable on request, never removed unasked.
 
 ## Process Boundary
 
@@ -280,7 +309,8 @@ is nothing to upgrade from later.
 - **SC-002**: No existing user loses their topology crossing the migration, and
   the old storage remains recoverable until they clear it.
 - **SC-003**: No failure mode — failed save, damaged file, newer format, crash
-  — destroys a byte the person had not already chosen to discard.
+  — destroys a byte the person had not already chosen to discard, and no
+  recovery leaves behind a copy the person cannot see and clear.
 - **SC-004**: A person always knows which plan is open and whether it is saved.
 - **SC-005**: A correction in the library can reach every reachable plan built
   on the old definition, without any plan changing on its own.
@@ -313,6 +343,18 @@ Decided rather than left open; each is challengeable.
   start, the partial write kept visible, a newer file readable rather than
   refused. The one hard line kept is that nothing best-effort may ever write
   back to a file it only partly understood — that is where SC-003 lives.
+- **Preserved copies are bounded, not accumulated.** Four validation answers
+  chose one predictably-named artifact over a growing pile of timestamped ones.
+  The safety SC-003 promises is that a copy exists *when it is needed*, not that
+  every copy exists forever; a folder full of debris the person did not ask for
+  is its own kind of harm. The hard line kept is that clearing is always offered
+  and never silent (FR-024).
+
+- **A preserved partial is not a backup.** It is named as a partial, never
+  `.bak`, because it holds an interrupted write: newer than the plan file but
+  possibly incomplete. A `.bak` name would invite restoring from it as though it
+  were the good copy, which is precisely backwards.
+
 - **The library remains app-level** (002's assumption stands); recorded
   definitions make plans self-contained without bundling the catalogue.
 

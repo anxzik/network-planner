@@ -46,10 +46,20 @@ request after a successful US2 migration. Presence suppresses re-offers
 
 `{ pid, hostname, openedAt }` — advisory, stale-tolerant (R6).
 
-## PartialSave (`<plan>.partial-<ts>`)
+## Preserved artifacts (FR-024)
 
-The preserved interrupted write (folded FR-008). Never opened as a plan;
-listed to the person, removable by them.
+One predictably named slot per plan per kind. A repeat occurrence **replaces**
+the slot; nothing accumulates. All three are listable and clearable on request,
+and none is ever removed unasked.
+
+| Artifact | Name | Holds | Cleared when |
+|---|---|---|---|
+| PartialSave | `<plan>.partial` | The interrupted write — newer than the plan file, possibly incomplete (FR-008) | The person clears it; offered after a later save succeeds |
+| UpgradeOriginal | `<plan>.<fromVersion>.original` | The pre-upgrade file, one per plan regardless of how often it is reopened (FR-020) | Offered once the upgraded plan has been saved whole |
+| BroadApplyOriginal | `<plan>.preapply.original` | The pre-broad-apply copy (FR-018/R7) | Offered after the applied plan is verified by the person |
+
+None is ever opened as a plan. A reopen that finds its slot already occupied
+leaves the existing copy alone — the older content is the one worth keeping.
 
 ## Classification result (pure, from planFile.js)
 

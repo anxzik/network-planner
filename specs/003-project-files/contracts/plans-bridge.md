@@ -24,6 +24,8 @@ call async, failure is a returned envelope.
 | `applyUpdate(document, typeId)` | — | updated document | FR-016 |
 | `broadApplyPreview(typeId)` | — | `{ reachable:[{id,name}], unreachable:[{name,reason}] }` | FR-018 |
 | `broadApply(typeId, ids)` | chosen recents | per-plan results | FR-018 |
+| `listPreserved(planId)` | — | `[ { kind, name, redundant } ]` | FR-024 |
+| `clearPreserved(planId, kind)` | — | `{ cleared }` | FR-024 |
 
 ## Error codes
 
@@ -35,5 +37,8 @@ call async, failure is a returned envelope.
 
 - A document opened with `readOnly` refuses `save` in **main**, not only in UI
   (R5). `saveAs` is the sole exit and its result is a new file.
-- `save` is atomic (R1); on failure the envelope names the preserved partial.
+- `save` is atomic (R1); on failure the envelope names the preserved partial —
+  one `<plan>.partial` slot, replaced on a repeat failure, never accumulated.
+- Preserved artifacts (FR-024) are listed by kind, never by path. `redundant`
+  says clearing may be *offered*; nothing is cleared without `clearPreserved`.
 - Divergence math is pure (`planDivergence.js`) and identical on both sides.

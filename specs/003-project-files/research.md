@@ -11,8 +11,15 @@ temporary becomes the preserved partial FR-008 now requires.
 **Rationale**: rename within one directory is atomic on the filesystems the
 four packaging targets use; writing in place is exactly how a disk-full failure
 corrupts. No dependency needed. The preserved partial gets a recognisable
-suffix (`.partial-<timestamp>`) beside the plan so the person can see it, which
-the folded FR-008 demands.
+suffix beside the plan so the person can see it, which the folded FR-008
+demands.
+
+**Naming, per the folded FR-024**: one slot per plan — `<plan>.partial` — not a
+timestamped file per failure. A second failed save replaces that slot; the
+person is told, and can clear it. Two names were rejected: `.partial-<ts>`
+(accumulates debris nobody asked for) and `.bak` (conventionally means *the
+previous good copy*, whereas this file is the opposite — the newer content, and
+possibly truncated. A name that invites restoring from it would be a trap).
 
 **Alternatives considered**: write-in-place with backup copy (a window where
 neither file is whole); a journal like SQLite's (the catalogue needs queries,
@@ -75,5 +82,5 @@ platforms and filesystems in play, and the spec asks for best-effort.
 The implementation opens each reachable plan file through the same
 read-classify path as an ordinary open, applies the accepted definition update,
 and saves through R1's atomic path — with the same per-file original-kept
-discipline FR-020 uses. A locked or missing file is reported unreachable, never
-queued.
+discipline FR-020 uses, in FR-024's single per-plan slot. A locked or missing
+file is reported unreachable, never queued.

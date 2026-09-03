@@ -25,7 +25,7 @@ co-located tests, per Principle I.
 **Constraints**: renderer sees names and opaque ids, never reusable paths;
 read-only enforced in main (R5); saves atomic (R1); SC-003 is the spine.
 
-**Scale/Scope**: ~5 new pure modules + tests, one main-process module
+**Scale/Scope**: ~6 new pure modules + tests, one main-process module
 (`src/plans/`), bridge additions, and renderer surfaces (title state, prompts,
 migration/salvage/divergence/broad-apply panels, recents).
 
@@ -54,7 +54,8 @@ src/
 │   ├── planFile.js           serialise/classify/upgrade (mirrors libraryFile)
 │   ├── planDivergence.js     recorded vs current, offer/decline logic
 │   ├── storageSalvage.js     FR-012 best-effort recovery of old storage
-│   └── recentsPrune.js       FR-007 decisions
+│   ├── recentsPrune.js       FR-007 decisions
+│   └── preservedArtifacts.js FR-024 slot naming + retention decisions
 ├── context/PlanContext.jsx   NEW: open-plan state, dirty flag, bridge calls
 └── components/Plans/         NEW: prompts, migration & salvage, divergence,
                               broad-apply, recents surfaces
@@ -71,7 +72,7 @@ R7 broad-apply bounds.
 
 **Phase 1** (complete): data-model.md, contracts/plans-bridge.md, quickstart.md.
 
-**Phase 2** (next, `/speckit-tasks`): suggested order — planFile.js first
+**Phase 2** (`/speckit-tasks`, complete — 47 tasks): suggested order — planFile.js first
 (everything trusts classification), then atomic save, then migration, then the
 FR-005 family.
 

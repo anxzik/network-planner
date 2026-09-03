@@ -27,10 +27,15 @@
    notice; Save disabled and refused; Save As produces an editable current-format
    copy with the warned caveat.
 10. **Failed save** (FR-008): make the target read-only at the OS level, Save —
-    previous content intact, partial preserved beside, message names it.
-11. **Crash recovery** (FR-009): modify, kill the app, restart — restore offer.
-12. **Two instances** (R6): open the same file twice — second is read-only with
+    previous content intact, `<plan>.partial` preserved beside, message names it
+    and says which content it holds. Save again, fail again — still one partial,
+    replaced not accumulated (FR-024).
+11. **Preserved artifacts** (FR-024): after an upgrade and a failed save, the
+    plan's preserved copies are listed and clearable; clearing is offered once
+    redundant and never happens on its own.
+12. **Crash recovery** (FR-009): modify, kill the app, restart — restore offer.
+13. **Two instances** (R6): open the same file twice — second is read-only with
     notice.
 
-Automatable now: 5–9 core logic via unit tests; 1, 10, 11 partially. Manual:
-dialogs throughout, 12.
+Automatable now: 5–9 core logic via unit tests; 1, 10, 11, 12 partially.
+Manual: dialogs throughout, 13.
