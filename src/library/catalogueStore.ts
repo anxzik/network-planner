@@ -215,6 +215,52 @@ export class CatalogueStore {
     return this.getType(id);
   }
 
+  // The import batch: adds and replacements in one transaction, so a failure
+  // partway leaves the catalogue exactly as it was (FR-027). What to add and
+  // replace was decided by the pure merge; this only executes it.
+  applyImport(
+    add: ReadonlyArray<Record<string, unknown>>,
+    replace: ReadonlyArray<Record<string, unknown>>,
+  ): void {
+    const now = new Date().toISOString();
+    const insert = this.db.prepare(
+      `INSERT INTO appliance_types
+         (id, name, manufacturer, model, category, description, planes, icon,
+          color, specifications, origin, approved, edited_from_shipped,
+          shipped_definition, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'local', 0, 0, NULL, ?, ?)`,
+    );
+    const update = this.db.prepare(
+      `UPDATE appliance_types SET
+         name = ?, manufacturer = ?, model = ?, category = ?, description = ?,
+         planes = ?, icon = ?, color = ?, specifications = ?, updated_at = ?
+       WHERE id = ?`,
+    );
+    this.db.exec('BEGIN');
+    try {
+      for (const t of add) {
+        insert.run(
+          String(t.id), String(t.name), String(t.manufacturer), String(t.model),
+          String(t.category), String(t.description ?? ''),
+          JSON.stringify(t.planes ?? []), String(t.icon ?? ''), String(t.color ?? ''),
+          JSON.stringify(t.specifications ?? {}), now, now,
+        );
+      }
+      for (const t of replace) {
+        update.run(
+          String(t.name), String(t.manufacturer), String(t.model), String(t.category),
+          String(t.description ?? ''), JSON.stringify(t.planes ?? []),
+          String(t.icon ?? ''), String(t.color ?? ''),
+          JSON.stringify(t.specifications ?? {}), now, String(t.id),
+        );
+      }
+      this.db.exec('COMMIT');
+    } catch (err) {
+      this.db.exec('ROLLBACK');
+      throw err;
+    }
+  }
+
   close(): void {
     this.db.close();
   }

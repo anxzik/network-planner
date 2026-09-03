@@ -86,18 +86,18 @@ behavioural module in `src/utils/` to carry a co-located test.
 
 ### Tests for User Story 2
 
-- [ ] T023 [P] [US2] Write src/utils/libraryFile.test.js covering format version reading, upgrading an older format, malformed input, and round-trip serialisation
-- [ ] T024 [P] [US2] Write src/utils/importMerge.test.js covering collision detection, all three resolutions, skip reasons, and the report shape
+- [x] T023 [P] [US2] Write src/utils/libraryFile.test.js covering format version reading, upgrading an older format, malformed input, and round-trip serialisation
+- [x] T024 [P] [US2] Write src/utils/importMerge.test.js covering collision detection, all three resolutions, skip reasons, and the report shape
 
 ### Implementation for User Story 2
 
-- [ ] T025 [P] [US2] Implement src/utils/libraryFile.js to read `formatVersion` before parsing, and to bring an older known format forward, per FR-012, FR-013 and FR-013a
-- [ ] T026 [P] [US2] Implement src/utils/importMerge.js as a pure function from incoming, existing and strategy to apply, skip and report, per FR-009 to FR-011
-- [ ] T027 [US2] Implement export with a save dialog in src/library/ipc.ts for FR-006 and FR-007, returning no reusable path to the renderer
-- [ ] T028 [US2] Implement `previewImport` in src/library/ipc.ts so collisions are shown before anything is written
-- [ ] T029 [US2] Implement `importLibrary` in src/library/ipc.ts applying the chosen resolutions and returning an ImportReport
-- [ ] T030 [US2] Surface the unrecognised-version warning for FR-013 in src/components/Hardware/ImportReportPanel.jsx without discarding the file
-- [ ] T031 [US2] Build src/components/Hardware/ImportReportPanel.jsx showing added, replaced and skipped with a reason for each
+- [x] T025 [P] [US2] Implement src/utils/libraryFile.js to read `formatVersion` before parsing, and to bring an older known format forward, per FR-012, FR-013 and FR-013a
+- [x] T026 [P] [US2] Implement src/utils/importMerge.js as a pure function from incoming, existing and strategy to apply, skip and report, per FR-009 to FR-011
+- [x] T027 [US2] Implement export with a save dialog in src/library/ipc.ts for FR-006 and FR-007, returning no reusable path to the renderer
+- [x] T028 [US2] Implement `previewImport` in src/library/ipc.ts so collisions are shown before anything is written
+- [x] T029 [US2] Implement `importLibrary` in src/library/ipc.ts applying the chosen resolutions and returning an ImportReport
+- [x] T030 [US2] Surface the unrecognised-version warning for FR-013 in src/components/Hardware/ImportReportPanel.jsx without discarding the file
+- [x] T031 [US2] Build src/components/Hardware/ImportReportPanel.jsx showing added, replaced and skipped with a reason for each
 
 **Checkpoint**: User Stories 1 and 2 both work independently.
 

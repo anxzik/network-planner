@@ -112,13 +112,35 @@ export function LibraryProvider({ children }) {
     return result;
   }, [refresh]);
 
+  const exportLibrary = useCallback(async (ids) => {
+    const bridge = window.networkPlanner?.library;
+    if (!bridge) return { ok: false, error: { code: 'STORAGE_FAILED', message: 'The catalogue is not available here.' } };
+    return bridge.exportLibrary(ids);
+  }, []);
+
+  const previewImport = useCallback(async () => {
+    const bridge = window.networkPlanner?.library;
+    if (!bridge) return { ok: false, error: { code: 'STORAGE_FAILED', message: 'The catalogue is not available here.' } };
+    return bridge.previewImport();
+  }, []);
+
+  const importLibrary = useCallback(async (payload) => {
+    const bridge = window.networkPlanner?.library;
+    if (!bridge) return { ok: false, error: { code: 'STORAGE_FAILED', message: 'The catalogue is not available here.' } };
+    const result = await bridge.importLibrary(payload);
+    if (result.ok) await refresh();
+    return result;
+  }, [refresh]);
+
   const value = useMemo(
     () => ({
       types, categories, status, error, refresh,
       createType, updateType, removeType, restoreShipped, markApproved, placementsOf,
+      exportLibrary, previewImport, importLibrary,
     }),
     [types, categories, status, error, refresh,
-     createType, updateType, removeType, restoreShipped, markApproved, placementsOf],
+     createType, updateType, removeType, restoreShipped, markApproved, placementsOf,
+     exportLibrary, previewImport, importLibrary],
   );
 
   return <LibraryContext.Provider value={value}>{children}</LibraryContext.Provider>;

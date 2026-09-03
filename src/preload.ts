@@ -12,6 +12,9 @@ const library = {
   restoreShipped: (id: string) => ipcRenderer.invoke('library:restoreShipped', id),
   markApproved: (id: string, approved: boolean) =>
     ipcRenderer.invoke('library:markApproved', id, approved),
+  exportLibrary: (ids?: string[]) => ipcRenderer.invoke('library:export', ids),
+  previewImport: () => ipcRenderer.invoke('library:previewImport'),
+  importLibrary: (payload: unknown) => ipcRenderer.invoke('library:import', payload),
 };
 
 contextBridge.exposeInMainWorld('networkPlanner', { library });

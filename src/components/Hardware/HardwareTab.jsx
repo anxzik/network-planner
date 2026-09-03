@@ -1,17 +1,32 @@
 // The Hardware tab (T012, extended by US1): browse the catalogue, select a
 // type, edit it, or create a new one. Thin: state here is which type is open.
 import {useState} from 'react';
-import {HardDrive, Plus} from 'lucide-react';
+import {Download, HardDrive, Plus, Upload} from 'lucide-react';
 import ApplianceEditor from './ApplianceEditor';
 import ApplianceGrid from './ApplianceGrid';
+import ImportReportPanel from './ImportReportPanel';
 import {useLibrary} from '../../context/LibraryContext';
 import {useSettings} from '../../context/SettingsContext';
 
 function HardwareTab() {
-  const { types, status, error } = useLibrary();
+  const { types, status, error, exportLibrary, previewImport } = useLibrary();
   const { currentTheme } = useSettings();
   const [selectedId, setSelectedId] = useState(null);
   const [creating, setCreating] = useState(false);
+  const [preview, setPreview] = useState(null);
+  const [notice, setNotice] = useState(null);
+
+  const startImport = async () => {
+    const result = await previewImport();
+    if (result.ok) setPreview(result.value);
+    else if (result.error.code !== 'CANCELLED') setNotice(result.error.message);
+  };
+
+  const doExport = async () => {
+    const result = await exportLibrary();
+    if (result.ok) setNotice(`Exported ${result.value.types} types to ${result.value.fileName}.`);
+    else if (result.error.code !== 'CANCELLED') setNotice(result.error.message);
+  };
 
   const selected = types.find((t) => t.id === selectedId) || null;
   const editorOpen = creating || selected !== null;
@@ -28,15 +43,28 @@ function HardwareTab() {
             {status === 'unavailable' && 'The catalogue is not available here.'}
             {status === 'error' && (error?.message || 'The catalogue could not be read.')}
           </span>
+          <button onClick={startImport}
+            className="ml-auto flex items-center gap-1 px-3 py-1.5 rounded text-sm border"
+            style={{ borderColor: currentTheme.border, color: currentTheme.text }}>
+            <Upload size={14} /> Import
+          </button>
+          <button onClick={doExport}
+            className="flex items-center gap-1 px-3 py-1.5 rounded text-sm border"
+            style={{ borderColor: currentTheme.border, color: currentTheme.text }}>
+            <Download size={14} /> Export
+          </button>
           <button
             onClick={() => { setSelectedId(null); setCreating(true); }}
-            className="ml-auto flex items-center gap-1 px-3 py-1.5 rounded text-sm font-medium text-white"
+            className="flex items-center gap-1 px-3 py-1.5 rounded text-sm font-medium text-white"
             style={{ backgroundColor: currentTheme.primary }}
           >
             <Plus size={14} /> New
           </button>
         </div>
 
+        {notice && (
+          <div className="text-xs mb-2" style={{ color: currentTheme.textSecondary }}>{notice}</div>
+        )}
         {status === 'ready' && (
           <ApplianceGrid
             types={types}
@@ -45,6 +73,10 @@ function HardwareTab() {
           />
         )}
       </div>
+
+      {preview && (
+        <ImportReportPanel preview={preview} onClose={() => setPreview(null)} />
+      )}
 
       {editorOpen && (
         <ApplianceEditor

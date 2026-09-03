@@ -1,7 +1,8 @@
 // IPC handlers for the hardware library. Dialogs, paths and the store stay on
 // this side of the boundary; the renderer sees only the envelope defined in
 // specs/002-hardware-library/contracts/preload-bridge.md.
-import { app, ipcMain } from 'electron';
+import { app, dialog, ipcMain } from 'electron';
+import fs from 'node:fs';
 import path from 'node:path';
 import { CatalogueStore } from './catalogueStore';
 // The same pure validation the renderer runs, run again here: the main process
@@ -9,6 +10,12 @@ import { CatalogueStore } from './catalogueStore';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- plain JS module, typed loosely on purpose
 import { validateApplianceType } from '../utils/applianceValidation.js';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore -- plain JS module, typed loosely on purpose
+import { readLibraryFile, serialiseLibrary } from '../utils/libraryFile.js';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore -- plain JS module, typed loosely on purpose
+import { detectCollisions, mergeImport } from '../utils/importMerge.js';
 import { seedIfEmpty } from './seed';
 
 type Envelope<T> =
@@ -121,6 +128,98 @@ export function initLibrary(): void {
     if (typeof id !== 'string') return fail('VALIDATION_FAILED', 'An appliance type id must be text.');
     const updated = store.markApproved(id, approved === true);
     return updated ? ok(updated) : fail('VALIDATION_FAILED', `No appliance type is named ${id}.`);
+  });
+
+  // FR-006, FR-007. The dialog, the path and the write all stay here. The
+  // renderer learns the file's name and size, never a reusable path - the
+  // contract's table promised { path } and its own constraints forbid it;
+  // the constraint wins, recorded as a deviation in the commit.
+  ipcMain.handle('library:export', async (_event, ids: unknown) => {
+    if (!store) return fail('STORAGE_FAILED', 'The catalogue is not open.');
+    const all = store.listTypes();
+    const wanted = Array.isArray(ids) && ids.length > 0
+      ? all.filter((t) => (ids as unknown[]).includes(t.id))
+      : all;
+    const picked = await dialog.showSaveDialog({
+      title: 'Export the hardware library',
+      defaultPath: 'hardware-library.json',
+      filters: [{ name: 'Library files', extensions: ['json'] }],
+    });
+    if (picked.canceled || !picked.filePath) return fail('CANCELLED', 'Nothing was exported.');
+    try {
+      const text = serialiseLibrary({ applianceTypes: wanted as unknown as never[] }) as string;
+      fs.writeFileSync(picked.filePath, text);
+      return ok({
+        fileName: picked.filePath.split(/[\\/]/).pop(),
+        types: wanted.length,
+        bytes: Buffer.byteLength(text),
+      });
+    } catch (err) {
+      return fail('STORAGE_FAILED', `The export could not be written: ${String(err)}`);
+    }
+  });
+
+  // FR-009: collisions are decided before anything is written. The parsed
+  // entries travel to the renderer as data; the path does not.
+  ipcMain.handle('library:previewImport', async () => {
+    if (!store) return fail('STORAGE_FAILED', 'The catalogue is not open.');
+    const picked = await dialog.showOpenDialog({
+      title: 'Import a library file',
+      properties: ['openFile'],
+      filters: [{ name: 'Library files', extensions: ['json'] }],
+    });
+    if (picked.canceled || picked.filePaths.length === 0) {
+      return fail('CANCELLED', 'Nothing was imported.');
+    }
+    let text: string;
+    try {
+      text = fs.readFileSync(picked.filePaths[0], 'utf8');
+    } catch (err) {
+      return fail('FILE_UNREADABLE', `The file could not be read: ${String(err)}`);
+    }
+    const parsed = readLibraryFile(text) as {
+      kind: string; message?: string; formatWarning: string | null;
+      entries: Array<Record<string, unknown>>; skipped: Array<{ id: string; reason: string }>;
+    };
+    if (parsed.kind === 'unreadable') return fail('FILE_UNREADABLE', parsed.message ?? 'Unreadable file.');
+    const collisions = detectCollisions(parsed.entries, store.listTypes()) as Array<{
+      incoming: Record<string, unknown>; existing: Record<string, unknown>;
+    }>;
+    return ok({
+      entries: parsed.entries,
+      collisions,
+      unreadable: parsed.skipped,
+      formatWarning: parsed.formatWarning,
+    });
+  });
+
+  // FR-010, FR-011: the merge is pure and re-run here against the store's own
+  // state; the batch write is atomic in applyImport.
+  ipcMain.handle('library:import', (_event, payload: unknown) => {
+    if (!store) return fail('STORAGE_FAILED', 'The catalogue is not open.');
+    const { entries, resolutions, unreadable } = (payload ?? {}) as {
+      entries?: Array<Record<string, unknown>>;
+      resolutions?: Record<string, string>;
+      unreadable?: Array<{ id: string; reason: string }>;
+    };
+    if (!Array.isArray(entries)) return fail('VALIDATION_FAILED', 'The import carried no entries.');
+    const merged = mergeImport(entries, store.listTypes(), resolutions ?? {}) as {
+      add: Array<Record<string, unknown>>; replace: Array<Record<string, unknown>>;
+      skipped: Array<{ id: string; reason: string }>;
+      report: { added: number; replaced: number; skipped: number };
+    };
+    try {
+      store.applyImport(merged.add, merged.replace);
+    } catch (err) {
+      return fail('STORAGE_FAILED', `Nothing was applied: ${String(err)}`);
+    }
+    const skipped = [...(unreadable ?? []), ...merged.skipped];
+    return ok({
+      added: merged.add.map((t) => ({ id: t.id, name: t.name })),
+      replaced: merged.replace.map((t) => ({ id: t.id, name: t.name })),
+      skipped,
+      report: { ...merged.report, skipped: skipped.length },
+    });
   });
 }
 
