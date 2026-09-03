@@ -18,6 +18,7 @@ _No pages yet_
 
 - [Electron runtime facts](pages/reference-electron-runtime.md) — bundled Node, node:sqlite availability
 - [Library interchange format](pages/reference-library-file-format.md) — JSON with a leading format version
+- [Packaging fuses and what they constrain](pages/reference-packaging-fuses.md) — security hardening as architectural constraint
 
 ## Howto
 
