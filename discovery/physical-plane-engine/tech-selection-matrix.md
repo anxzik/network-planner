@@ -97,8 +97,21 @@ Leaflet keeps both paths open.
 
 ## Recommendation
 
-**A short-listed set needing PoC validation: MapLibre GL first, Leaflet as the
-fallback.** Not a final selection, because the deciding question is executable.
+**Selected: MapLibre GL.**
+
+> Updated 2026-09-03: the proof of concept this shortlist was conditional on has
+> run and passed six checks of six ([poc-result.md](poc-result.md)): scale exact
+> to three decimals, anchoring to half a pixel, a two-metre drag to two decimal
+> places, offline, in this project's own Electron runtime. The Leaflet fallback
+> exercise was conditional on MapLibre failing by learning curve, and it did
+> not fail. Two findings carry forward into the plane-architecture work: vector
+> floorplans need rasterising before MapLibre's image source accepts them, and
+> module scripts do not load from file:// origins outside the bundler.
+
+The original shortlist reasoning is preserved below as written.
+
+A short-listed set needing PoC validation: MapLibre GL first, Leaflet as the
+fallback. Not a final selection, because the deciding question is executable.
 
 The one thing to prove is the requirement's hardest sentence: a georeferenced
 building floorplan, overlaid to scale, zoomed from street level down to rack
