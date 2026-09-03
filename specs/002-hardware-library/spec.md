@@ -148,7 +148,7 @@ manufacturer, by category, and by searching for its model.
   type.
 - The library grows large enough that loading it delays application start.
 - A plan is opened whose recorded definition of a type differs from the
-  library's current one.
+  library's current one, and the person declines the offer to update it.
 - Someone without permission attempts to change equipment marked approved.
 
 ## Requirements *(mandatory)*
@@ -171,6 +171,9 @@ manufacturer, by category, and by searching for its model.
   contain the types it places.
 - **FR-005c**: When a placed appliance's recorded definition differs from the
   library's current one, the application MUST make clear which is shown.
+- **FR-005d**: When a placed appliance's recorded definition differs from the
+  library's current one, the application MUST offer to update the plan's copy to
+  the current definition, and MUST NOT change it unless the person accepts.
 - **FR-006**: The application MUST be able to export appliance types to a file,
   either the whole library or a selection.
 - **FR-007**: An export MUST contain everything needed to recreate the types
@@ -276,7 +279,8 @@ manufacturer, by category, and by searching for its model.
 - **Logic to extract**: validating an appliance type, deciding whether an import
   is well-formed and what version it declares, detecting collisions and applying
   the chosen resolution, merging a library, distinguishing shipped from edited
-  types, and searching and filtering. All of it takes data and returns data, and
+  types, comparing a plan's recorded definition against the catalogue, and
+  searching and filtering. All of it takes data and returns data, and
   belongs in `src/utils/` with co-located tests.
 - **Left in the component**: the library browser, the type editor form, the
   import collision prompt, and file pickers. These display what the logic
@@ -310,6 +314,8 @@ manufacturer, by category, and by searching for its model.
 - **SC-010**: Editing a type in the library never alters a plan made earlier.
 - **SC-011**: Equipment marked approved cannot be changed by someone without
   permission.
+- **SC-012**: A correction made in the library can reach a plan built on the old
+  definition, without that plan changing on its own.
 
 ## Assumptions
 

@@ -40,6 +40,10 @@ an identifier. Corrections do not propagate, so a genuine error in a type,
 a wrong port count, stays wrong in every plan already built on it, and there is
 no mechanism here to push a fix forward. Someone will eventually want one.
 
+> Since resolved: [ADR 0012](0012-updating-a-diverged-plan.md) adds an offer to
+> update a plan whose recorded definition has diverged. One plan at a time, and
+> only when the person accepts.
+
 Two definitions of the same model can now coexist: the library's current one and
 an older copy inside a plan. The interface has to make clear which is being
 shown, or people will edit the library and wonder why the canvas disagrees.

@@ -1,7 +1,7 @@
 {
   "feature": "002-hardware-library",
   "spec_hash": "sha256:2a69f4623377fc997f4ab3a2147d8514b786ab0ee5b2a35e398fb03e86102c72",
-  "spec_self_validation": "passed",
+  "spec_self_validation": "stale",
   "spec_validated_at": "2026-09-03T11:54:39Z",
   "spec_critical_count": 10,
   "spec_missed_items": [
@@ -11,7 +11,7 @@
   ],
   "review_status": "not-required",
   "approval_status": "allowed",
-  "notes": "Run 4: 5/8. Runs so far 1/7, 4/8, 6/8, 5/8. EC-1 corrected from run 3. EC-9 missed for the second consecutive run with the same answer both times (offer to update a diverged plan), which reads as a requirement the spec lacks rather than a misreading. EC-2 answered with upgrade-on-import, a behaviour the spec does not have. EC-8 is a genuine miss: SC-007 exists but has no baseline.",
+  "notes": "Run 4: 5/8. Runs so far 1/7, 4/8, 6/8, 5/8. EC-1 corrected from run 3. EC-9 missed for the second consecutive run with the same answer both times (offer to update a diverged plan), which reads as a requirement the spec lacks rather than a misreading. EC-2 answered with upgrade-on-import, a behaviour the spec does not have. EC-8 is a genuine miss: SC-007 exists but has no baseline. Spec revised again to add FR-005d and SC-012, folding in the EC-9 answer given twice. Tasks and plan updated to name the wider deferred range.",
   "tasks_hash": "sha256:0918126a96f842fd5b607fb6eaa9aa686dbc4bb8b5d9ae4198ee85c1d86b16d6",
   "tasks_self_validation": "stale",
   "tasks_validated_at": "2026-09-03T03:16:33Z",

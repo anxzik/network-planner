@@ -232,6 +232,7 @@ Deferred in plan.md and deliberately absent here:
 
 - **FR-029 and FR-030**, restricting change to approved equipment. Blocked on R4
   in research.md. T022 ships the flag only.
-- **FR-005a to FR-005c**, plans recording the definition they were placed with.
-  Blocked on R5: project files do not exist yet.
+- **FR-005a to FR-005d**, plans recording the definition they were placed with,
+  and being offered the library's current one when the two diverge. Blocked on
+  R5: project files do not exist yet.
 - **SC-007** cannot be judged until T002 records a baseline.

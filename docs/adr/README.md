@@ -22,6 +22,7 @@ behind both were arrived at.
 | [0009](0009-map-data-source.md) | Geographic maps use online tiles and degrade offline | Accepted |
 | [0010](0010-hardware-library-database.md) | Keep the hardware library in a local database | Accepted |
 | [0011](0011-plans-snapshot-appliance-types.md) | A plan keeps its own copy of every appliance type it places | Accepted |
+| [0012](0012-updating-a-diverged-plan.md) | A plan can be offered the library's current definition | Accepted |
 
 ## Open
 

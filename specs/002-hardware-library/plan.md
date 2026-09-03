@@ -152,9 +152,10 @@ Recorded so they are not mistaken for oversights:
   there is no established identity in a single-user desktop application, and the
   three possible mechanisms differ enormously in cost. FR-028, marking equipment
   approved, still ships, and the flag is designed so a mechanism attaches later.
-- **FR-005a to FR-005c** (a plan recording the definition it was placed with).
-  Blocked on R5: the project file format does not exist yet. Until this lands,
-  editing a type still changes what existing plans resolve, which is exactly
-  what ADR 0011 exists to prevent.
+- **FR-005a to FR-005d** (a plan recording the definition it was placed with,
+  and being offered the current one when they diverge). Blocked on R5: the
+  project file format does not exist yet. Until this lands, editing a type still
+  changes what existing plans resolve, which is exactly what ADR 0011 exists to
+  prevent.
 - **SC-007** cannot be evaluated without a start-time baseline. Measure before
   implementing.

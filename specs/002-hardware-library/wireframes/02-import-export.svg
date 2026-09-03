@@ -139,12 +139,14 @@
       <rect x="138" width="62" height="20" rx="10" fill="#ea580c"/><text x="169" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-003</text>
     </g>
     <text x="490" y="126" font-size="14" font-weight="bold" fill="#1f2937">6. Plans travel without the catalogue</text>
-    <text x="490" y="147" font-size="14" fill="#374151">A plan carries its own copy of every type it places.</text>
+    <text x="490" y="147" font-size="14" fill="#374151">A plan carries its own copy, and is offered the current one when they differ.</text>
     <g transform="translate(490, 157)">
       <rect x="0" width="70" height="20" rx="10" fill="#2563eb"/><text x="35" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-005b</text>
       <rect x="77" width="70" height="20" rx="10" fill="#2563eb"/><text x="112" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-005c</text>
-      <rect x="154" width="62" height="20" rx="10" fill="#ea580c"/><text x="185" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-009</text>
-      <rect x="223" width="62" height="20" rx="10" fill="#ea580c"/><text x="254" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-010</text>
+      <rect x="154" width="70" height="20" rx="10" fill="#2563eb"/><text x="189" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-005d</text>
+      <rect x="231" width="62" height="20" rx="10" fill="#ea580c"/><text x="262" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-009</text>
+      <rect x="300" width="62" height="20" rx="10" fill="#ea580c"/><text x="331" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-010</text>
+      <rect x="369" width="62" height="20" rx="10" fill="#ea580c"/><text x="400" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-012</text>
     </g>
     <text x="956" y="126" font-size="14" font-weight="bold" fill="#1f2937">7. Deferred to the project file work</text>
     <text x="956" y="147" font-size="14" fill="#374151">The copies above need a plan format that does not exist yet.</text>
