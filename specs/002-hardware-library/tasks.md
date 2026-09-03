@@ -30,7 +30,7 @@ behavioural module in `src/utils/` to carry a co-located test.
 
 - [x] T001 Verify baseline is green: `npm run lint && npm test && npm run typecheck`
 - [x] T002 Export the current catalogue and keep it in specs/002-hardware-library/ as an older-format fixture, so FR-013a can be tested against a real file
-- [ ] T003 [P] Confirm `node:sqlite` loads in a packaged build, not only under `npm start`, using `npm run package` on one target
+- [x] T003 [P] Confirm `node:sqlite` loads in a packaged build, not only under `npm start`, using `npm run package` on one target
 
 ---
 

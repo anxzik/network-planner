@@ -127,13 +127,20 @@ What would have to be exercised to close this. None of it has been run.
 
 | Check | Windows | macOS | Linux |
 |---|---|---|---|
-| Module loads in the packaged main process | ✗ | ✗ | ✗ |
+| Module loads in the packaged main process | ✗ | ✗ | ✓ |
 | Database created at its intended location | ✗ | ✗ | ✗ |
 | Write survives an unclean shutdown | ✗ | ✗ | ✗ |
 | Behaviour with the application already running | ✗ | ✗ | ✗ |
 
-Development-mode availability is established on Linux only, and by a method the
-packaged build disables.
+The Linux cell was closed on 3 September 2026 (task T003). A temporary probe in
+the main process, packaged with the project's own configuration and run from the
+fused binary, opened an in-memory database and answered a query:
+`T003_PROBE_OK {"node":"24.11.1","electron":"40.0.0","sqliteVersion":"3.50.4","packaged":true}`.
+The fuses on that binary were read back before the run and match
+`forge.config.ts`, including RunAsNode disabled, so the evidence can only have
+come from inside the packaged main process. The probe was reverted after
+capture. Windows and macOS remain unexercised, and the database file location
+remains unspecified.
 
 ## Fallbacks or Degradation
 
