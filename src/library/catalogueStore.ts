@@ -126,6 +126,95 @@ export class CatalogueStore {
     }
   }
 
+  createType(draft: Record<string, unknown>): ApplianceTypeRow {
+    const now = new Date().toISOString();
+    const id = typeof draft.id === 'string' && draft.id.trim() !== ''
+      ? String(draft.id)
+      : `local-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    this.db.prepare(
+      `INSERT INTO appliance_types
+         (id, name, manufacturer, model, category, description, planes, icon,
+          color, specifications, origin, approved, edited_from_shipped,
+          shipped_definition, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'local', 0, 0, NULL, ?, ?)`,
+    ).run(
+      id, String(draft.name), String(draft.manufacturer), String(draft.model),
+      String(draft.category), String(draft.description ?? ''),
+      JSON.stringify(draft.planes ?? []), String(draft.icon ?? ''),
+      String(draft.color ?? ''), JSON.stringify(draft.specifications ?? {}),
+      now, now,
+    );
+    return this.getType(id) as ApplianceTypeRow;
+  }
+
+  updateType(id: string, changes: Record<string, unknown>): ApplianceTypeRow | null {
+    const existing = this.getType(id);
+    if (!existing) return null;
+    const next = { ...existing, ...changes };
+    // Editing a shipped type marks it, and the original stays in
+    // shipped_definition for FR-003; a later release changing the shipped
+    // definition does not overwrite this row (FR-025 keeps the person's copy).
+    const editedFromShipped = existing.origin === 'shipped' ? 1
+      : existing.editedFromShipped ? 1 : 0;
+    this.db.prepare(
+      `UPDATE appliance_types SET
+         name = ?, manufacturer = ?, model = ?, category = ?, description = ?,
+         planes = ?, icon = ?, color = ?, specifications = ?,
+         edited_from_shipped = ?, updated_at = ?
+       WHERE id = ?`,
+    ).run(
+      String(next.name), String(next.manufacturer), String(next.model),
+      String(next.category), String(next.description ?? ''),
+      JSON.stringify(next.planes ?? []), String(next.icon ?? ''),
+      String(next.color ?? ''), JSON.stringify(next.specifications ?? {}),
+      editedFromShipped, new Date().toISOString(), id,
+    );
+    return this.getType(id);
+  }
+
+  // FR-004: a person may delete types they created. Shipped types are
+  // restorable, not deletable.
+  removeType(id: string): { removed: boolean; reason?: string } {
+    const existing = this.getType(id);
+    if (!existing) return { removed: false, reason: 'missing' };
+    if (existing.origin === 'shipped') return { removed: false, reason: 'shipped' };
+    this.db.prepare('DELETE FROM appliance_types WHERE id = ?').run(id);
+    return { removed: true };
+  }
+
+  // FR-003: the original definition rides in shipped_definition from seeding.
+  restoreShipped(id: string): ApplianceTypeRow | null {
+    const row = this.db
+      .prepare('SELECT shipped_definition FROM appliance_types WHERE id = ?')
+      .get(id) as SqlRow | undefined;
+    if (!row || row.shipped_definition == null) return null;
+    const original = JSON.parse(String(row.shipped_definition)) as Record<string, unknown>;
+    this.db.prepare(
+      `UPDATE appliance_types SET
+         name = ?, manufacturer = ?, model = ?, category = ?, description = ?,
+         planes = ?, icon = ?, color = ?, specifications = ?,
+         edited_from_shipped = 0, updated_at = ?
+       WHERE id = ?`,
+    ).run(
+      String(original.name), String(original.manufacturer), String(original.model),
+      String(original.category), String(original.description ?? ''),
+      JSON.stringify(original.planes ?? []), String(original.icon ?? ''),
+      String(original.color ?? ''), JSON.stringify(original.specifications ?? {}),
+      new Date().toISOString(), id,
+    );
+    return this.getType(id);
+  }
+
+  // FR-028: the flag ships; enforcement is deferred pending research R4.
+  markApproved(id: string, approved: boolean): ApplianceTypeRow | null {
+    const existing = this.getType(id);
+    if (!existing) return null;
+    this.db.prepare(
+      'UPDATE appliance_types SET approved = ?, updated_at = ? WHERE id = ?',
+    ).run(approved ? 1 : 0, new Date().toISOString(), id);
+    return this.getType(id);
+  }
+
   close(): void {
     this.db.close();
   }

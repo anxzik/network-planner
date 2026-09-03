@@ -60,19 +60,19 @@ behavioural module in `src/utils/` to carry a co-located test.
 
 ### Tests for User Story 1
 
-- [ ] T013 [P] [US1] Write src/utils/applianceValidation.test.js covering required fields, plane membership, portless types, and the port-count limit
+- [x] T013 [P] [US1] Write src/utils/applianceValidation.test.js covering required fields, plane membership, portless types, and the port-count limit
 
 ### Implementation for User Story 1
 
-- [ ] T014 [P] [US1] Implement src/utils/applianceValidation.js for FR-001, FR-019, FR-020 and FR-024, pure, no React imports
-- [ ] T015 [US1] Add create, update and delete to src/library/catalogueStore.ts (depends on T007, T014)
-- [ ] T016 [US1] Add `restoreShipped` to src/library/catalogueStore.ts using the stored `shippedDefinition` for FR-003
-- [ ] T017 [US1] Add `usage(id)` to src/library/catalogueStore.ts so FR-005 can refuse deletion and name the plans
-- [ ] T018 [US1] Return `TYPE_IN_USE` from delete in src/library/ipc.ts when a type is placed, per contracts/preload-bridge.md
-- [ ] T019 [US1] Build the type editor in src/components/Hardware/ApplianceEditor.jsx
-- [ ] T020 [US1] Build the appliance grid in src/components/Hardware/ApplianceGrid.jsx, marking edited and locally added types for FR-018
-- [ ] T021 [US1] Implement the portless confirmation flow for FR-020 in src/components/Hardware/ApplianceEditor.jsx, passing `confirmedNoPorts` through src/preload.ts
-- [ ] T022 [US1] Add the approved flag to src/library/schema.ts and `markApproved` to src/library/catalogueStore.ts for FR-028, leaving enforcement to a later feature
+- [x] T014 [P] [US1] Implement src/utils/applianceValidation.js for FR-001, FR-019, FR-020 and FR-024, pure, no React imports
+- [x] T015 [US1] Add create, update and delete to src/library/catalogueStore.ts (depends on T007, T014)
+- [x] T016 [US1] Add `restoreShipped` to src/library/catalogueStore.ts using the stored `shippedDefinition` for FR-003
+- [x] T017 [US1] Add `usage(id)` to src/library/catalogueStore.ts so FR-005 can refuse deletion and name the plans
+- [x] T018 [US1] Return `TYPE_IN_USE` from delete in src/library/ipc.ts when a type is placed, per contracts/preload-bridge.md
+- [x] T019 [US1] Build the type editor in src/components/Hardware/ApplianceEditor.jsx
+- [x] T020 [US1] Build the appliance grid in src/components/Hardware/ApplianceGrid.jsx, marking edited and locally added types for FR-018
+- [x] T021 [US1] Implement the portless confirmation flow for FR-020 in src/components/Hardware/ApplianceEditor.jsx, passing `confirmedNoPorts` through src/preload.ts
+- [x] T022 [US1] Add the approved flag to src/library/schema.ts and `markApproved` to src/library/catalogueStore.ts for FR-028, leaving enforcement to a later feature
 
 **Checkpoint**: User Story 1 is fully functional and testable on its own.
 

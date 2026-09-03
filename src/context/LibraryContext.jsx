@@ -2,6 +2,7 @@
 // what came back; decisions about the data belong in src/utils/, and the
 // bridge itself is defined in specs/002-hardware-library/contracts/.
 import {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
+import {useNetwork} from './NetworkContext';
 
 const LibraryContext = createContext(null);
 
@@ -29,6 +30,11 @@ export function LibraryProvider({ children }) {
     }
   }, []);
 
+  // The only topology that exists today lives in this renderer (ADR 0008 is a
+  // later feature), so FR-005's in-use check happens here, against the live
+  // plan, before a delete is allowed to reach the main process.
+  const { nodes } = useNetwork();
+
   // Event-handler path: a person pressing refresh may see the loading state.
   const refresh = useCallback(async () => {
     const bridge = window.networkPlanner?.library;
@@ -51,9 +57,68 @@ export function LibraryProvider({ children }) {
     };
   }, [applyResult]);
 
+  const placementsOf = useCallback(
+    (typeId) => nodes
+      .filter((n) => n.data?.device?.id === typeId)
+      .map((n) => n.data?.label || n.id),
+    [nodes],
+  );
+
+  const createType = useCallback(async (draft) => {
+    const bridge = window.networkPlanner?.library;
+    if (!bridge) return { ok: false, error: { code: 'STORAGE_FAILED', message: 'The catalogue is not available here.' } };
+    const result = await bridge.create(draft);
+    if (result.ok) await refresh();
+    return result;
+  }, [refresh]);
+
+  const updateType = useCallback(async (id, changes) => {
+    const bridge = window.networkPlanner?.library;
+    if (!bridge) return { ok: false, error: { code: 'STORAGE_FAILED', message: 'The catalogue is not available here.' } };
+    const result = await bridge.update(id, changes);
+    if (result.ok) await refresh();
+    return result;
+  }, [refresh]);
+
+  const removeType = useCallback(async (id) => {
+    // FR-005: refused while placed, naming where it is in use.
+    const placed = placementsOf(id);
+    if (placed.length > 0) {
+      return { ok: false, error: {
+        code: 'TYPE_IN_USE',
+        message: `This type is placed in the current topology as ${placed.join(', ')}. Remove those first.`,
+      } };
+    }
+    const bridge = window.networkPlanner?.library;
+    if (!bridge) return { ok: false, error: { code: 'STORAGE_FAILED', message: 'The catalogue is not available here.' } };
+    const result = await bridge.remove(id);
+    if (result.ok) await refresh();
+    return result;
+  }, [placementsOf, refresh]);
+
+  const restoreShipped = useCallback(async (id) => {
+    const bridge = window.networkPlanner?.library;
+    if (!bridge) return { ok: false, error: { code: 'STORAGE_FAILED', message: 'The catalogue is not available here.' } };
+    const result = await bridge.restoreShipped(id);
+    if (result.ok) await refresh();
+    return result;
+  }, [refresh]);
+
+  const markApproved = useCallback(async (id, approved) => {
+    const bridge = window.networkPlanner?.library;
+    if (!bridge) return { ok: false, error: { code: 'STORAGE_FAILED', message: 'The catalogue is not available here.' } };
+    const result = await bridge.markApproved(id, approved);
+    if (result.ok) await refresh();
+    return result;
+  }, [refresh]);
+
   const value = useMemo(
-    () => ({ types, categories, status, error, refresh }),
-    [types, categories, status, error, refresh],
+    () => ({
+      types, categories, status, error, refresh,
+      createType, updateType, removeType, restoreShipped, markApproved, placementsOf,
+    }),
+    [types, categories, status, error, refresh,
+     createType, updateType, removeType, restoreShipped, markApproved, placementsOf],
   );
 
   return <LibraryContext.Provider value={value}>{children}</LibraryContext.Provider>;

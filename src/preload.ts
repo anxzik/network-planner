@@ -6,6 +6,12 @@ import { contextBridge, ipcRenderer } from 'electron';
 const library = {
   list: () => ipcRenderer.invoke('library:list'),
   get: (id: string) => ipcRenderer.invoke('library:get', id),
+  create: (draft: unknown) => ipcRenderer.invoke('library:create', draft),
+  update: (id: string, changes: unknown) => ipcRenderer.invoke('library:update', id, changes),
+  remove: (id: string) => ipcRenderer.invoke('library:remove', id),
+  restoreShipped: (id: string) => ipcRenderer.invoke('library:restoreShipped', id),
+  markApproved: (id: string, approved: boolean) =>
+    ipcRenderer.invoke('library:markApproved', id, approved),
 };
 
 contextBridge.exposeInMainWorld('networkPlanner', { library });
