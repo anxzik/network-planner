@@ -2,13 +2,13 @@ installed:
 - atlas
 - brownfield
 - diagram
-- doctor
 - extensify
 - fix-findings
 - github-issues
 - grill
 - product
 - spec-validate
+- speckit-utils
 - status
 - status-report
 - time-machine
@@ -54,6 +54,14 @@ hooks:
     prompt: Generate wireframes for this feature now?
     description: Offer wireframe generation after spec creation
     condition: null
+  - extension: speckit-utils
+    command: speckit.speckit-utils.doctor
+    enabled: true
+    optional: true
+    priority: 10
+    prompt: Run project health check?
+    description: Validate project health after specification generation
+    condition: null
   after_clarify:
   - extension: product
     command: speckit.product.brief
@@ -80,6 +88,14 @@ hooks:
     priority: 10
     prompt: Ingest this feature's research and plan decisions into the project wiki?
     description: Compound the feature's verified research into the wiki after planning
+    condition: null
+  - extension: speckit-utils
+    command: speckit.speckit-utils.validate
+    enabled: true
+    optional: true
+    priority: 10
+    prompt: Validate spec-to-task traceability?
+    description: Verify requirements map to planned tasks after planning
     condition: null
   after_tasks:
   - extension: diagram

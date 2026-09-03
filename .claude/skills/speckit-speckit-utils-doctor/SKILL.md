@@ -1,5 +1,5 @@
 ---
-name: speckit-doctor
+name: speckit-speckit-utils-doctor
 description: 'Validate project health: templates, agent config, scripts, constitution, and feature artifacts'
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:

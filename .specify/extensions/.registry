@@ -65,21 +65,6 @@
       "registered_skills": [],
       "installed_at": "2026-09-02T23:30:08.425183+00:00"
     },
-    "doctor": {
-      "version": "1.0.0",
-      "source": "local",
-      "manifest_hash": "sha256:45150c8ac10b6b002ebea9de34a203911951fe3a89cb8635a2a149082c02eeed",
-      "enabled": true,
-      "priority": 10,
-      "registered_commands": {
-        "claude": [
-          "speckit.doctor.check",
-          "speckit.doctor"
-        ]
-      },
-      "registered_skills": [],
-      "installed_at": "2026-09-02T23:30:09.887409+00:00"
-    },
     "extensify": {
       "version": "1.1.0",
       "source": "local",
@@ -259,6 +244,25 @@
       },
       "registered_skills": [],
       "installed_at": "2026-09-02T23:31:05.823326+00:00"
+    },
+    "speckit-utils": {
+      "version": "1.0.0",
+      "source": "local",
+      "manifest_hash": "sha256:e4970a3d868ad26c27c2b7b57cec58a017b0f6d31e1186dd64ca30c8e8da7721",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "claude": [
+          "speckit.speckit-utils.resume",
+          "speckit.resume",
+          "speckit.speckit-utils.doctor",
+          "speckit.doctor",
+          "speckit.speckit-utils.validate",
+          "speckit.validate"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-09-03T00:14:32.847979+00:00"
     }
   }
 }
