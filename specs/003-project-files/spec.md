@@ -4,6 +4,18 @@
 **Created**: 2026-09-03
 **Status**: Draft
 
+## UI Mockup
+
+Signed off: 2026-09-03
+
+- Files, recents and the migration: [`wireframes/01-files-and-migration.svg`](./wireframes/01-files-and-migration.svg) (light theme)
+- Recorded definitions and format lifecycle: [`wireframes/02-recorded-definitions.svg`](./wireframes/02-recorded-definitions.svg) (light theme)
+
+These wireframes are spec constraints. Implementation should match their
+layout, component structure, and interaction flow. Deviations require spec
+revision. Drawing 02 reflects the folded FR-021: a newer-format plan opens
+read-only and is never written back.
+
 ## User Scenarios & Testing *(mandatory)*
 
 A plan is the most valuable thing a person makes in this application, and today
