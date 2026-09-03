@@ -57,7 +57,13 @@ secure**. What "secure" requires here is not yet settled, and the range is wide:
   suit an organisation curating a standard set. Not decided, and related to the
   open question about locking shipped types.
 
-Integrity is adopted now. Encryption and access control are recorded as open
-until someone states the threat being defended against, because the answer
-changes substantially depending on whether the concern is a shared workstation,
-a lost laptop, or an untrusted colleague.
+**Resolved**: integrity and access control are both in scope. An organisation
+curating a standard set of equipment must be able to mark it approved and
+restrict who may change it, which is the concern that motivated the database.
+This also settles the separate open question about locking shipped types: the
+same mechanism covers both, since approved equipment is approved regardless of
+whether it shipped with the application or was added locally.
+
+Encryption at rest stays open. It defends a different threat, someone with the
+machine's storage rather than someone using the application, and no one has
+stated that threat yet.

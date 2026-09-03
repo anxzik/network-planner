@@ -64,6 +64,19 @@ not review record by record; FR-011 compensates by requiring a report. And
 "secure" is adopted only as integrity, with encryption and access control left
 open in ADR 0010 until a threat model exists.
 
+**Second validation run scored 4 of 8**, up from 1 of 7. Three of the four
+misses were product preferences rather than misreadings and have since been
+folded in: plans now keep their own copy of every type they place (ADR 0011),
+a portless type requires confirmation before saving, and "secure" now includes
+access control over approved equipment, which also settles whether shipped types
+can be locked.
+
+ADR 0011 changes the shape of this feature more than its wording suggests. Plans
+became self-contained, which answered the open question about a plan arriving on
+a machine that lacks its equipment. It also introduced a new one: a corrected
+definition no longer reaches plans already built on the old one, and nothing
+here pushes a fix forward.
+
 **Deliberately out of scope**: integration with GNU Radio, GNS3 and similar
 tooling, named in CONTEXT.md as item 12. This feature is the foundation those
 would import into.

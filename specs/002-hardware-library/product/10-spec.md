@@ -40,12 +40,12 @@ fixed list, and the cost of changing it grows with each one.
 
 ## Assumptions
 
-- The catalogue belongs to the person, not one plan.
-  Wrong if plans must open anywhere unchanged.
+- The catalogue belongs to the person; plans keep copies.
+  Wrong if corrections must reach existing plans.
 - Symbols stay sharp at any zoom level.
   Wrong if flat images prove good enough.
-- Shipped equipment is editable, the original recoverable.
-  Wrong if approved kit must stay locked.
+- Approved equipment is locked; everything else is editable.
+  Wrong if teams need to fork approved kit freely.
 - Serial numbers belong to a placed unit.
   Wrong if planning tracks individual assets.
 
@@ -118,13 +118,12 @@ fixed list, and the cost of changing it grows with each one.
 **Risks**:
 
 - People may not curate a catalogue if exporting feels laborious.
-- Deleting a type used in existing plans could confuse or alarm.
+- Locking approved equipment may frustrate people mid-task.
 - Edits to shipped equipment may conflict with a later release.
 - A catalogue of thousands may slow the application at start.
 
 **Open questions**:
 
-- Should the catalogue belong to the person, or travel inside each plan?
-- What happens when a plan arrives referencing equipment the recipient lacks?
 - How long should application start take before people notice?
-- Should an organisation be able to lock its approved equipment against editing?
+- Should the catalogue be encrypted on disk, and against whom?
+- How does a corrected definition reach plans already built on it?

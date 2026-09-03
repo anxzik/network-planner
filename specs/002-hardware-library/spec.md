@@ -131,6 +131,9 @@ manufacturer, by category, and by searching for its model.
 - Editing a shipped type, then a later application release changes that same
   type.
 - The library grows large enough that loading it delays application start.
+- A plan is opened whose recorded definition of a type differs from the
+  library's current one.
+- Someone without permission attempts to change equipment marked approved.
 
 ## Requirements *(mandatory)*
 
@@ -145,8 +148,13 @@ manufacturer, by category, and by searching for its model.
 - **FR-004**: A person MUST be able to delete an appliance type they created.
 - **FR-005**: The application MUST refuse to delete an appliance type that any
   topology still places, and MUST tell the person where it is in use.
-- **FR-005a**: When an appliance type is edited, topologies that already place
-  it MUST remain openable and MUST NOT lose their placed appliances.
+- **FR-005a**: When an appliance type is placed, the topology MUST record the
+  definition it was placed with. Editing the type in the library MUST NOT change
+  topologies built earlier.
+- **FR-005b**: A topology MUST open correctly on a machine whose library does not
+  contain the types it places.
+- **FR-005c**: When a placed appliance's recorded definition differs from the
+  library's current one, the application MUST make clear which is shown.
 - **FR-006**: The application MUST be able to export appliance types to a file,
   either the whole library or a selection.
 - **FR-007**: An export MUST contain everything needed to recreate the types
@@ -174,9 +182,9 @@ manufacturer, by category, and by searching for its model.
 - **FR-018**: Types a person created or edited MUST be distinguishable from
   those that shipped with the application.
 - **FR-019**: An appliance type MUST record which plane or planes it belongs to.
-- **FR-020**: An appliance type MUST be able to have no ports, and the
-  application MUST tell the person it will not be connectable until ports are
-  added.
+- **FR-020**: An appliance type MUST be able to have no ports. Before saving one,
+  the application MUST ask the person to confirm, stating that it will not be
+  connectable until ports are added.
 - **FR-021**: The port layout on an appliance type MUST support the port kinds
   the application already generates — copper ethernet at several speeds, the SFP
   and QSFP families, fibre, coax, RJ11 and WAN — and per-port-group speed and
@@ -194,6 +202,11 @@ manufacturer, by category, and by searching for its model.
   library.
 - **FR-027**: An interrupted or failed write MUST NOT leave the catalogue
   damaged or partly written.
+- **FR-028**: An appliance type MUST be markable as approved.
+- **FR-029**: The application MUST restrict who may change or delete an approved
+  appliance type, whether it shipped with the application or was added locally.
+- **FR-030**: An attempt to change an approved type without permission MUST be
+  refused and MUST say why.
 
 ### Key Entities
 
@@ -232,6 +245,9 @@ manufacturer, by category, and by searching for its model.
   single topology and available to every plan ([ADR 0010](../../docs/adr/0010-hardware-library-database.md)).
   It is not stored inside a project file. Library files remain how a catalogue
   moves between machines; the database is how it is held and queried on one.
+  Separately, each project file carries its own copy of every type it places
+  ([ADR 0011](../../docs/adr/0011-plans-snapshot-appliance-types.md)), so a plan
+  does not depend on the receiving machine's catalogue.
 - **Shape change**: yes. The catalogue moves from application source to data the
   person owns, and gains a recorded format version.
 - **Migration**: the 131 shipped types must be carried into the new form
@@ -273,6 +289,11 @@ manufacturer, by category, and by searching for its model.
 - **SC-007**: Application start is not noticeably slower with a library of
   several thousand types than with the shipped 131.
 - **SC-008**: An interrupted write never damages the catalogue.
+- **SC-009**: A plan opens correctly on a machine that has never seen the
+  equipment it places.
+- **SC-010**: Editing a type in the library never alters a plan made earlier.
+- **SC-011**: Equipment marked approved cannot be changed by someone without
+  permission.
 
 ## Assumptions
 
