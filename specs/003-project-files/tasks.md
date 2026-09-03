@@ -34,7 +34,7 @@ users lose work without US2); they are still independently testable.
 Per Constitution Principle I, logic goes in `src/utils/` with a test; components
 stay thin. Divergence math, format classification, upgrades, salvage and
 pruning decisions are all pure. The wireframes signed off in spec.md
-(`wireframes/01-files-and-migration.svg`, `wireframes/02-recorded-definitions.svg`)
+(`wireframes/01-files-and-migration.svg`, `wireframes/02-recorded-definitions.svg`, `wireframes/03-adoption-and-preserved.svg`)
 are binding layout constraints on every renderer task.
 
 ---
@@ -120,7 +120,7 @@ are binding layout constraints on every renderer task.
 - [ ] T033 [US3] Create `src/components/Plans/BroadApplyPanel.jsx`: which plans would change, choose all/some/none, per-plan results with unreachable entries listed honestly, per wireframe 02 (FR-018, SC-005)
 - [ ] T034 [P] [US3] Create `src/utils/typeAdoption.js` + `src/utils/typeAdoption.test.js`: pure decisions for FR-025 — which recorded definitions are absent from the catalogue and therefore adoptable, which are already present and must be skipped rather than overwritten, and the locally-created catalogue row an adopted definition becomes (`origin: 'local'`, `adoptedFromPlan`)
 - [ ] T035 [US3] Implement `adoptable` and `adopt` handlers in `src/plans/ipc.ts` over `src/utils/typeAdoption.js`, writing through the existing catalogue store in `src/library/catalogueStore.ts`; the plan document is read-only input and MUST be byte-identical after an adopt (FR-025)
-- [ ] T036 [US3] Create `src/components/Plans/AdoptTypesPanel.jsx`: the after-open, per-type adopt offer — never a precondition of opening, declining changes nothing. **Wireframe pass needed first**: drawing 02 was signed off before FR-025 and shows no adopt surface (FR-025)
+- [ ] T036 [US3] Create `src/components/Plans/AdoptTypesPanel.jsx`: the after-open, per-type adopt offer per wireframe 03 — never a precondition of opening, an already-present type shown greyed and labelled skipped, declining changes nothing (FR-025)
 - [ ] T037 [US3] Verify quickstart 5, 5b, 6 and 7 (pure logic automated, panels by hand) and gates green
 
 **Checkpoint**: A plan is self-contained and truthful; corrections travel only by consent.
@@ -148,7 +148,7 @@ are binding layout constraints on every renderer task.
 ## Phase 7: Polish & Cross-Cutting Concerns
 
 - [ ] T045 [P] Create `src/utils/preservedArtifacts.js` + `src/utils/preservedArtifacts.test.js`: pure naming and retention decisions for FR-024 — the slot name for each kind, whether an occurrence replaces or leaves an existing slot alone, and whether a given artifact has become redundant (upgraded plan saved whole, salvage accepted and written) and may therefore be *offered* for clearing
-- [ ] T046 List and clear preserved artifacts: `listPreserved(planId)` / `clearPreserved(planId, kind)` handlers in `src/plans/ipc.ts` over `src/utils/preservedArtifacts.js`, and `src/components/Plans/PreservedArtifactsPanel.jsx` showing what exists for a plan with a clear action — offered when redundant, never performed unasked (FR-024)
+- [ ] T046 List and clear preserved artifacts: `listPreserved(planId)` / `clearPreserved(planId, kind)` handlers in `src/plans/ipc.ts` over `src/utils/preservedArtifacts.js`, and `src/components/Plans/PreservedArtifactsPanel.jsx` per wireframe 03 — each slot named, its own Clear action, the redundant one distinguished; offered when redundant, never performed unasked (FR-024)
 - [ ] T047 [P] Two-instance behaviour: wire the lock sidecar from `src/plans/planStore.ts` into `open` so a second opener gets `LOCKED` → read-only with notice; stale locks (dead pid or aged) are ignored; verify quickstart 13 by hand (R6)
 - [ ] T048 [P] Edge-case sweep with tests where pure: save onto a path holding a different plan (ordinary overwrite after the dialog's own confirm), open-plan file renamed/moved/deleted externally (surfaced on next save as `SAVE_FAILED`-style report, not a crash), and a recorded definition failing today's validation rules (rendered anyway per FR-015, flagged in the divergence panel) in `src/utils/planFile.test.js` / `src/utils/planDivergence.test.js`
 - [ ] T049 Keep files under 500 lines: check `src/plans/ipc.ts` and `src/context/PlanContext.jsx` sizes; split if breached
@@ -186,8 +186,5 @@ increments; US4's T038 (format versioning) is cheap insurance worth pulling
 forward if release timing threatens to slip, since FR-019 is already satisfied
 by T003 writing `formatVersion` from the first file.
 
-**One blocked task**: T036 (AdoptTypesPanel) cannot be built to a signed-off
-drawing — FR-025 was folded after wireframe 02 was approved, and the drawing
-shows no adopt surface. Run a wireframe pass for it before that task, or build
-T034/T035 (the pure logic and the handlers, both fully testable without UI) and
-leave the panel until the drawing catches up.
+**No blocked tasks.** Wireframe 03 closed the gap FR-024 and FR-025 opened:
+every renderer task in this feature now has an approved drawing behind it.

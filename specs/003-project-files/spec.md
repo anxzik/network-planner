@@ -10,16 +10,18 @@ Signed off: 2026-09-03
 
 - Files, recents and the migration: [`wireframes/01-files-and-migration.svg`](./wireframes/01-files-and-migration.svg) (light theme)
 - Recorded definitions and format lifecycle: [`wireframes/02-recorded-definitions.svg`](./wireframes/02-recorded-definitions.svg) (light theme)
+- Adopting types and preserved copies: [`wireframes/03-adoption-and-preserved.svg`](./wireframes/03-adoption-and-preserved.svg) (light theme, signed off 2026-09-03)
 
 These wireframes are spec constraints. Implementation should match their
 layout, component structure, and interaction flow. Deviations require spec
 revision. Drawing 02 reflects the folded FR-021: a newer-format plan opens
 read-only and is never written back.
 
-**Open against this sign-off**: FR-025 (adopting a plan's recorded definitions
-into the catalogue) was folded after these drawings were approved, and drawing
-02 shows no adopt surface. The sign-off stands for everything it depicts; the
-adopt offer needs a wireframe pass before its UI is built.
+Drawing 03 was added after 01 and 02 were approved, to cover the two
+requirements folded later: FR-025 (adopting a plan's recorded definitions) and
+FR-024 (bounded preserved copies), together with FR-006's three prompt outcomes
+and FR-021's extended Save As warning. Coverage across the set is complete:
+25/25 functional requirements, 7/7 success criteria, 4/4 user stories.
 
 ## User Scenarios & Testing *(mandatory)*
 
