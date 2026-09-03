@@ -1,8 +1,9 @@
 import {useState} from 'react';
-import {Calculator, ClipboardList, Cpu, GitBranch, Layers, List, Network, Settings, Share2} from 'lucide-react';
+import {Calculator, ClipboardList, Cpu, GitBranch, HardDrive, Layers, List, Network, Settings, Share2} from 'lucide-react';
 import DeviceLibrary from './components/DeviceLibrary/DeviceLibrary';
 import NetworkCanvas from './components/Canvas/NetworkCanvas';
 import SettingsModal from './components/Settings/SettingsModal';
+import {HardwareTab} from './components/Hardware';
 import ListView from './components/ListView/ListView';
 import SubnetCalculator from './components/SubnetCalculator/SubnetCalculator';
 import VlanConfigPanel from './components/VlanConfig/VlanConfigPanel';
@@ -87,6 +88,17 @@ function App() {
               >
                 <Calculator size={14} />
                 Calculator
+              </button>
+              <button
+                onClick={() => setActiveView('hardware')}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all"
+                style={{
+                  backgroundColor: activeView === 'hardware' ? currentTheme.surface : 'transparent',
+                  color: activeView === 'hardware' ? currentTheme.primary : currentTheme.textSecondary,
+                }}
+              >
+                <HardDrive size={14} />
+                Hardware
               </button>
             </div>
           </div>
@@ -276,6 +288,9 @@ function App() {
             <div className="flex-1 relative">
               <ListView />
             </div>
+          ) : activeView === 'hardware' ? (
+            /* Hardware Library */
+            <HardwareTab />
           ) : (
             /* Calculator View */
             <div className="flex-1 relative overflow-y-auto">

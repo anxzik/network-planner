@@ -272,6 +272,10 @@ manufacturer, by category, and by searching for its model.
   single topology and available to every plan ([ADR 0010](../../docs/adr/0010-hardware-library-database.md)).
   It is not stored inside a project file. Library files remain how a catalogue
   moves between machines; the database is how it is held and queried on one.
+  The database file lives in the application's per-user data directory, under
+  the name `catalogue.db`, outside the read-only packaged archive - the location
+  question `compatibility-discovery.md` required settling before storage code
+  was written.
   Separately, each project file carries its own copy of every type it places
   ([ADR 0011](../../docs/adr/0011-plans-snapshot-appliance-types.md)), so a plan
   does not depend on the receiving machine's catalogue.

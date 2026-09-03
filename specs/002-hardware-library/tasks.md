@@ -40,13 +40,13 @@ behavioural module in `src/utils/` to carry a co-located test.
 
 - [x] T004 [P] Transcribe the 131 shipped appliance types from src/data/devices.js into src/utils/shippedTypes.js, preserving every id, category and port group, and mapping the existing physical and logical viewType values onto plane membership for FR-019
 - [x] T005 [P] Write src/utils/shippedTypes.test.js asserting 131 types, 19 categories, ids unchanged, all 16 port kinds still representable, and every type carrying at least one plane
-- [ ] T006 Define the catalogue schema and its schema version in src/library/schema.ts per data-model.md, including the required `planes` field for FR-019
-- [ ] T007 Implement the SQLite-backed store in src/library/catalogueStore.ts, confining every `node:sqlite` call to this file
-- [ ] T008 Implement first-run seeding in src/library/seed.ts, loading src/utils/shippedTypes.js into the catalogue
-- [ ] T009 Create the context bridge in src/preload.ts exposing `window.networkPlanner.library` per contracts/preload-bridge.md
-- [ ] T010 Register IPC handlers in src/library/ipc.ts and wire them into src/main.ts, keeping all dialogs and paths in the main process
-- [ ] T011 Create src/context/LibraryContext.jsx holding catalogue state and calling the bridge
-- [ ] T012 Create the Hardware tab shell in src/components/Hardware/HardwareTab.jsx and src/components/Hardware/index.js
+- [x] T006 Define the catalogue schema and its schema version in src/library/schema.ts per data-model.md, including the required `planes` field for FR-019
+- [x] T007 Implement the SQLite-backed store in src/library/catalogueStore.ts, confining every `node:sqlite` call to this file
+- [x] T008 Implement first-run seeding in src/library/seed.ts, loading src/utils/shippedTypes.js into the catalogue
+- [x] T009 Create the context bridge in src/preload.ts exposing `window.networkPlanner.library` per contracts/preload-bridge.md
+- [x] T010 Register IPC handlers in src/library/ipc.ts and wire them into src/main.ts, keeping all dialogs and paths in the main process
+- [x] T011 Create src/context/LibraryContext.jsx holding catalogue state and calling the bridge
+- [x] T012 Create the Hardware tab shell in src/components/Hardware/HardwareTab.jsx and src/components/Hardware/index.js
 
 **Checkpoint**: the application starts, the catalogue seeds with 131 types, and the renderer can read them through the bridge.
 
