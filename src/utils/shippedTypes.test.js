@@ -1,6 +1,14 @@
 import {describe, expect, it} from 'vitest';
+import fs from 'node:fs';
 import {shippedCategories, shippedTypeById, shippedTypes} from './shippedTypes';
-import {deviceCategories, devices} from '../data/devices';
+
+// The source of truth for faithfulness is the frozen pre-feature capture
+// (T002): devices.js itself was deleted once its consumers moved to the
+// catalogue (T047), and the fixture is the record of what shipped.
+const legacy = JSON.parse(fs.readFileSync(
+  'specs/002-hardware-library/fixtures/legacy-catalogue-v0.json', 'utf8'));
+const devices = legacy.devices;
+const deviceCategories = legacy.deviceCategories;
 
 // The sixteen kinds portFactory generates, plus one this test discovered:
 // endpoint-rpizero ships with a usb port group that portFactory has never

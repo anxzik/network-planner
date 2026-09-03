@@ -150,16 +150,16 @@ behavioural module in `src/utils/` to carry a co-located test.
 
 ## Phase 7: Polish & Cross-Cutting Concerns
 
-- [ ] T045 Point src/components/DeviceLibrary/DeviceLibrary.jsx at LibraryContext instead of src/data/devices.js
-- [ ] T046 Point src/components/Settings/DeviceLibrarySettings.jsx at LibraryContext instead of src/data/devices.js
-- [ ] T047 Delete src/data/devices.js and the tracked src/data/devices.js.backup once T045 and T046 are verified
-- [ ] T048 Verify FR-027 against src/library/catalogueStore.ts by interrupting a large import and confirming the catalogue is intact on restart
-- [ ] T049 Extract any logic that accumulated in components back into src/utils/
-- [ ] T050 Run every scenario in specs/002-hardware-library/quickstart.md
-- [ ] T051 Run `npm run lint` — must pass
-- [ ] T052 Run `npm test` — must pass
-- [ ] T053 Run `npm run typecheck` — must pass
-- [ ] T054 Verify in the packaged app: `npm start`
+- [x] T045 Point src/components/DeviceLibrary/DeviceLibrary.jsx at LibraryContext instead of src/data/devices.js
+- [x] T046 Point src/components/Settings/DeviceLibrarySettings.jsx at LibraryContext instead of src/data/devices.js
+- [x] T047 Delete src/data/devices.js and the tracked src/data/devices.js.backup once T045 and T046 are verified
+- [x] T048 Verify FR-027 against src/library/catalogueStore.ts by interrupting a large import and confirming the catalogue is intact on restart
+- [x] T049 Extract any logic that accumulated in components back into src/utils/
+- [x] T050 Run every scenario in specs/002-hardware-library/quickstart.md
+- [x] T051 Run `npm run lint` — must pass
+- [x] T052 Run `npm test` — must pass
+- [x] T053 Run `npm run typecheck` — must pass
+- [x] T054 Verify in the packaged app: `npm start`
 
 ---
 

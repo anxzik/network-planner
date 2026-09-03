@@ -44,7 +44,9 @@ export function LibraryProvider({ children }) {
   // Filters ride along in a ref so mutations refetch with the current search
   // without refresh changing identity on every keystroke.
   const filtersRef = useRef(filters);
-  filtersRef.current = filters;
+  useEffect(() => {
+    filtersRef.current = filters;
+  }, [filters]);
   const refresh = useCallback(async (nextFilters) => {
     const bridge = window.networkPlanner?.library;
     if (!bridge) return;

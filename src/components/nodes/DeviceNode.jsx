@@ -57,7 +57,6 @@ function DeviceNode({ data, selected }) {
             backgroundColor: `${device.color}20`,
           }}
         >
-          {/* eslint-disable-next-line react-hooks/static-components */}
           {imported ? (
           <img
             alt=""
@@ -65,6 +64,10 @@ function DeviceNode({ data, selected }) {
             style={{ width: 24, height: 24 }}
           />
         ) : (
+          /* eslint-disable-next-line react-hooks/static-components -- the
+             icon component is a lookup from a fixed map, the file's
+             long-standing pattern; my branch insertion had orphaned the
+             original directive two elements up */
           <IconComponent
             size={32}
             style={{ color: device.color }}
