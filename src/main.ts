@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import { closeLibrary, initLibrary } from './library/ipc';
+import { closePlans, initPlans } from './plans/ipc';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 
@@ -36,6 +37,7 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
   initLibrary();
+  initPlans();
   createWindow();
 });
 
@@ -44,6 +46,10 @@ app.on('ready', () => {
 // explicitly with Cmd + Q.
 app.on('quit', () => {
   closeLibrary();
+  // Best-effort: Electron does not await this. A lock left behind by a quit
+  // that outran it carries a dead pid, which the next open reads as stale and
+  // ignores — the fallback R6 was designed around rather than a leak.
+  void closePlans();
 });
 
 app.on('window-all-closed', () => {

@@ -1,0 +1,182 @@
+// IPC handlers for plan files. Dialogs, paths and file handles stay on this
+// side of the boundary; the renderer sees only the envelope defined in
+// specs/003-project-files/contracts/plans-bridge.md, and never a reusable path
+// — recents cross as opaque ids.
+import { app, ipcMain } from 'electron';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { PlanState, type RecentEntry, type RecoverySlot } from './recents';
+import { readPlan, releaseLock, takeLock } from './planStore';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore -- plain JS module, typed loosely on purpose
+import { readPlanFile } from '../utils/planFile.js';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore -- plain JS module, typed loosely on purpose
+import { findByPath, forDisplay, recordOpen, removeEntry } from '../utils/recentsPrune.js';
+
+type Envelope<T> =
+  | { ok: true; value: T }
+  | { ok: false; error: { code: string; message: string } };
+
+const ok = <T>(value: T): Envelope<T> => ({ ok: true, value });
+const fail = (code: string, message: string): Envelope<never> => ({
+  ok: false,
+  error: { code, message },
+});
+
+let state: PlanState | null = null;
+
+// What this window currently has open. The path lives here and never crosses
+// the bridge; `readOnly` is the flag main enforces `save` against (R5).
+interface OpenPlan {
+  path: string;
+  name: string;
+  readOnly: boolean;
+}
+let openPlan: OpenPlan | null = null;
+
+async function exists(target: string): Promise<boolean> {
+  try {
+    await fs.access(target);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// Opening a file: read, classify, then decide what the renderer may do with it.
+// Every branch here is a classification planFile.js already made; this function
+// only turns those into a lock, a mode and a notice.
+async function openAtPath(target: string): Promise<Envelope<unknown>> {
+  const read = await readPlan(target);
+  if (!read.ok) return fail('FILE_UNREADABLE', read.message);
+
+  const classified = readPlanFile(read.text);
+  if (classified.kind === 'unreadable') {
+    // The file is left exactly as it is; nothing here writes to it (FR-022).
+    return fail('FILE_UNREADABLE', classified.message ?? 'The plan could not be read.');
+  }
+  if (classified.kind === 'older') {
+    // Bringing a file forward is a separate step with its own copy-aside
+    // obligation, so this build declines to open it rather than silently
+    // showing content it has not upgraded.
+    return fail(
+      'FILE_UNREADABLE',
+      classified.message ?? 'This plan was written in an older format.',
+    );
+  }
+
+  // A second window on the same plan reads it but may not write it (R6).
+  const lock = await takeLock(target);
+  const lockedOut = !lock.held;
+  // A newer format is read-only and never written back (FR-021).
+  const readOnly = classified.kind === 'newer' || lockedOut;
+
+  if (openPlan && openPlan.path !== target) await releaseLock(openPlan.path);
+  const name = path.basename(target);
+  openPlan = { path: target, name, readOnly };
+
+  if (state) {
+    const entries = await state.readRecents();
+    await state.writeRecents(
+      recordOpen(entries, { path: target, name, at: new Date().toISOString() }) as RecentEntry[],
+    );
+  }
+
+  return ok({
+    document: classified.document,
+    name,
+    readOnly,
+    notice: lockedOut
+      ? 'This plan is open in another window, so it is read-only here.'
+      : classified.message,
+    notUnderstood: classified.notUnderstood ?? [],
+  });
+}
+
+export function initPlans(): void {
+  // Beside the catalogue database, not inside it (R3).
+  state = new PlanState(app.getPath('userData'));
+
+  ipcMain.handle('plans:listRecents', async () => {
+    if (!state) return fail('STORAGE_FAILED', 'Plan state is not open.');
+    const entries = await state.readRecents();
+    const existsByPath: Record<string, boolean> = {};
+    for (const entry of entries) existsByPath[entry.path] = await exists(entry.path);
+    // A vanished file is marked, never dropped (FR-007).
+    return ok({ recents: forDisplay(entries, existsByPath) });
+  });
+
+  ipcMain.handle('plans:removeRecent', async (_event, id: unknown) => {
+    if (!state) return fail('STORAGE_FAILED', 'Plan state is not open.');
+    if (typeof id !== 'string') return fail('VALIDATION_FAILED', 'A recent entry needs an id.');
+    const entries = await state.readRecents();
+    await state.writeRecents(removeEntry(entries, id) as RecentEntry[]);
+    return ok({ removed: true });
+  });
+
+  ipcMain.handle('plans:openRecent', async (_event, id: unknown) => {
+    if (!state) return fail('STORAGE_FAILED', 'Plan state is not open.');
+    if (typeof id !== 'string') return fail('VALIDATION_FAILED', 'A recent entry needs an id.');
+    const entry = findByPath(await state.readRecents(), id);
+    if (!entry) return fail('FILE_UNREADABLE', 'That plan is no longer in the recent list.');
+    return openAtPath(entry.path);
+  });
+
+  ipcMain.handle('plans:recoverySlot', async () => {
+    if (!state) return fail('STORAGE_FAILED', 'Plan state is not open.');
+    const slot = await state.readRecoverySlot();
+    // The slot names no path to the renderer, only whether it had a home.
+    return ok(
+      slot
+        ? {
+            document: slot.document,
+            capturedAt: slot.capturedAt,
+            reason: slot.reason,
+            name: slot.sourcePath ? path.basename(slot.sourcePath) : null,
+          }
+        : null,
+    );
+  });
+
+  ipcMain.handle('plans:saveRecovery', async (_event, payload: unknown) => {
+    if (!state) return fail('STORAGE_FAILED', 'Plan state is not open.');
+    if (typeof payload !== 'object' || payload === null) {
+      return fail('VALIDATION_FAILED', 'A recovery capture needs a document.');
+    }
+    const { document, reason } = payload as { document?: unknown; reason?: unknown };
+    if (typeof document !== 'object' || document === null) {
+      return fail('VALIDATION_FAILED', 'A recovery capture needs a document.');
+    }
+    const slot: RecoverySlot = {
+      document: document as Record<string, unknown>,
+      sourcePath: openPlan ? openPlan.path : null,
+      capturedAt: new Date().toISOString(),
+      reason: reason === 'discarded' ? 'discarded' : 'crash',
+    };
+    await state.writeRecoverySlot(slot);
+    return ok({ captured: true });
+  });
+
+  // Cleared by a successful save or by the person declining the restore offer
+  // — never by a discard, which is what keeps Escape safe (FR-006a).
+  ipcMain.handle('plans:clearRecovery', async () => {
+    if (!state) return fail('STORAGE_FAILED', 'Plan state is not open.');
+    await state.clearRecoverySlot();
+    return ok({ cleared: true });
+  });
+}
+
+export async function closePlans(): Promise<void> {
+  if (openPlan) {
+    await releaseLock(openPlan.path);
+    openPlan = null;
+  }
+  state = null;
+}
+
+// Used by the handlers this module gains later: save must refuse a plan opened
+// read-only in main, not only in the UI (R5).
+export function currentPlan(): OpenPlan | null {
+  return openPlan;
+}
