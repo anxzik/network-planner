@@ -263,6 +263,25 @@
       },
       "registered_skills": [],
       "installed_at": "2026-09-03T00:14:32.847979+00:00"
+    },
+    "discovery": {
+      "version": "0.2.0",
+      "source": "local",
+      "manifest_hash": "sha256:9e724bc23a6290c9e0e3433282a8bcb4e8f9d432efdd86a60c7c153a6fb718e1",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "claude": [
+          "speckit.discovery.feasibility",
+          "speckit.discovery.techselect",
+          "speckit.discovery.codebase",
+          "speckit.discovery.codebase-api-imp",
+          "speckit.discovery.poc",
+          "speckit.discovery.decision"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-09-03T13:01:34.443755+00:00"
     }
   }
 }
