@@ -134,15 +134,15 @@ behavioural module in `src/utils/` to carry a co-located test.
 
 ### Tests for User Story 4
 
-- [ ] T039 [P] [US4] Write src/utils/catalogueQuery.test.js covering search matching, category and plane filters, and origin filtering
+- [x] T039 [P] [US4] Write src/utils/catalogueQuery.test.js covering search matching, category and plane filters, and origin filtering
 
 ### Implementation for User Story 4
 
-- [ ] T040 [P] [US4] Implement src/utils/catalogueQuery.js as pure predicates and query shaping for FR-017
-- [ ] T041 [US4] Implement `list(query)` in src/library/catalogueStore.ts so filtering happens in SQL rather than by loading everything, per FR-026
-- [ ] T042 [US4] Build src/components/Hardware/CategoryRail.jsx with category counts
-- [ ] T043 [US4] Add search and plane filtering to src/components/Hardware/HardwareTab.jsx
-- [ ] T044 [US4] Distinguish person-created and edited types visually in src/components/Hardware/ApplianceGrid.jsx for FR-018
+- [x] T040 [P] [US4] Implement src/utils/catalogueQuery.js as pure predicates and query shaping for FR-017
+- [x] T041 [US4] Implement `list(query)` in src/library/catalogueStore.ts so filtering happens in SQL rather than by loading everything, per FR-026
+- [x] T042 [US4] Build src/components/Hardware/CategoryRail.jsx with category counts
+- [x] T043 [US4] Add search and plane filtering to src/components/Hardware/HardwareTab.jsx
+- [x] T044 [US4] Distinguish person-created and edited types visually in src/components/Hardware/ApplianceGrid.jsx for FR-018
 
 **Checkpoint**: all four user stories are independently functional.
 

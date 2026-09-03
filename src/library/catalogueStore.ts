@@ -5,6 +5,9 @@
 // not make them. Anything that decides belongs in src/utils/ with a test.
 import { DatabaseSync } from 'node:sqlite';
 import { SCHEMA_STATEMENTS, SCHEMA_VERSION } from './schema';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore -- plain JS module, typed loosely on purpose
+import { buildTypeQuery } from '../utils/catalogueQuery.js';
 
 export interface ApplianceTypeRow {
   id: string;
@@ -62,11 +65,29 @@ export class CatalogueStore {
     return Number(row.n);
   }
 
-  listTypes(): ApplianceTypeRow[] {
+  listTypes(filters?: Record<string, unknown>): ApplianceTypeRow[] {
+    // FR-026: the filter runs in SQL; the whole catalogue is never loaded to
+    // answer a search. The clause is shaped by the pure module and only bound
+    // here.
+    const q = buildTypeQuery(filters ?? {}) as { where: string; params: string[] };
     const rows = this.db
-      .prepare('SELECT * FROM appliance_types ORDER BY category, name')
-      .all() as SqlRow[];
+      .prepare(`SELECT * FROM appliance_types ${q.where} ORDER BY category, name`)
+      .all(...q.params) as SqlRow[];
     return rows.map(rowToType);
+  }
+
+  // Unfiltered tallies for the category rail; grouped in SQL for the same
+  // FR-026 reason.
+  countsByCategory(): { byCategory: Record<string, number>; local: number } {
+    const rows = this.db
+      .prepare('SELECT category, COUNT(*) AS n FROM appliance_types GROUP BY category')
+      .all() as SqlRow[];
+    const byCategory: Record<string, number> = {};
+    for (const r of rows) byCategory[String(r.category)] = Number(r.n);
+    const local = this.db
+      .prepare(`SELECT COUNT(*) AS n FROM appliance_types WHERE origin = 'local'`)
+      .get() as SqlRow;
+    return { byCategory, local: Number(local.n) };
   }
 
   getType(id: string): ApplianceTypeRow | null {

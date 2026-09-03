@@ -1,7 +1,7 @@
 // Catalogue state for the renderer. Reads through the preload bridge and holds
 // what came back; decisions about the data belong in src/utils/, and the
 // bridge itself is defined in specs/002-hardware-library/contracts/.
-import {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
+import {createContext, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {useNetwork} from './NetworkContext';
 
 const LibraryContext = createContext(null);
@@ -15,6 +15,8 @@ export function LibraryProvider({ children }) {
   const [types, setTypes] = useState([]);
   const [categories, setCategories] = useState([]);
   const [symbolSets, setSymbolSets] = useState([]);
+  const [counts, setCounts] = useState({ byCategory: {}, local: 0 });
+  const [filters, setFiltersState] = useState({});
   // 'loading' | 'ready' | 'error' | 'unavailable'
   const [status, setStatus] = useState(() => (bridgeAvailable() ? 'loading' : 'unavailable'));
   const [error, setError] = useState(null);
@@ -24,6 +26,7 @@ export function LibraryProvider({ children }) {
       setTypes(result.value.types);
       setCategories(result.value.categories);
       setSymbolSets(result.value.symbolSets ?? []);
+      setCounts(result.value.counts ?? { byCategory: {}, local: 0 });
       setError(null);
       setStatus('ready');
     } else {
@@ -38,12 +41,21 @@ export function LibraryProvider({ children }) {
   const { nodes } = useNetwork();
 
   // Event-handler path: a person pressing refresh may see the loading state.
-  const refresh = useCallback(async () => {
+  // Filters ride along in a ref so mutations refetch with the current search
+  // without refresh changing identity on every keystroke.
+  const filtersRef = useRef(filters);
+  filtersRef.current = filters;
+  const refresh = useCallback(async (nextFilters) => {
     const bridge = window.networkPlanner?.library;
     if (!bridge) return;
     setStatus('loading');
-    applyResult(await bridge.list());
+    applyResult(await bridge.list(nextFilters ?? filtersRef.current));
   }, [applyResult]);
+
+  const setFilters = useCallback(async (nextFilters) => {
+    setFiltersState(nextFilters);
+    await refresh(nextFilters);
+  }, [refresh]);
 
   // Mount path: everything happens after the await, and a result that lands
   // after unmount is dropped rather than applied.
@@ -154,11 +166,11 @@ export function LibraryProvider({ children }) {
 
   const value = useMemo(
     () => ({
-      types, categories, symbolSets, status, error, refresh,
+      types, categories, symbolSets, counts, filters, setFilters, status, error, refresh,
       createType, updateType, removeType, restoreShipped, markApproved, placementsOf,
       exportLibrary, previewImport, importLibrary, importSymbols, symbolById,
     }),
-    [types, categories, symbolSets, status, error, refresh,
+    [types, categories, symbolSets, counts, filters, setFilters, status, error, refresh,
      createType, updateType, removeType, restoreShipped, markApproved, placementsOf,
      exportLibrary, previewImport, importLibrary, importSymbols, symbolById],
   );

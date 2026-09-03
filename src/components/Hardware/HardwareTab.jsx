@@ -4,12 +4,13 @@ import {useState} from 'react';
 import {Download, HardDrive, Plus, Upload} from 'lucide-react';
 import ApplianceEditor from './ApplianceEditor';
 import ApplianceGrid from './ApplianceGrid';
+import CategoryRail from './CategoryRail';
 import ImportReportPanel from './ImportReportPanel';
 import {useLibrary} from '../../context/LibraryContext';
 import {useSettings} from '../../context/SettingsContext';
 
 function HardwareTab() {
-  const { types, status, error, exportLibrary, previewImport } = useLibrary();
+  const { types, status, error, exportLibrary, previewImport, filters, setFilters } = useLibrary();
   const { currentTheme } = useSettings();
   const [selectedId, setSelectedId] = useState(null);
   const [creating, setCreating] = useState(false);
@@ -33,6 +34,7 @@ function HardwareTab() {
 
   return (
     <div className="flex flex-1 overflow-hidden" style={{ color: currentTheme.text }}>
+      <CategoryRail />
       <div className="flex-1 overflow-y-auto p-4">
         <div className="flex items-center gap-2 mb-3">
           <HardDrive size={18} style={{ color: currentTheme.primary }} />
@@ -43,6 +45,14 @@ function HardwareTab() {
             {status === 'unavailable' && 'The catalogue is not available here.'}
             {status === 'error' && (error?.message || 'The catalogue could not be read.')}
           </span>
+          <input
+            type="search"
+            placeholder="Search model or manufacturer"
+            value={filters.search || ''}
+            onChange={(e) => setFilters({ ...filters, search: e.target.value || undefined })}
+            className="w-64 rounded border px-2 py-1.5 text-sm"
+            style={{ borderColor: currentTheme.border, backgroundColor: currentTheme.background, color: currentTheme.text }}
+          />
           <button onClick={startImport}
             className="ml-auto flex items-center gap-1 px-3 py-1.5 rounded text-sm border"
             style={{ borderColor: currentTheme.border, color: currentTheme.text }}>

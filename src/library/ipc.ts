@@ -45,13 +45,16 @@ export function initLibrary(): void {
       (result.seeded ? ' (seeded on first run)' : ''),
   );
 
-  ipcMain.handle('library:list', () => {
+  ipcMain.handle('library:list', (_event, filters: unknown) => {
     if (!store) return fail('STORAGE_FAILED', 'The catalogue is not open.');
     try {
       return ok({
-        types: store.listTypes(),
+        types: store.listTypes(
+          typeof filters === 'object' && filters !== null
+            ? (filters as Record<string, unknown>) : {}),
         categories: store.listCategories(),
         symbolSets: store.listSymbolSets(),
+        counts: store.countsByCategory(),
       });
     } catch (err) {
       return fail('STORAGE_FAILED', `The catalogue could not be read: ${String(err)}`);

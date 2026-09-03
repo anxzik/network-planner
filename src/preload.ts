@@ -4,7 +4,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
 const library = {
-  list: () => ipcRenderer.invoke('library:list'),
+  list: (filters?: unknown) => ipcRenderer.invoke('library:list', filters),
   get: (id: string) => ipcRenderer.invoke('library:get', id),
   create: (draft: unknown) => ipcRenderer.invoke('library:create', draft),
   update: (id: string, changes: unknown) => ipcRenderer.invoke('library:update', id, changes),
