@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {classifyOldStorage, MIGRATION_MARKER_KEY, migrationMarker} from './storageSalvage';
+import {classifyOldStorage, MARKER_STORAGE_KEY, migrationMarker} from './storageSalvage';
 
 const root = (extra = {}) => JSON.stringify({
   __version: 1,
@@ -67,16 +67,30 @@ describe('intact storage (FR-010)', () => {
 });
 
 describe('already migrated', () => {
+  const marker = JSON.stringify(migrationMarker('denver.netplan', '2026-09-03T00:00:00Z').value);
+
   it('reports the marker instead of offering the crossing again', () => {
-    const marked = root(migrationMarker('denver.netplan', '2026-09-03T00:00:00Z'));
-    const result = classifyOldStorage(marked);
+    const result = classifyOldStorage(root(), marker);
     expect(result.kind).toBe('migrated');
     expect(result.marker.migratedTo).toBe('denver.netplan');
   });
 
   it('still reports what the storage holds, so it can be exported again', () => {
-    const marked = root(migrationMarker('denver.netplan', '2026-09-03T00:00:00Z'));
-    expect(classifyOldStorage(marked).document.appliances).toHaveLength(2);
+    expect(classifyOldStorage(root(), marker).document.appliances).toHaveLength(2);
+  });
+
+  it('recognises damaged storage that was already migrated, rather than re-offering salvage', () => {
+    expect(classifyOldStorage('{"nodes":[{"id":"n1"}],"edges":@@@}', marker).kind).toBe('migrated');
+  });
+
+  it('ignores an unreadable marker rather than assuming a crossing happened', () => {
+    expect(classifyOldStorage(root(), 'not json').kind).toBe('intact');
+    expect(classifyOldStorage(root(), JSON.stringify({ nonsense: true })).kind).toBe('intact');
+  });
+
+  it('still tolerates a marker an earlier build wrote inside the root', () => {
+    const legacy = root({ __migration: { migratedTo: 'old.netplan', migratedAt: 'then' } });
+    expect(classifyOldStorage(legacy).kind).toBe('migrated');
   });
 });
 
@@ -135,14 +149,18 @@ describe('damaged storage (FR-012)', () => {
 });
 
 describe('migrationMarker', () => {
-  it('records where the work went and when', () => {
+  it('records where the work went and when, under its own key', () => {
     const marker = migrationMarker('denver.netplan', '2026-09-03T12:00:00Z');
-    expect(marker[MIGRATION_MARKER_KEY])
-      .toEqual({ migratedTo: 'denver.netplan', migratedAt: '2026-09-03T12:00:00Z' });
+    expect(marker.key).toBe(MARKER_STORAGE_KEY);
+    expect(marker.value).toEqual({ migratedTo: 'denver.netplan', migratedAt: '2026-09-03T12:00:00Z' });
+  });
+
+  it('never asks for the old root to be rewritten, so the original is untouched', () => {
+    expect(migrationMarker('a.netplan', 'now').key).not.toBe('networkPlanner');
   });
 
   it('produces a marker the classifier recognises', () => {
-    const marked = JSON.stringify({ nodes: [{ id: 'n1' }], ...migrationMarker('a.netplan', 'now') });
-    expect(classifyOldStorage(marked).kind).toBe('migrated');
+    const { value } = migrationMarker('a.netplan', 'now');
+    expect(classifyOldStorage(root(), JSON.stringify(value)).kind).toBe('migrated');
   });
 });

@@ -29,6 +29,10 @@ const plans = {
   open: () => ipcRenderer.invoke('plans:open'),
   save: (document: unknown) => ipcRenderer.invoke('plans:save', document),
   saveAs: (document: unknown) => ipcRenderer.invoke('plans:saveAs', document),
+  checkOldStorage: (payload: { raw: string | null; marker: string | null }) =>
+    ipcRenderer.invoke('plans:checkOldStorage', payload),
+  migrate: (payload: { raw: string | null; marker: string | null }) =>
+    ipcRenderer.invoke('plans:migrate', payload),
   listRecents: () => ipcRenderer.invoke('plans:listRecents'),
   removeRecent: (id: string) => ipcRenderer.invoke('plans:removeRecent', id),
   openRecent: (id: string) => ipcRenderer.invoke('plans:openRecent', id),

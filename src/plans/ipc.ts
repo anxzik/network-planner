@@ -13,6 +13,9 @@ import { readPlanFile, serialisePlan } from '../utils/planFile.js';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- plain JS module, typed loosely on purpose
 import { findByPath, forDisplay, recordOpen, removeEntry } from '../utils/recentsPrune.js';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore -- plain JS module, typed loosely on purpose
+import { classifyOldStorage, migrationMarker } from '../utils/storageSalvage.js';
 
 type Envelope<T> =
   | { ok: true; value: T }
@@ -178,6 +181,67 @@ export function initPlans(): void {
       return fail('VALIDATION_FAILED', 'A save needs a plan to write.');
     }
     return saveAsFlow(document as Record<string, unknown>);
+  });
+
+  // The migration crosses the boundary twice, and has to (R4). The old topology
+  // lives in renderer localStorage, which main cannot read; plan files live on
+  // disk, which the renderer must not write. So the renderer hands the raw
+  // content across, main classifies and writes, and main asks the renderer to
+  // set the marker. Neither side reaches into the other's territory.
+  ipcMain.handle('plans:checkOldStorage', (_event, payload: unknown) => {
+    const { raw, marker } = (payload ?? {}) as { raw?: unknown; marker?: unknown };
+    const found = classifyOldStorage(
+      typeof raw === 'string' ? raw : null,
+      typeof marker === 'string' ? marker : null,
+    );
+    // 'none' is the answer for a first-time user, and it must reach them as
+    // silence rather than as a notice saying nothing was found (FR-013).
+    return ok({
+      offer: found.kind,
+      preview: found.preview ?? null,
+      recovered: found.recovered ?? [],
+      lost: found.lost ?? [],
+      marker: found.marker ?? null,
+      message: found.message ?? null,
+    });
+  });
+
+  ipcMain.handle('plans:migrate', async (_event, payload: unknown) => {
+    const { raw, marker } = (payload ?? {}) as { raw?: unknown; marker?: unknown };
+    // Classified again here rather than trusting what the renderer decided:
+    // main owns the data it is about to write.
+    const found = classifyOldStorage(
+      typeof raw === 'string' ? raw : null,
+      typeof marker === 'string' ? marker : null,
+    );
+    if (found.kind === 'none' || found.kind === 'unreadable') {
+      return fail('NOT_MIGRATED', found.message ?? 'There is nothing to migrate.');
+    }
+
+    const picked = await dialog.showSaveDialog({
+      title: 'Save your existing plan as a file',
+      defaultPath: 'my-plan.netplan',
+      filters: PLAN_FILTERS,
+    });
+    // Declining leaves everything exactly as it was, including the old storage.
+    if (picked.canceled || !picked.filePath) {
+      return fail('CANCELLED', 'Nothing was migrated. Your existing plan is untouched.');
+    }
+    const target = picked.filePath.endsWith('.netplan') ? picked.filePath : `${picked.filePath}.netplan`;
+
+    const written = await writeTo(target, found.document as Record<string, unknown>);
+    if (!written.ok) return written;
+
+    // The instruction, not the act: main never touches localStorage. The marker
+    // goes in its own key so the old root is never rewritten (FR-011, FR-012).
+    return ok({
+      document: found.document,
+      name: written.value.name,
+      salvaged: found.kind === 'salvageable',
+      recovered: found.recovered ?? [],
+      lost: found.lost ?? [],
+      marker: migrationMarker(written.value.name, new Date().toISOString()),
+    });
   });
 
   ipcMain.handle('plans:listRecents', async () => {

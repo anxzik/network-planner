@@ -10,6 +10,12 @@
 
 export const STORAGE_KEY = 'networkPlanner';
 export const MIGRATION_MARKER_KEY = '__migration';
+// The marker lives in its own key, beside the old root rather than inside it.
+// Writing it into the root would mean reading and rewriting that root — and
+// storage.js's read returns an empty object for damaged content, so marking a
+// salvaged migration would overwrite the very original FR-012 promises to keep
+// untouched. A sibling key marks it without ever rewriting a byte of it.
+export const MARKER_STORAGE_KEY = 'networkPlanner__migration';
 
 // How the old keys map onto a plan document.
 const FIELDS = [
@@ -130,7 +136,25 @@ function preview(document) {
 }
 
 // `raw` is exactly what localStorage held, or null when the key was absent.
-export function classifyOldStorage(raw) {
+function readMarker(markerRaw, parsedRoot) {
+  if (typeof markerRaw === 'string' && markerRaw !== '') {
+    try {
+      const parsed = JSON.parse(markerRaw);
+      if (parsed && typeof parsed === 'object' && typeof parsed.migratedTo === 'string') return parsed;
+    } catch { /* an unreadable marker means nothing was reliably marked */ }
+  }
+  // Tolerated for a marker written inside the root by an earlier build.
+  const inRoot = parsedRoot?.[MIGRATION_MARKER_KEY];
+  return inRoot && typeof inRoot === 'object' ? inRoot : null;
+}
+
+/**
+ * @param {string|null|undefined} raw exactly what localStorage held, or null
+ * @param {string|null|undefined} [markerRaw] the migration marker key's content
+ * @returns {{kind:string, document?:object, preview?:object, marker?:object,
+ *            recovered?:string[], lost?:string[], message?:string}}
+ */
+export function classifyOldStorage(raw, markerRaw = null) {
   if (raw === null || raw === undefined || raw === '') {
     // Nothing was ever stored. An ordinary empty start: no prompt, no warning,
     // no mention that migration exists (FR-013, SC-007).
@@ -146,8 +170,8 @@ export function classifyOldStorage(raw) {
   } catch { /* damaged: fall through to salvage */ }
 
   if (parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)) {
-    const marker = parsed[MIGRATION_MARKER_KEY];
-    if (marker && typeof marker === 'object') {
+    const marker = readMarker(markerRaw, parsed);
+    if (marker) {
       // Already crossed. Say so plainly rather than offering the crossing again.
       return { kind: 'migrated', marker, document: toDocument(parsed), preview: preview(toDocument(parsed)) };
     }
@@ -156,6 +180,7 @@ export function classifyOldStorage(raw) {
     return { kind: 'intact', document, preview: preview(document) };
   }
 
+  const salvagedMarker = readMarker(markerRaw, null);
   const { root, recovered, lost } = salvage(raw);
   const document = toDocument(root);
   if (recovered.length === 0 || isEmptyDocument(document)) {
@@ -164,6 +189,9 @@ export function classifyOldStorage(raw) {
       message: 'The old storage could not be read, and nothing could be recovered from it. '
         + 'It has been left exactly as it is.',
     };
+  }
+  if (salvagedMarker) {
+    return { kind: 'migrated', marker: salvagedMarker, document, preview: preview(document) };
   }
   return {
     kind: 'salvageable',
@@ -178,6 +206,11 @@ export function classifyOldStorage(raw) {
 
 // The marker the renderer writes back once a migration has been accepted. Main
 // asks for it; main never touches localStorage itself (R4).
+/**
+ * @param {string} fileName
+ * @param {string} at
+ * @returns {{key:string, value:{migratedTo:string, migratedAt:string}}}
+ */
 export function migrationMarker(fileName, at) {
-  return { [MIGRATION_MARKER_KEY]: { migratedTo: fileName, migratedAt: at } };
+  return { key: MARKER_STORAGE_KEY, value: { migratedTo: fileName, migratedAt: at } };
 }
