@@ -3,7 +3,7 @@
 // decisions about plan data belong in src/utils/, and the bridge itself is
 // defined in specs/003-project-files/contracts/plans-bridge.md.
 import {createContext, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {planSnapshot} from '../utils/planFile';
+import {emptyPlanDocument, planSnapshot} from '../utils/planFile';
 import {useNetwork} from './NetworkContext';
 import {useScratchpad} from './ScratchpadContext';
 
@@ -47,7 +47,14 @@ export function PlanProvider({ children }) {
   // drifts the moment a path forgets to set it, and this repo has already
   // removed one such effect (commit 9966aef). Comparing against the document as
   // last written is a fact about the two values, not a state machine.
-  const [savedSnapshot, setSavedSnapshot] = useState(() => planSnapshot());
+  // The baseline is the canvas as it stood on the first render, not an empty
+  // document. NetworkContext seeds a default VLAN, so measuring against empty
+  // would make a freshly started application report unsaved changes it does not
+  // have — and stand a save prompt in front of the first New or Open.
+  const [savedSnapshot, setSavedSnapshot] = useState(() => planSnapshot({
+    ...network.serialiseToDocument(),
+    scratchpad: scratchpad.serialiseToDocument(),
+  }));
   const currentSnapshot = useMemo(() => planSnapshot(planDocument), [planDocument]);
   const dirty = currentSnapshot !== savedSnapshot;
 
@@ -67,12 +74,64 @@ export function PlanProvider({ children }) {
     markClean(planSnapshot({ ...value.document, scratchpad: value.document.scratchpad }));
   }, [network, scratchpad, markClean]);
 
+  // The pending action a save-prompt is standing in front of (FR-006). Null
+  // when nothing is waiting; otherwise the thing to do once the person answers.
+  const [pending, setPending] = useState(null);
+
   const refreshRecents = useCallback(async () => {
     const bridge = plans();
     if (!bridge) return;
     const result = await bridge.listRecents();
     if (result.ok) setRecents(result.value.recents);
   }, []);
+
+  const applySaved = useCallback((value) => {
+    setName(value.name);
+    setSource('file');
+    setReadOnly(false);
+    markClean(currentSnapshot);
+  }, [markClean, currentSnapshot]);
+
+  const save = useCallback(async () => {
+    const bridge = plans();
+    if (!bridge) return { ok: false, error: { code: 'UNAVAILABLE', message: 'No bridge.' } };
+    const result = await bridge.save(planDocument);
+    if (result.ok) applySaved(result.value);
+    return result;
+  }, [planDocument, applySaved]);
+
+  const saveAs = useCallback(async () => {
+    const bridge = plans();
+    if (!bridge) return { ok: false, error: { code: 'UNAVAILABLE', message: 'No bridge.' } };
+    const result = await bridge.saveAs(planDocument);
+    if (result.ok) applySaved(result.value);
+    return result;
+  }, [planDocument, applySaved]);
+
+  const openDialog = useCallback(async () => {
+    const bridge = plans();
+    if (!bridge) return { ok: false, error: { code: 'UNAVAILABLE', message: 'No bridge.' } };
+    const result = await bridge.open();
+    if (result.ok) {
+      applyOpened(result.value);
+      await refreshRecents();
+    }
+    return result;
+  }, [applyOpened, refreshRecents]);
+
+  const newPlan = useCallback(async () => {
+    const bridge = plans();
+    network.loadFromDocument(emptyPlanDocument());
+    scratchpad.loadFromDocument({});
+    setName('Untitled plan');
+    setSource('untitled');
+    setReadOnly(false);
+    setNotice(null);
+    markClean(planSnapshot());
+    if (bridge) await bridge.newPlan();
+    return { ok: true };
+  }, [network, scratchpad, markClean]);
+
 
   const openRecent = useCallback(async (id) => {
     const bridge = plans();
@@ -92,12 +151,38 @@ export function PlanProvider({ children }) {
     await refreshRecents();
   }, [refreshRecents]);
 
+  // Anything that would replace the canvas asks first when there is unsaved
+  // work (FR-006). Clean canvases go straight through: a prompt that appears
+  // when there is nothing to lose teaches people to dismiss prompts.
+  const guard = useCallback((action) => {
+    if (!dirty) return action();
+    setPending(() => action);
+    return Promise.resolve({ ok: true, pending: true });
+  }, [dirty]);
+
   // FR-006a: a discard sets work aside rather than destroying it, so the
   // recovery slot is written *before* the canvas is cleared.
   const discardInto = useCallback(async () => {
     const bridge = plans();
     if (bridge) await bridge.saveRecovery({ document: planDocument, reason: 'discarded' });
   }, [planDocument]);
+
+  // The three outcomes of the prompt, and nothing else. Escape resolves to
+  // 'discard' at the component; there is no fourth answer here to reach.
+  const resolvePending = useCallback(async (answer) => {
+    const action = pending;
+    setPending(null);
+    if (!action) return;
+    if (answer === 'cancel') return;
+    if (answer === 'save') {
+      const result = await save();
+      // A save that failed or was cancelled must not go on to replace the
+      // canvas: the person asked to keep this work first.
+      if (!result.ok) return;
+    }
+    if (answer === 'discard') await discardInto();
+    await action();
+  }, [pending, save, discardInto]);
 
   const restoreRecovery = useCallback(() => {
     if (!recovery) return;
@@ -150,16 +235,19 @@ export function PlanProvider({ children }) {
   }, []);
 
   const value = useMemo(() => ({
-    name, dirty, readOnly, source, notice, recents, recovery, available,
+    name, dirty, readOnly, source, notice, recents, recovery, available, pending,
     document: planDocument,
+    save, saveAs, openDialog, newPlan,
     openRecent, removeRecent, refreshRecents,
-    discardInto, restoreRecovery, declineRecovery,
+    guard, resolvePending,
+    restoreRecovery, declineRecovery,
     markClean, applyOpened,
     clearNotice: () => setNotice(null),
   }), [
-    name, dirty, readOnly, source, notice, recents, recovery, available, planDocument,
-    openRecent, removeRecent, refreshRecents, discardInto, restoreRecovery,
-    declineRecovery, markClean, applyOpened,
+    name, dirty, readOnly, source, notice, recents, recovery, available, pending,
+    planDocument, save, saveAs, openDialog, newPlan,
+    openRecent, removeRecent, refreshRecents, guard, resolvePending,
+    restoreRecovery, declineRecovery, markClean, applyOpened,
   ]);
 
   return <PlanContext.Provider value={value}>{children}</PlanContext.Provider>;
