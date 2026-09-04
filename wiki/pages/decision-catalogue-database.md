@@ -1,7 +1,7 @@
 ---
 type: decision
-updated: 2026-09-02
-sources: [S001, S002]
+updated: 2026-09-03
+sources: [S001, S002, S003]
 ---
 
 # Catalogue storage: node:sqlite
@@ -27,8 +27,22 @@ has none of it, and [[reference-electron-runtime]] confirms it is present.
   database in memory and must be serialised out by hand, which reintroduces the
   whole-file rewrite (S001).
 
+## Where the database lives
+
+In the per-user data directory, as `catalogue.db`, outside the packaged
+application archive - the asar is read-only and integrity-checked, so this was
+a correctness question rather than a preference, settled before storage code
+was written (S003). See [[reference-packaging-fuses]].
+
 ## The cost carried
 
 The module is experimental. Confining every call to a single storage module
 keeps a breaking change to one file (S001), which is the reasoning recorded in
 [[decision-pure-logic-split]].
+
+The fallback is costlier than it looks: switching to a native module such as
+better-sqlite3 also requires wiring the auto-unpack-natives plugin into the
+forge configuration, which is present in package.json but unwired (S003).
+
+Open: whether two application instances may open the catalogue at once. SQLite's
+behaviour differs by platform and filesystem, and nothing specifies it (S003).

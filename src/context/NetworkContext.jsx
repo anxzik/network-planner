@@ -4,6 +4,19 @@ import {createDeviceNode, createEdge, createPortEdge} from '../utils/nodeFactory
 import {getDefaultVlan} from '../utils/vlanFactory';
 import {determineVlanTransport, getPortById} from '../utils/portFactory';
 import {exportAll, importAll, loadData, saveData} from '../utils/storage';
+import {collectRecordedDefinitions} from '../utils/planDivergence';
+import {hasMigrated, MARKER_STORAGE_KEY} from '../utils/storageSalvage';
+
+// Before the crossing, the canvas still loads what the old storage holds — a
+// person who declines the migration must see their work, not an empty canvas
+// that looks like it ate it. After the crossing, that storage is preserved
+// history: loading from it would reopen the pre-migration topology over
+// whatever plan the person actually has open (US2, FR-011).
+function legacyTopology(key, fallback) {
+  let marker = null;
+  try { marker = window.localStorage.getItem(MARKER_STORAGE_KEY); } catch { /* no storage */ }
+  return hasMigrated(marker) ? fallback : loadData(key, fallback);
+}
 import {usePersist} from '../hooks/usePersist';
 import {
   applySelection,
@@ -24,8 +37,8 @@ const NetworkContext = createContext(null);
 export function NetworkProvider({ children }) {
   // ReactFlow state management
   // Initialize from storage
-  const initialNodes = loadData('nodes', []);
-  const initialEdges = loadData('edges', []);
+  const initialNodes = legacyTopology('nodes', []);
+  const initialEdges = legacyTopology('edges', []);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
@@ -34,7 +47,7 @@ export function NetworkProvider({ children }) {
   const [selectedDeviceType, setSelectedDeviceType] = useState(null);
 
   // Network objects state (for list view)
-  const [networkObjects, setNetworkObjects] = useState(() => loadData('networkObjects', []));
+  const [networkObjects, setNetworkObjects] = useState(() => legacyTopology('networkObjects', []));
 
   // Connection validation state
   const [connectionError, setConnectionError] = useState(null);
@@ -44,17 +57,19 @@ export function NetworkProvider({ children }) {
   const [viewMode, setViewMode] = useState(() => loadData('viewMode', 'physical'));
 
   // VLAN state management
-  const [vlans, setVlans] = useState(() => loadData('vlans', [getDefaultVlan()]));
+  const [vlans, setVlans] = useState(() => legacyTopology('vlans', [getDefaultVlan()]));
 
   // Port selector modal state
   const [portSelectorOpen, setPortSelectorOpen] = useState(false);
   const [pendingConnection, setPendingConnection] = useState(null);
 
   // Persist state changes, debounced
-  usePersist('nodes', nodes);
-  usePersist('edges', edges);
-  usePersist('networkObjects', networkObjects);
-  usePersist('vlans', vlans);
+  // The topology no longer streams to browser storage. A plan is a file now:
+  // deliberate saves write it, and the recovery slot catches what is unsaved
+  // (FR-009). Continuing to mirror the canvas here would keep rewriting the
+  // very storage US2 preserves, and make "unsaved changes" meaningless.
+  // viewMode stays: which plane is displayed is a window preference, not part
+  // of any plan.
   usePersist('viewMode', viewMode);
 
   // Add a new device node to the canvas
@@ -271,6 +286,38 @@ export function NetworkProvider({ children }) {
   // Derived state: auto-populated topology devices list
   const topologyDevices = useMemo(() => toTopologyDevices(nodes), [nodes]);
 
+  // Document seams (FR-001, FR-002). Capture and restore the canvas without
+  // touching persistence: the caller decides where a document goes, and the
+  // context knows nothing about files, localStorage or either one's lifecycle.
+  const serialiseToDocument = useCallback(
+    () => ({
+      appliances: nodes,
+      connections: edges,
+      vlans,
+      networkObjects,
+      // One full definition per placed type (FR-014, ADR 0011), so the plan
+      // opens complete on a machine whose catalogue never had them.
+      recordedDefinitions: collectRecordedDefinitions(nodes),
+    }),
+    [nodes, edges, vlans, networkObjects],
+  );
+
+  const loadFromDocument = useCallback(
+    (document) => {
+      const source = document ?? {};
+      setNodes(Array.isArray(source.appliances) ? source.appliances : []);
+      setEdges(Array.isArray(source.connections) ? source.connections : []);
+      setVlans(Array.isArray(source.vlans) && source.vlans.length
+        ? source.vlans : [getDefaultVlan()]);
+      setNetworkObjects(Array.isArray(source.networkObjects) ? source.networkObjects : []);
+      // Selection belongs to the window, not the plan; a restored document must
+      // not leave a selection pointing at a node that is no longer there.
+      setSelectedNode(null);
+      setSelectedDeviceType(null);
+    },
+    [setNodes, setEdges],
+  );
+
   // Project export/import helpers
   const exportProject = useCallback(() => {
     // Return entire namespaced snapshot
@@ -356,6 +403,8 @@ export function NetworkProvider({ children }) {
 
     // Persistence helpers
     exportProject,
+    serialiseToDocument,
+    loadFromDocument,
     importProject,
 
     // Utility getters

@@ -1,7 +1,7 @@
 ---
 type: decision
-updated: 2026-09-02
-sources: [S001, S002]
+updated: 2026-09-03
+sources: [S001, S002, S004]
 ---
 
 # Work deferred, and why
@@ -32,6 +32,9 @@ twice (S001).
 
 > ⚠ Consequence worth remembering: until that lands, editing a type still
 > changes what existing plans resolve, which is the exact behaviour the
-> snapshot decision exists to prevent (S001).
+> snapshot decision exists to prevent (S001). The fix is now specified and
+> planned as the project-files feature, which delivers the recorded-definition
+> family in full (S004) — the marker stays until it ships. See
+> [[decision-plan-files]].
 
 See [[decision-pure-logic-split]] and [[concept-appliance-type]].

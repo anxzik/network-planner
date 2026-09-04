@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import { closeLibrary, initLibrary } from './library/ipc';
+import { closePlans, initPlans } from './plans/ipc';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 
@@ -20,7 +21,11 @@ const createWindow = () => {
 
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-    mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
+    // Forge hardcodes `localhost` in this URL whatever address the dev server
+    // bound to. The dev server is pinned to 127.0.0.1 (see
+    // vite.renderer.config.mts), so address it directly rather than depending
+    // on how this machine happens to resolve localhost.
+    mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL.replace('localhost', '127.0.0.1'));
   } else {
     mainWindow.loadFile(
       path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`),
@@ -36,6 +41,7 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
   initLibrary();
+  initPlans();
   createWindow();
 });
 
@@ -44,6 +50,10 @@ app.on('ready', () => {
 // explicitly with Cmd + Q.
 app.on('quit', () => {
   closeLibrary();
+  // Best-effort: Electron does not await this. A lock left behind by a quit
+  // that outran it carries a dead pid, which the next open reads as stale and
+  // ignores — the fallback R6 was designed around rather than a leak.
+  void closePlans();
 });
 
 app.on('window-all-closed', () => {

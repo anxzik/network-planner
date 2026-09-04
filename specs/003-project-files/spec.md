@@ -1,0 +1,429 @@
+# Feature Specification: Project Files
+
+**Feature Branch**: `003-project-files`
+**Created**: 2026-09-03
+**Status**: Draft
+
+## UI Mockup
+
+Signed off: 2026-09-03
+
+- Files, recents and the migration: [`wireframes/01-files-and-migration.svg`](./wireframes/01-files-and-migration.svg) (light theme)
+- Recorded definitions and format lifecycle: [`wireframes/02-recorded-definitions.svg`](./wireframes/02-recorded-definitions.svg) (light theme)
+- Adopting types and preserved copies: [`wireframes/03-adoption-and-preserved.svg`](./wireframes/03-adoption-and-preserved.svg) (light theme, signed off 2026-09-03)
+
+These wireframes are spec constraints. Implementation should match their
+layout, component structure, and interaction flow. Deviations require spec
+revision. Drawing 02 reflects the folded FR-021: a newer-format plan opens
+read-only and is never written back.
+
+Drawing 03 was added after 01 and 02 were approved, to cover the two
+requirements folded later: FR-025 (adopting a plan's recorded definitions) and
+FR-024 (bounded preserved copies), together with FR-006's three prompt outcomes
+and FR-021's extended Save As warning. Coverage across the set is complete:
+25/25 functional requirements, 7/7 success criteria, 4/4 user stories.
+
+## User Scenarios & Testing *(mandatory)*
+
+A plan is the most valuable thing a person makes in this application, and today
+it lives in one invisible browser-storage slot: one plan, no name, no way to
+hand it to anyone, trapped in the application's profile directory. This feature
+makes a plan a file — something a person can name, keep, back up, put in
+version control, and send to a colleague.
+
+It also settles three debts recorded when the hardware library shipped: a plan
+carrying its own copies of the appliance types it places, the offer to update a
+diverged copy, and the safe-migration promises originally specified for the old
+storage before it was superseded.
+
+### User Story 1 - A plan is a file (Priority: P1)
+
+A person designs a site, saves it as a named file where they choose, closes the
+application, and opens the file next week — or on a different machine.
+
+**Why this priority**: Everything else in this feature and the two planes that
+follow it assume a plan is an addressable thing. This is the capability itself.
+
+**Independent Test**: Save a topology to a chosen location, reopen the
+application, open the file, and confirm every device, connection, VLAN and note
+is exactly as saved.
+
+**Acceptance Scenarios**:
+
+1. **Given** a topology on the canvas, **When** the person saves it, **Then**
+   they choose a name and location, and the plan is written there.
+2. **Given** a saved plan, **When** the person opens it, **Then** the canvas
+   shows every appliance, connection, port assignment, VLAN and scratchpad note
+   as saved, and the application shows which plan is open.
+3. **Given** an open plan with unsaved changes, **When** the person tries to
+   close it, open another, or start a new one, **Then** they are asked whether
+   to save first, and declining loses nothing until they confirm.
+4. **Given** an open plan, **When** the person chooses Save As, **Then** a copy
+   is written to the new location and that copy becomes the open plan.
+5. **Given** recently opened plans, **When** the person looks for them, **Then**
+   the application lists them for reopening without a file dialog.
+
+### User Story 2 - The existing plan moves out of browser storage (Priority: P1)
+
+A person who has been using the application opens this version for the first
+time. Their existing topology is waiting for them, now as a file.
+
+**Why this priority**: Every current user crosses this bridge exactly once, and
+a failure here is the destroyed-work scenario this project has twice written
+requirements against. It ships with US1 or existing users lose the feature's
+benefit — or worse, their work.
+
+**Independent Test**: With a topology in the old storage, start the updated
+application, and confirm the plan appears intact as a file, with the original
+storage preserved until the person confirms the migration succeeded.
+
+**Acceptance Scenarios**:
+
+1. **Given** a topology in the old browser storage, **When** the updated
+   application first starts, **Then** the plan is offered as a file migration,
+   not silently converted.
+2. **Given** the person accepts, **Then** the topology becomes a named file,
+   opens on the canvas, and the old storage is kept, marked migrated, until
+   they choose to clear it.
+3. **Given** the old storage cannot be read, **Then** a salvage attempt shows
+   the person what could be recovered, to accept or decline; the raw content is
+   preserved untouched either way, they are told a copy was kept, and nothing
+   is ever destroyed.
+4. **Given** a first-run with no old storage, **Then** no migration prompt, no
+   warning — an ordinary empty start.
+
+### User Story 3 - A plan opens anywhere and stays truthful (Priority: P2)
+
+A person sends their site plan to a colleague whose catalogue has never seen
+the equipment in it. It opens complete. Later, the library corrects a port
+count; plans built on the old definition are offered the fix, one by one, and
+nothing changes without consent.
+
+**Why this priority**: This is the deferred FR-005 family from the hardware
+library, buildable only now that a plan is a file with a place to carry copies.
+
+**Independent Test**: Place a locally-created type, save, delete the type from
+the catalogue, reopen the plan — it renders completely. Edit a placed type in
+the library, reopen — the divergence is shown and the offer appears.
+
+**Acceptance Scenarios**:
+
+1. **Given** a plan placing an appliance type, **When** it is saved, **Then**
+   the file records the full definition it was placed with.
+2. **Given** a plan whose recorded definitions are absent from the opening
+   machine's catalogue, **When** it opens, **Then** every appliance renders
+   from its recorded definition, complete.
+3. **Given** a placed type whose recorded definition differs from the
+   catalogue's current one, **When** the plan opens, **Then** the application
+   makes clear which is shown and offers to update the plan's copy; declining
+   changes nothing and is remembered for that plan.
+4. **Given** a corrected definition and several recent plans carrying the old
+   copy, **When** the person chooses to apply it broadly, **Then** they are
+   shown which plans would change and choose all, some, or none before
+   anything is written.
+5. **Given** an opened plan carrying types the local catalogue lacks, **When**
+   the person wants to keep those types, **Then** they can adopt any or all of
+   them into their catalogue after the plan has opened; the plan is unchanged
+   by adopting, and unaffected by declining.
+
+### User Story 4 - Old and damaged files are handled safely (Priority: P2)
+
+Months from now, the file format has grown. A person opens a plan written by
+an older version — or a file that got corrupted in a sync folder.
+
+**Why this priority**: These are the promises of the superseded
+storage-migration feature, re-homed to files where they were always going to
+matter. The format versioning must exist from the first file written, or there
+is nothing to upgrade from later.
+
+**Acceptance Scenarios**:
+
+1. **Given** a plan written by an older version of the application, **When** it
+   opens, **Then** it is brought forward to the current form and a copy of the
+   original file is kept beside it until the person removes it.
+2. **Given** a plan recording a version newer than the application understands,
+   **Then** it opens read-only, showing what this version can read with a
+   notice; the file itself is never written to, and an editable copy is an
+   explicit, warned Save As.
+3. **Given** a file that cannot be read at all, **Then** it is left untouched,
+   the person is told what happened, and nothing overwrites it.
+4. **Given** a save that fails partway — disk full, permission lost — **Then**
+   the previous file content survives intact, the interrupted partial is kept
+   aside, and the person is told.
+
+### Edge Cases
+
+- The person saves onto a path that already holds a different plan.
+- The open plan's file is renamed, moved or deleted outside the application
+  while it is open.
+- A recent-files entry points at a file that no longer exists.
+- The same plan file is opened by two application instances.
+- A recorded appliance definition in a plan fails today's validation rules.
+- The old browser storage holds data marked migrated, and the person triggers
+  migration again.
+- A plan is saved onto a cloud-synced folder that later delivers a conflicting
+  copy.
+- The application is force-quit with unsaved changes on the canvas.
+
+## Requirements *(mandatory)*
+
+### Functional Requirements
+
+**Files**
+
+- **FR-001**: A person MUST be able to save the open plan as a file, choosing
+  its name and location.
+- **FR-002**: A person MUST be able to open a plan file, replacing the canvas
+  content after any unsaved-changes prompt.
+- **FR-003**: A person MUST be able to start a new, empty plan.
+- **FR-004**: Save As MUST write a copy to a new location and make it the open
+  plan, leaving the original file as it was.
+- **FR-005**: The application MUST always show which plan is open and whether
+  it has unsaved changes.
+- **FR-006**: Closing, opening or starting a new plan with unsaved changes MUST
+  prompt to save, and nothing is lost until the person chooses. The prompt
+  offers exactly three outcomes: **Save** (write, then proceed), **Discard**
+  (proceed without writing, setting the changes aside), and **Cancel** (do
+  nothing — the pending action is abandoned and the canvas is left as it was).
+  **Escape maps to Discard**: a person who triggered an action, read the
+  prompt, and pressed Escape has answered it, and being made to hunt for the
+  right button to proceed is its own cost. The prompt's other dismissals —
+  closing the dialog's window, clicking outside it — MUST map to **Cancel**,
+  because those are reachable by accident in a way a deliberate keypress is
+  not.
+- **FR-006a**: Because Escape discards, a discard MUST be recoverable. Work
+  dropped by Discard MUST remain in the recovery slot (FR-009) and be offered
+  back, rather than being cleared as though it had been saved. The slot is
+  cleared by a successful save or by the person declining the offer — never by
+  a discard. This is what makes the fast gesture safe: the quick answer stops
+  being irreversible.
+- **FR-007**: The application MUST list recently opened plans; an entry whose
+  file has vanished is offered for removal, never silently dropped.
+- **FR-008**: A failed or interrupted save MUST leave the previous file content
+  intact, MUST preserve the interrupted partial write aside rather than
+  discarding it silently, and MUST tell the person what happened — naming the
+  preserved partial and explaining that it holds the content they were saving
+  (newer, possibly incomplete) while the plan file holds the last content
+  written whole. The partial occupies one predictable slot per plan (FR-024).
+- **FR-009**: The application MUST recover unsaved work after a crash or
+  force-quit, offering it on next start. The same slot holds work dropped by a
+  Discard (FR-006a); it is cleared by a successful save or an explicit
+  declining of the offer, never silently.
+
+**Migration from browser storage**
+
+- **FR-010**: On first start after this feature, an existing topology in the
+  old storage MUST be offered as a migration to a file, never converted
+  silently.
+- **FR-011**: The old storage MUST be preserved, marked migrated, after a
+  successful migration, until the person chooses to clear it.
+- **FR-012**: Old storage that cannot be read MUST first be offered a salvage
+  attempt, recovering what is readable for the person to inspect and accept or
+  decline. Whatever the outcome, the original MUST be preserved untouched, the
+  person told a copy was kept, and the application MUST NOT overwrite it. Once
+  a salvage has been accepted and its plan saved, the preserved original MUST
+  be offered for clearing like any other preserved artifact (FR-024) — offered,
+  never cleared unasked.
+- **FR-013**: A first run with no old storage MUST show no migration prompt and
+  no warning.
+
+**Recorded definitions (the FR-005 family, delivered)**
+
+- **FR-014**: A saved plan MUST record the full definition of every appliance
+  type it places.
+- **FR-015**: A plan MUST open completely on a machine whose catalogue lacks
+  its types, rendering from recorded definitions.
+- **FR-016**: When a recorded definition differs from the catalogue's current
+  one, the application MUST make clear which is shown and MUST offer to update
+  the plan's copy; nothing changes unless the person accepts.
+- **FR-017**: A declined update offer MUST be remembered per plan and per type,
+  and not re-asked on every open. The memory MUST record *which version of the
+  definition* was declined, so that a later, genuinely different correction to
+  the same type is offered again. A decline silences one answered question, not
+  the type forever — without this, a corrected definition could never reach a
+  plan that once said no, and SC-005 would not hold.
+- **FR-018**: The application MUST be able to apply a corrected definition
+  across the plans it knows about, showing which would change and applying only
+  to those chosen; a plan it cannot reach is listed as unreachable, not
+  guessed at.
+
+- **FR-025**: When a plan carries recorded definitions the local catalogue does
+  not have, the person MUST be able to adopt those definitions into their own
+  catalogue. The offer comes *after* the plan has opened and rendered — it is
+  never a precondition of opening (FR-015 stands unchanged). Adoption is
+  per-type and optional: the person chooses which, if any. An adopted type
+  enters the catalogue as a locally-created type recording that it came from a
+  plan. Adopting MUST NOT alter the plan, and declining MUST NOT impede it;
+  both continue to render from the recorded definitions either way.
+
+**Format lifecycle**
+
+- **FR-019**: Every plan file MUST record the format version it was written in.
+- **FR-020**: A file in an older format the application understands MUST be
+  brought forward on open, with the original file copied aside first and kept
+  until the person removes it. One copy is kept per plan, not one per open
+  (FR-024): reopening an older file that already has its original preserved
+  MUST NOT create a second copy. Once the upgraded plan has been saved whole,
+  the application MUST offer to clear the preserved original.
+- **FR-021**: A file recording a newer format MUST open read-only, showing
+  what this version can read, with a clear notice of both the newer format and
+  anything not understood. The application MUST NEVER write back to that file.
+  Keeping an editable copy is an explicit Save As, warned on two counts: that
+  content this version cannot read is not carried into the copy, and that the
+  copy is therefore not a substitute for the original file, which remains the
+  only complete version and must be kept.
+- **FR-022**: A file that cannot be read MUST be left untouched and reported;
+  nothing MUST ever overwrite it.
+- **FR-023**: Bringing a file forward MUST be deterministic, depending only on
+  the file's content.
+
+**Preserved artifacts**
+
+- **FR-024**: Every copy the application preserves on the person's behalf — the
+  partial from a failed save, the original kept beside an upgraded file, the
+  per-plan copy taken before a broad apply — MUST occupy a single, predictably
+  named slot per plan. A repeat occurrence MUST replace that slot rather than
+  accumulate a new file, so a folder never fills with timestamped debris the
+  person did not ask for. The application MUST be able to show the person which
+  preserved artifacts exist for a plan and clear them on request, and MUST NOT
+  remove one without being asked. Where a preserved artifact has become
+  redundant — the upgraded plan saved whole, the salvage accepted and written —
+  clearing MUST be offered, never performed silently.
+
+### Key Entities
+
+- **Plan file**: a person's topology as a portable file — appliances,
+  connections, VLANs, scratchpad content, recorded appliance definitions, and
+  a format version.
+- **Recorded definition**: the full appliance-type definition a plan carries
+  for each type it places, fixed at placement time (ADR 0011).
+- **Recent plans**: the application's memory of where a person's plans are,
+  which is also the reach of a broad update (FR-018).
+- **Migration marker**: what the old storage becomes after its content moves to
+  a file — preserved, labelled, clearable.
+- **Preserved artifact**: any copy the application kept on the person's behalf —
+  a partial write, an upgrade original, a pre-broad-apply copy. One slot per
+  plan per kind, listable, clearable on request, never removed unasked.
+
+## Process Boundary
+
+- **Scope**: Requires main-process work throughout.
+- **Node/OS capability needed**: file dialogs, reading and writing plan files,
+  the atomic-save discipline of FR-008, and the crash-recovery slot of FR-009.
+- **Bridge surface**: the renderer requests operations and receives results and
+  plan content. Paths stay in the main process; the renderer sees plan names,
+  not reusable paths — the same constraint the hardware library's bridge
+  already enforces.
+
+## Persistence
+
+- **What persists**: plans as files wherever the person puts them; the
+  recent-plans list, the crash-recovery slot, and per-plan declined-offer
+  memory in the application's own storage.
+- **Where**: plan files are the person's; everything else lives beside the
+  catalogue database in the per-user data directory.
+- **Shape change**: the topology leaves browser storage permanently. The
+  catalogue database (ADR 0010) is unaffected.
+- **Migration**: US2 is the migration, and it is the last obligation of the old
+  storage: after it, browser storage holds only a preserved, labelled copy.
+
+## Testability
+
+- **Logic to extract**: serialising and reading a plan file, format-version
+  classification and upgrade steps, divergence detection between recorded and
+  current definitions, the update-offer decision including remembered
+  declines, migration classification of old storage, and recent-list pruning
+  decisions. All pure, all in `src/utils/` with co-located tests.
+- **Left in the component**: dialogs, the unsaved-changes prompt, the title-bar
+  state, the migration and update-offer surfaces.
+- **Manual verification**: dialog flows, crash recovery, two-instance
+  behaviour, and cloud-sync conflict handling.
+
+## Success Criteria *(mandatory)*
+
+### Measurable Outcomes
+
+- **SC-001**: A plan saved on one machine opens on another with every element
+  intact, including appliances whose types the second machine has never seen.
+- **SC-002**: No existing user loses their topology crossing the migration, and
+  the old storage remains recoverable until they clear it.
+- **SC-003**: No failure mode — failed save, damaged file, newer format, crash
+  — destroys a byte the person had not already chosen to discard, and no
+  recovery leaves behind a copy the person cannot see and clear. Work a person
+  *did* choose to discard survives in the recovery slot until they save or
+  decline it (FR-006a), so no single keypress is terminal.
+- **SC-004**: A person always knows which plan is open and whether it is saved.
+- **SC-005**: A correction in the library can reach every reachable plan built
+  on the old definition, without any plan changing on its own.
+- **SC-006**: Every upgrade path from every released format version to the
+  current one is covered by an automated test. This is a standing obligation,
+  not a one-time task: it is satisfied trivially while one format version
+  exists, and every future change to the format adds a test before it ships.
+- **SC-007**: A first-time user sees no migration prompts, warnings or errors.
+
+## Assumptions
+
+Decided rather than left open; each is challengeable.
+
+- **One plan open at a time.** File > New / Open / Save / Save As, one canvas.
+  Multiple windows are out of scope until someone needs them.
+- **Explicit save with continuous crash protection.** The person saves
+  deliberately (FR-005's dirty flag is meaningful), while a recovery slot
+  captures unsaved work continuously (FR-009). Silent autosave to the person's
+  file would make "unsaved changes" meaningless and turn mistakes permanent.
+- **Plan files use the `.netplan` extension**, visible in dialogs and file
+  managers. The content is a versioned text format, diffable in version
+  control.
+- **"Plans it knows about" (FR-018) means the recent list.** The application
+  never scans a disk for plan files; reach is what the person has opened.
+  ADR 0013 recorded reversal of a bulk apply as open; per-plan file copies
+  made before applying (FR-020's discipline) are the answer inherited here.
+- **Two instances on one file**: second opener gets read-only with a notice.
+  Detected best-effort; cloud-sync conflicts surface as ordinary conflicting
+  copies (edge case), not corruption, because saves are atomic.
+- **Escape is a decision, not an accident.** A keypress made while reading a
+  prompt is deliberate in a way that closing a window or clicking away is not,
+  so Escape proceeds and the other two dismissals do not. The asymmetry is the
+  point: the gesture that is fast to make is also the gesture whose result
+  FR-006a keeps recoverable.
+
+- **Recovery is offered, not just performed.** Three validation answers across
+  two features chose richer recovery over tidy refusal: salvage before an empty
+  start, the partial write kept visible, a newer file readable rather than
+  refused. The one hard line kept is that nothing best-effort may ever write
+  back to a file it only partly understood — that is where SC-003 lives.
+- **Preserved copies are bounded, not accumulated.** Four validation answers
+  chose one predictably-named artifact over a growing pile of timestamped ones.
+  The safety SC-003 promises is that a copy exists *when it is needed*, not that
+  every copy exists forever; a folder full of debris the person did not ask for
+  is its own kind of harm. The hard line kept is that clearing is always offered
+  and never silent (FR-024).
+
+- **A preserved partial is not a backup.** It is named as a partial, never
+  `.bak`, because it holds an interrupted write: newer than the plan file but
+  possibly incomplete. A `.bak` name would invite restoring from it as though it
+  were the good copy, which is precisely backwards.
+
+- **Adoption is an offer that follows opening, never a gate on it.** A plan
+  must open complete on a stranger's machine with no ceremony (FR-015) — that
+  is the whole point of recorded definitions. But a person who likes the
+  equipment in a plan they were sent has, until now, had no way to keep it.
+  FR-025 adds that path without letting it become a precondition: open first,
+  render everything, then offer.
+
+- **The library remains app-level** (002's assumption stands); recorded
+  definitions make plans self-contained without bundling the catalogue.
+
+## Dependencies
+
+- Builds on the hardware library (PR #15): the bridge pattern, the catalogue as
+  the source of current definitions, and `importMerge`-style pure-module
+  discipline.
+- Delivers the deferred FR-005a–e family from
+  `specs/002-hardware-library/spec.md`.
+- [ADR 0008](../../docs/adr/0008-project-files-on-disk.md) — the decision this
+  feature implements; [ADR 0011](../../docs/adr/0011-plans-snapshot-appliance-types.md),
+  [0012](../../docs/adr/0012-updating-a-diverged-plan.md),
+  [0013](../../docs/adr/0013-propagating-a-correction.md) — the recorded-definition
+  behaviours; [ADR 0002](../../docs/adr/0002-localstorage-persistence.md)
+  (superseded) — whose two defects US2 and US4 finally retire.
