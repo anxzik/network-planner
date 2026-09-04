@@ -29,6 +29,8 @@ export function PlanProvider({ children }) {
   const [name, setName] = useState('Untitled plan');
   const [readOnly, setReadOnly] = useState(false);
   const [notice, setNotice] = useState(null);
+  // Parts of a newer-format file this version could not read (FR-021).
+  const [notUnderstood, setNotUnderstood] = useState([]);
   const [recents, setRecents] = useState([]);
   const [recovery, setRecovery] = useState(null);
   const [available] = useState(bridgeAvailable);
@@ -81,6 +83,7 @@ export function PlanProvider({ children }) {
     setName(value.name);
     setReadOnly(Boolean(value.readOnly));
     setNotice(value.notice ?? null);
+    setNotUnderstood(value.notUnderstood ?? []);
     setSource('file');
     setDeclinedOffers(value.document.declinedOffers ?? {});
     markClean(planSnapshot({ ...value.document, scratchpad: value.document.scratchpad }));
@@ -109,6 +112,9 @@ export function PlanProvider({ children }) {
     if (!bridge) return { ok: false, error: { code: 'UNAVAILABLE', message: 'No bridge.' } };
     const result = await bridge.save(planDocument);
     if (result.ok) applySaved(result.value);
+    // A failed save keeps the previous file whole and the partial beside it;
+    // the person has to be told both, not left with a silent failure (FR-008).
+    else if (result.error.code !== 'CANCELLED') setNotice(result.error.message);
     return result;
   }, [planDocument, applySaved]);
 
@@ -124,6 +130,7 @@ export function PlanProvider({ children }) {
     const bridge = plans();
     if (!bridge) return { ok: false, error: { code: 'UNAVAILABLE', message: 'No bridge.' } };
     const result = await bridge.open();
+    if (result.ok === false && result.error.code !== 'CANCELLED') setNotice(result.error.message);
     if (result.ok) {
       applyOpened(result.value);
       await refreshRecents();
@@ -375,7 +382,7 @@ export function PlanProvider({ children }) {
   }, []);
 
   const value = useMemo(() => ({
-    name, dirty, readOnly, source, notice, recents, recovery, available, pending,
+    name, dirty, readOnly, source, notice, notUnderstood, recents, recovery, available, pending,
     migration, migrate, dismissMigration,
     divergences, checkDivergences, acceptUpdate, declineOffer,
     broadApplyPreview, broadApply,
@@ -388,7 +395,7 @@ export function PlanProvider({ children }) {
     markClean, applyOpened,
     clearNotice: () => setNotice(null),
   }), [
-    name, dirty, readOnly, source, notice, recents, recovery, available, pending,
+    name, dirty, readOnly, source, notice, notUnderstood, recents, recovery, available, pending,
     migration, migrate, dismissMigration,
     divergences, checkDivergences, acceptUpdate, declineOffer,
     broadApplyPreview, broadApply,

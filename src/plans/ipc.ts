@@ -10,7 +10,7 @@ import { catalogueById, catalogueStore } from './catalogueLookup';
 import { preserveCopy, readPlan, releaseLock, savePlan, takeLock } from './planStore';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- plain JS module, typed loosely on purpose
-import { readPlanFile, serialisePlan } from '../utils/planFile.js';
+import { readPlanFile, serialisePlan, upgradePlan } from '../utils/planFile.js';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- plain JS module, typed loosely on purpose
 import { findByPath, forDisplay, recentId, recordOpen, removeEntry } from '../utils/recentsPrune.js';
@@ -66,14 +66,36 @@ async function openAtPath(target: string): Promise<Envelope<unknown>> {
     // The file is left exactly as it is; nothing here writes to it (FR-022).
     return fail('FILE_UNREADABLE', classified.message ?? 'The plan could not be read.');
   }
+  let document = classified.document;
+  let upgradeNotice: string | null = null;
+
   if (classified.kind === 'older') {
-    // Bringing a file forward is a separate step with its own copy-aside
-    // obligation, so this build declines to open it rather than silently
-    // showing content it has not upgraded.
-    return fail(
-      'FILE_UNREADABLE',
-      classified.message ?? 'This plan was written in an older format.',
-    );
+    const fromVersion: string = classified.version ?? 'an older format';
+    const upgraded = upgradePlan(classified.document, fromVersion);
+    if (!upgraded.ok) {
+      // A version this build has no path from is left alone and reported,
+      // never opened as though it had been understood (FR-022).
+      return fail('FILE_UNREADABLE', upgraded.message ?? 'This plan could not be brought forward.');
+    }
+    // The original is copied aside before the upgraded plan can be written
+    // over it — one copy per plan, and an existing one is left alone because
+    // it is the older and truer original (FR-020, FR-024).
+    let keptAs: string | null = null;
+    try {
+      const kept = await preserveCopy(target, 'upgradeOriginal', { fromVersion });
+      keptAs = kept.name;
+    } catch {
+      // If the original cannot be preserved, the upgrade does not happen:
+      // FR-020's promise is the copy, not the convenience.
+      return fail(
+        'SAVE_FAILED',
+        'This plan is in an older format, but a copy of the original could not be '
+          + 'kept beside it, so it was not brought forward.',
+      );
+    }
+    document = upgraded.document;
+    upgradeNotice = `This plan was brought forward from format ${fromVersion}. `
+      + `The original was kept as ${keptAs}.`;
   }
 
   // A second window on the same plan reads it but may not write it (R6).
@@ -94,12 +116,12 @@ async function openAtPath(target: string): Promise<Envelope<unknown>> {
   }
 
   return ok({
-    document: classified.document,
+    document,
     name,
     readOnly,
     notice: lockedOut
       ? 'This plan is open in another window, so it is read-only here.'
-      : classified.message,
+      : upgradeNotice ?? classified.message,
     notUnderstood: classified.notUnderstood ?? [],
   });
 }

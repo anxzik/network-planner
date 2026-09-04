@@ -121,7 +121,7 @@ are binding layout constraints on every renderer task.
 - [x] T034 [P] [US3] Create `src/utils/typeAdoption.js` + `src/utils/typeAdoption.test.js`: pure decisions for FR-025 — which recorded definitions are absent from the catalogue and therefore adoptable, which are already present and must be skipped rather than overwritten, and the locally-created catalogue row an adopted definition becomes (`origin: 'local'`, `adoptedFromPlan`)
 - [x] T035 [US3] Implement `adoptable` and `adopt` handlers in `src/plans/ipc.ts` over `src/utils/typeAdoption.js`, writing through the existing catalogue store in `src/library/catalogueStore.ts`; the plan document is read-only input and MUST be byte-identical after an adopt (FR-025)
 - [x] T036 [US3] Create `src/components/Plans/AdoptTypesPanel.jsx`: the after-open, per-type adopt offer per wireframe 03 — never a precondition of opening, an already-present type shown greyed and labelled skipped, declining changes nothing (FR-025)
-- [ ] T037 [US3] Verify quickstart 5, 5b, 6 and 7 (pure logic automated, panels by hand) and gates green
+- [x] T037 [US3] Verify quickstart 5, 5b, 6 and 7 (pure logic automated, panels by hand) and gates green
 
 **Checkpoint**: A plan is self-contained and truthful; corrections travel only by consent.
 
@@ -133,12 +133,12 @@ are binding layout constraints on every renderer task.
 
 **Independent Test**: Lower a file's formatVersion → upgraded with original beside it. Raise to 99.0 → read-only with notice, save refused in main. Corrupt it → reported, untouched (quickstart 8, 9, 10).
 
-- [ ] T038 [US4] Add the upgrade path to `src/utils/planFile.js` + tests: deterministic `older(version)` → current transform depending only on file content, one test per released format version as the standing SC-006 obligation begins (FR-020, FR-023, SC-006)
-- [ ] T039 [US4] Copy-aside on upgrade in `src/plans/planStore.ts`: before an upgraded document is first saved, the original is copied into the `<plan>.<fromVersion>.original` slot and kept until the person removes it. One copy per plan — reopening an older file whose slot is already occupied leaves the existing (older, more valuable) copy alone rather than creating a second (FR-020, FR-024)
+- [x] T038 [US4] Add the upgrade path to `src/utils/planFile.js` + tests: deterministic `older(version)` → current transform depending only on file content, one test per released format version as the standing SC-006 obligation begins (FR-020, FR-023, SC-006)
+- [x] T039 [US4] Copy-aside on upgrade in `src/plans/planStore.ts`: before an upgraded document is first saved, the original is copied into the `<plan>.<fromVersion>.original` slot and kept until the person removes it. One copy per plan — reopening an older file whose slot is already occupied leaves the existing (older, more valuable) copy alone rather than creating a second (FR-020, FR-024)
 - [x] T040 [US4] Enforce read-only in main in `src/plans/ipc.ts`: a plan opened as `newer(version)` or lock-fallback sets `readOnly` in the open envelope, and `save` for a read-only plan is refused in the main process regardless of renderer state; `saveAs` is the sole exit (R5, FR-021)
-- [ ] T041 [P] [US4] Create `src/components/Plans/ReadOnlyNotice.jsx`: the newer-format notice per wireframe 02 — what this version can read, what it cannot, and the warned Save As on both counts: unread content is not carried into the copy, and the copy is therefore not a substitute for the original, which stays the only complete version (FR-021)
-- [ ] T042 [US4] Handle `unreadable` end to end: `FILE_UNREADABLE` envelope from `src/plans/ipc.ts`, the file left untouched, and a clear report in the renderer through `src/context/PlanContext.jsx` (FR-022, SC-003)
-- [ ] T043 [US4] Surface failed saves: `SAVE_FAILED` envelope names the preserved `<plan>.partial`; renderer message in `src/components/Plans/SaveFailedNotice.jsx` tells the person the previous file survived, where the partial is, and which content each one holds — the plan file is the last content written whole, the partial is what they were saving (FR-008)
+- [x] T041 [P] [US4] Create `src/components/Plans/ReadOnlyNotice.jsx`: the newer-format notice per wireframe 02 — what this version can read, what it cannot, and the warned Save As on both counts: unread content is not carried into the copy, and the copy is therefore not a substitute for the original, which stays the only complete version (FR-021)
+- [x] T042 [US4] Handle `unreadable` end to end: `FILE_UNREADABLE` envelope from `src/plans/ipc.ts`, the file left untouched, and a clear report in the renderer through `src/context/PlanContext.jsx` (FR-022, SC-003)
+- [x] T043 [US4] Surface failed saves: `SAVE_FAILED` envelope names the preserved `<plan>.partial`; renderer message in `src/components/Plans/SaveFailedNotice.jsx` tells the person the previous file survived, where the partial is, and which content each one holds — the plan file is the last content written whole, the partial is what they were saving (FR-008)
 - [ ] T044 [US4] Verify quickstart 8, 9, 10 and 11 (upgrade, classification and retention decisions automated; dialog flows by hand) and gates green
 
 **Checkpoint**: SC-003 holds — no failure mode destroys a byte the person had not chosen to discard.

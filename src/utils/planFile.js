@@ -76,6 +76,48 @@ export function planSnapshot(document = {}) {
   });
 }
 
+// Bringing an older plan forward (FR-020, FR-023). Each step takes the document
+// as that version wrote it and returns it as the next version expects. Steps
+// depend only on the document — never on the catalogue, the recents list, or
+// the time of day — because SC-006's per-version tests are only meaningful if
+// the same file upgrades identically on every machine, forever.
+//
+// The table is empty because 1.0 is the only released format. It is the
+// mechanism that matters: when 1.1 arrives, it adds one entry here and one test
+// beside it, which is the standing obligation SC-006 describes.
+export const UPGRADE_STEPS = {
+  // '1.0': { to: '1.1', apply: (document) => ({ ...document, newThing: [] }) },
+};
+
+export function upgradePlan(document, fromVersion, steps = UPGRADE_STEPS) {
+  let current = document;
+  let version = fromVersion;
+  const applied = [];
+  // Bounded by the number of steps, so a table with a cycle in it cannot spin.
+  for (let guard = 0; guard <= Object.keys(steps).length; guard += 1) {
+    if (version === CURRENT_PLAN_FORMAT_VERSION) {
+      return { ok: true, document: current, from: fromVersion, applied };
+    }
+    const step = steps[version];
+    if (!step) {
+      return {
+        ok: false,
+        from: fromVersion,
+        applied,
+        message: `This plan was written in format ${fromVersion}, and this version `
+          + 'does not know how to bring that forward.',
+      };
+    }
+    current = step.apply(current);
+    version = step.to;
+    applied.push(`${fromVersion === version ? fromVersion : ''}${step.to}`.trim() || step.to);
+  }
+  return {
+    ok: false, from: fromVersion, applied,
+    message: 'The upgrade path for this plan does not lead to the current format.',
+  };
+}
+
 // "1.0" -> { major: 1, minor: 0 }. Anything that is not two integers is not a
 // version this application can order itself against, and a file it cannot place
 // is unreadable rather than guessed at.

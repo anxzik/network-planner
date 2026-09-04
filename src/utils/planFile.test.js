@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {CURRENT_PLAN_FORMAT_VERSION, emptyPlanDocument, planSnapshot, readPlanFile, serialisePlan} from './planFile';
+import {CURRENT_PLAN_FORMAT_VERSION, emptyPlanDocument, planSnapshot, readPlanFile, serialisePlan, UPGRADE_STEPS, upgradePlan} from './planFile';
 
 const plan = (extra = {}) => ({
   name: 'warehouse-b',
@@ -217,5 +217,60 @@ describe('emptyPlanDocument', () => {
     const first = emptyPlanDocument();
     first.appliances.push({ id: 'leak' });
     expect(emptyPlanDocument().appliances).toEqual([]);
+  });
+});
+
+describe('upgradePlan (FR-020, FR-023, SC-006)', () => {
+  // A synthetic table, because 1.0 is the only released format. The mechanism
+  // is what is under test; each real future version adds its own case here.
+  const steps = {
+    '0.8': { to: '0.9', apply: (d) => ({ ...d, viaEight: true }) },
+    '0.9': { to: '1.0', apply: (d) => ({ ...d, viaNine: true }) },
+  };
+
+  it('is already current when there is nothing to do', () => {
+    const result = upgradePlan({ name: 'x' }, '1.0', steps);
+    expect(result.ok).toBe(true);
+    expect(result.applied).toEqual([]);
+  });
+
+  it('walks every step between the file’s version and the current one', () => {
+    const result = upgradePlan({ name: 'x' }, '0.8', steps);
+    expect(result.ok).toBe(true);
+    expect(result.document.viaEight).toBe(true);
+    expect(result.document.viaNine).toBe(true);
+  });
+
+  it('reports a version it has no path from, rather than guessing', () => {
+    const result = upgradePlan({ name: 'x' }, '0.1', steps);
+    expect(result.ok).toBe(false);
+    expect(result.message).toContain('0.1');
+  });
+
+  it('is deterministic: the same document upgrades identically every time', () => {
+    const document = { name: 'x', appliances: [{ id: 'n1' }] };
+    expect(upgradePlan(document, '0.8', steps)).toEqual(upgradePlan(document, '0.8', steps));
+  });
+
+  it('depends only on the document it was given', () => {
+    const document = { name: 'x' };
+    const first = upgradePlan(document, '0.8', steps).document;
+    const second = upgradePlan({ ...document }, '0.8', steps).document;
+    expect(first).toEqual(second);
+  });
+
+  it('does not mutate the document it was given', () => {
+    const document = { name: 'x' };
+    upgradePlan(document, '0.8', steps);
+    expect(document).toEqual({ name: 'x' });
+  });
+
+  it('cannot spin on a table that loops back on itself', () => {
+    const looping = { '0.9': { to: '0.8', apply: (d) => d }, '0.8': { to: '0.9', apply: (d) => d } };
+    expect(upgradePlan({}, '0.8', looping).ok).toBe(false);
+  });
+
+  it('has no steps yet, because 1.0 is the only released format', () => {
+    expect(Object.keys(UPGRADE_STEPS)).toEqual([]);
   });
 });
