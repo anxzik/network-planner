@@ -1,3 +1,4 @@
+export { default as DivergencePanel } from './DivergencePanel';
 export { default as MigrationPanel } from './MigrationPanel';
 export { default as PlanMenu } from './PlanMenu';
 export { default as PlanTitle } from './PlanTitle';

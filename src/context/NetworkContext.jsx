@@ -4,6 +4,7 @@ import {createDeviceNode, createEdge, createPortEdge} from '../utils/nodeFactory
 import {getDefaultVlan} from '../utils/vlanFactory';
 import {determineVlanTransport, getPortById} from '../utils/portFactory';
 import {exportAll, importAll, loadData, saveData} from '../utils/storage';
+import {collectRecordedDefinitions} from '../utils/planDivergence';
 import {hasMigrated, MARKER_STORAGE_KEY} from '../utils/storageSalvage';
 
 // Before the crossing, the canvas still loads what the old storage holds — a
@@ -289,7 +290,15 @@ export function NetworkProvider({ children }) {
   // touching persistence: the caller decides where a document goes, and the
   // context knows nothing about files, localStorage or either one's lifecycle.
   const serialiseToDocument = useCallback(
-    () => ({ appliances: nodes, connections: edges, vlans, networkObjects }),
+    () => ({
+      appliances: nodes,
+      connections: edges,
+      vlans,
+      networkObjects,
+      // One full definition per placed type (FR-014, ADR 0011), so the plan
+      // opens complete on a machine whose catalogue never had them.
+      recordedDefinitions: collectRecordedDefinitions(nodes),
+    }),
     [nodes, edges, vlans, networkObjects],
   );
 

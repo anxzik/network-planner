@@ -33,6 +33,12 @@ const fail = (code: string, message: string): Envelope<never> => ({
 
 let store: CatalogueStore | null = null;
 
+// The catalogue, for the plan handlers that must compare a plan's recorded
+// definitions against today's rows (FR-016). Read-only: plans never write here.
+export function currentStore(): CatalogueStore | null {
+  return store;
+}
+
 export function initLibrary(): void {
   // The one decision the compatibility discovery said had to be made before
   // storage code was written: the database lives in the per-user data

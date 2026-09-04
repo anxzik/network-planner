@@ -33,6 +33,9 @@ const plans = {
     ipcRenderer.invoke('plans:checkOldStorage', payload),
   migrate: (payload: { raw: string | null; marker: string | null }) =>
     ipcRenderer.invoke('plans:migrate', payload),
+  divergences: (document: unknown) => ipcRenderer.invoke('plans:divergences', document),
+  applyUpdate: (payload: { document: unknown; typeId: string }) =>
+    ipcRenderer.invoke('plans:applyUpdate', payload),
   listRecents: () => ipcRenderer.invoke('plans:listRecents'),
   removeRecent: (id: string) => ipcRenderer.invoke('plans:removeRecent', id),
   openRecent: (id: string) => ipcRenderer.invoke('plans:openRecent', id),

@@ -4,6 +4,7 @@
 // defined in specs/003-project-files/contracts/plans-bridge.md.
 import {createContext, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {emptyPlanDocument, planSnapshot} from '../utils/planFile';
+import {applyUpdate as applyUpdateToDocument, declineUpdate} from '../utils/planDivergence';
 import {MARKER_STORAGE_KEY, STORAGE_KEY} from '../utils/storageSalvage';
 import {useNetwork} from './NetworkContext';
 import {useScratchpad} from './ScratchpadContext';
@@ -33,6 +34,10 @@ export function PlanProvider({ children }) {
   const [available] = useState(bridgeAvailable);
   // What the old browser storage turned out to hold, once asked (US2).
   const [migration, setMigration] = useState(null);
+  // Declines travel in the plan file (research R2), so they live beside the
+  // canvas rather than in the application's own storage.
+  const [declinedOffers, setDeclinedOffers] = useState({});
+  const [divergences, setDivergences] = useState([]);
 
   const plans = () => window.networkPlanner?.plans;
 
@@ -42,8 +47,9 @@ export function PlanProvider({ children }) {
     () => ({
       ...network.serialiseToDocument(),
       scratchpad: scratchpad.serialiseToDocument(),
+      declinedOffers,
     }),
-    [network, scratchpad],
+    [network, scratchpad, declinedOffers],
   );
 
   // Dirty is *derived*, never synchronised. A flag kept in step by an effect
@@ -74,6 +80,7 @@ export function PlanProvider({ children }) {
     setReadOnly(Boolean(value.readOnly));
     setNotice(value.notice ?? null);
     setSource('file');
+    setDeclinedOffers(value.document.declinedOffers ?? {});
     markClean(planSnapshot({ ...value.document, scratchpad: value.document.scratchpad }));
   }, [network, scratchpad, markClean]);
 
@@ -118,6 +125,9 @@ export function PlanProvider({ children }) {
     if (result.ok) {
       applyOpened(result.value);
       await refreshRecents();
+      await bridge.divergences(result.value.document).then((d) => {
+        if (d.ok) setDivergences(d.value.divergences);
+      });
     }
     return result;
   }, [applyOpened, refreshRecents]);
@@ -143,6 +153,9 @@ export function PlanProvider({ children }) {
     if (result.ok) {
       applyOpened(result.value);
       await refreshRecents();
+      await bridge.divergences(result.value.document).then((d) => {
+        if (d.ok) setDivergences(d.value.divergences);
+      });
     }
     return result;
   }, [applyOpened, refreshRecents]);
@@ -153,6 +166,35 @@ export function PlanProvider({ children }) {
     await bridge.removeRecent(id);
     await refreshRecents();
   }, [refreshRecents]);
+
+  // Which recorded definitions the catalogue now disagrees with, and what to do
+  // about each. The divergence maths is pure and identical on both sides of the
+  // bridge (planDivergence.js); this is only the asking and the applying.
+  const checkDivergences = useCallback(async () => {
+    const bridge = plans();
+    if (!bridge) return [];
+    const result = await bridge.divergences(planDocument);
+    if (!result.ok) return [];
+    setDivergences(result.value.divergences);
+    return result.value.divergences;
+  }, [planDocument]);
+
+  // Accepting replaces the plan's copy and the placed nodes that render from
+  // it, then clears any decline: the question has been answered the other way.
+  const acceptUpdate = useCallback((typeId, current) => {
+    const updated = applyUpdateToDocument(planDocument, typeId, current);
+    network.loadFromDocument(updated);
+    setDeclinedOffers(updated.declinedOffers ?? {});
+    setDivergences((rest) => rest.filter((d) => d.typeId !== typeId));
+  }, [planDocument, network]);
+
+  // Declining changes nothing about the plan and is remembered against the
+  // version refused, so a later, genuinely different correction still asks.
+  const declineOffer = useCallback((typeId, current) => {
+    const declined = declineUpdate(planDocument, typeId, current);
+    setDeclinedOffers(declined.declinedOffers);
+    setDivergences((rest) => rest.filter((d) => d.typeId !== typeId));
+  }, [planDocument]);
 
   // Anything that would replace the canvas asks first when there is unsaved
   // work (FR-006). Clean canvases go straight through: a prompt that appears
@@ -303,6 +345,7 @@ export function PlanProvider({ children }) {
   const value = useMemo(() => ({
     name, dirty, readOnly, source, notice, recents, recovery, available, pending,
     migration, migrate, dismissMigration,
+    divergences, checkDivergences, acceptUpdate, declineOffer,
     document: planDocument,
     save, saveAs, openDialog, newPlan,
     openRecent, removeRecent, refreshRecents,
@@ -313,6 +356,7 @@ export function PlanProvider({ children }) {
   }), [
     name, dirty, readOnly, source, notice, recents, recovery, available, pending,
     migration, migrate, dismissMigration,
+    divergences, checkDivergences, acceptUpdate, declineOffer,
     planDocument, save, saveAs, openDialog, newPlan,
     openRecent, removeRecent, refreshRecents, guard, resolvePending,
     restoreRecovery, declineRecovery, markClean, applyOpened,

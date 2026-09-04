@@ -71,6 +71,8 @@ export function planSnapshot(document = {}) {
     vlans: document.vlans ?? empty.vlans,
     networkObjects: document.networkObjects ?? empty.networkObjects,
     scratchpad: document.scratchpad ?? empty.scratchpad,
+    recordedDefinitions: document.recordedDefinitions ?? empty.recordedDefinitions,
+    declinedOffers: document.declinedOffers ?? empty.declinedOffers,
   });
 }
 

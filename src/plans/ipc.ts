@@ -6,6 +6,7 @@ import { app, dialog, ipcMain } from 'electron';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { PlanState, type RecentEntry, type RecoverySlot } from './recents';
+import { catalogueById } from './catalogueLookup';
 import { readPlan, releaseLock, savePlan, takeLock } from './planStore';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- plain JS module, typed loosely on purpose
@@ -16,6 +17,9 @@ import { findByPath, forDisplay, recordOpen, removeEntry } from '../utils/recent
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- plain JS module, typed loosely on purpose
 import { classifyOldStorage, migrationMarker } from '../utils/storageSalvage.js';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore -- plain JS module, typed loosely on purpose
+import { applyUpdate, offerable } from '../utils/planDivergence.js';
 
 type Envelope<T> =
   | { ok: true; value: T }
@@ -242,6 +246,30 @@ export function initPlans(): void {
       lost: found.lost ?? [],
       marker: migrationMarker(written.value.name, new Date().toISOString()),
     });
+  });
+
+  // The same pure divergence maths the renderer runs, run again here against
+  // the catalogue main owns — the renderer never sees the catalogue rows it
+  // would need to decide this alone.
+  ipcMain.handle('plans:divergences', (_event, document: unknown) => {
+    if (typeof document !== 'object' || document === null) {
+      return fail('VALIDATION_FAILED', 'A plan is needed to compare against.');
+    }
+    try {
+      return ok({ divergences: offerable(document, catalogueById()) });
+    } catch (err) {
+      return fail('STORAGE_FAILED', `The catalogue could not be read: ${String(err)}`);
+    }
+  });
+
+  ipcMain.handle('plans:applyUpdate', (_event, payload: unknown) => {
+    const { document, typeId } = (payload ?? {}) as { document?: unknown; typeId?: unknown };
+    if (typeof document !== 'object' || document === null || typeof typeId !== 'string') {
+      return fail('VALIDATION_FAILED', 'An update needs a plan and a type.');
+    }
+    const current = catalogueById()[typeId];
+    if (!current) return fail('VALIDATION_FAILED', 'That type is no longer in the catalogue.');
+    return ok({ document: applyUpdate(document, typeId, current) });
   });
 
   ipcMain.handle('plans:listRecents', async () => {
