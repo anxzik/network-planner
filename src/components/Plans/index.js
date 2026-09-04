@@ -1,3 +1,4 @@
+export { default as AdoptTypesPanel } from './AdoptTypesPanel';
 export { default as BroadApplyPanel } from './BroadApplyPanel';
 export { default as DivergencePanel } from './DivergencePanel';
 export { default as MigrationPanel } from './MigrationPanel';

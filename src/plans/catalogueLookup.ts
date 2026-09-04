@@ -3,6 +3,10 @@
 // only the shape the comparison wants them in.
 import { currentStore } from '../library/ipc';
 
+export function catalogueStore() {
+  return currentStore();
+}
+
 export function catalogueById(): Record<string, unknown> {
   const store = currentStore();
   if (!store) return {};

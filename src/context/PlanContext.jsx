@@ -38,6 +38,8 @@ export function PlanProvider({ children }) {
   // canvas rather than in the application's own storage.
   const [declinedOffers, setDeclinedOffers] = useState({});
   const [divergences, setDivergences] = useState([]);
+  // What this plan brought that the catalogue does not have (FR-025).
+  const [adoptOffer, setAdoptOffer] = useState(null);
 
   const plans = () => window.networkPlanner?.plans;
 
@@ -128,6 +130,9 @@ export function PlanProvider({ children }) {
       await bridge.divergences(result.value.document).then((d) => {
         if (d.ok) setDivergences(d.value.divergences);
       });
+      await bridge.adoptable(result.value.document).then((a) => {
+        if (a.ok && a.value.offered.length > 0) setAdoptOffer(a.value);
+      });
     }
     return result;
   }, [applyOpened, refreshRecents]);
@@ -155,6 +160,9 @@ export function PlanProvider({ children }) {
       await refreshRecents();
       await bridge.divergences(result.value.document).then((d) => {
         if (d.ok) setDivergences(d.value.divergences);
+      });
+      await bridge.adoptable(result.value.document).then((a) => {
+        if (a.ok && a.value.offered.length > 0) setAdoptOffer(a.value);
       });
     }
     return result;
@@ -195,6 +203,18 @@ export function PlanProvider({ children }) {
     setDeclinedOffers(declined.declinedOffers);
     setDivergences((rest) => rest.filter((d) => d.typeId !== typeId));
   }, [planDocument]);
+
+  const adopt = useCallback(async (typeIds) => {
+    const bridge = plans();
+    if (!bridge) return { ok: false, error: { code: 'UNAVAILABLE', message: 'No bridge.' } };
+    const result = await bridge.adopt({ document: planDocument, typeIds });
+    // Adoption changes the catalogue, never the plan, so nothing about the open
+    // document is touched here — only the offer, which is now answered.
+    if (result.ok) setAdoptOffer(null);
+    return result;
+  }, [planDocument]);
+
+  const dismissAdoptOffer = useCallback(() => setAdoptOffer(null), []);
 
   const broadApplyPreview = useCallback(async (typeId) => {
     const bridge = plans();
@@ -359,6 +379,7 @@ export function PlanProvider({ children }) {
     migration, migrate, dismissMigration,
     divergences, checkDivergences, acceptUpdate, declineOffer,
     broadApplyPreview, broadApply,
+    adoptOffer, adopt, dismissAdoptOffer,
     document: planDocument,
     save, saveAs, openDialog, newPlan,
     openRecent, removeRecent, refreshRecents,
@@ -371,6 +392,7 @@ export function PlanProvider({ children }) {
     migration, migrate, dismissMigration,
     divergences, checkDivergences, acceptUpdate, declineOffer,
     broadApplyPreview, broadApply,
+    adoptOffer, adopt, dismissAdoptOffer,
     planDocument, save, saveAs, openDialog, newPlan,
     openRecent, removeRecent, refreshRecents, guard, resolvePending,
     restoreRecovery, declineRecovery, markClean, applyOpened,

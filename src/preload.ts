@@ -39,6 +39,9 @@ const plans = {
   broadApplyPreview: (typeId: string) => ipcRenderer.invoke('plans:broadApplyPreview', typeId),
   broadApply: (payload: { typeId: string; ids: string[] }) =>
     ipcRenderer.invoke('plans:broadApply', payload),
+  adoptable: (document: unknown) => ipcRenderer.invoke('plans:adoptable', document),
+  adopt: (payload: { document: unknown; typeIds: string[] }) =>
+    ipcRenderer.invoke('plans:adopt', payload),
   listRecents: () => ipcRenderer.invoke('plans:listRecents'),
   removeRecent: (id: string) => ipcRenderer.invoke('plans:removeRecent', id),
   openRecent: (id: string) => ipcRenderer.invoke('plans:openRecent', id),

@@ -6,7 +6,7 @@ import { app, dialog, ipcMain } from 'electron';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { PlanState, type RecentEntry, type RecoverySlot } from './recents';
-import { catalogueById } from './catalogueLookup';
+import { catalogueById, catalogueStore } from './catalogueLookup';
 import { preserveCopy, readPlan, releaseLock, savePlan, takeLock } from './planStore';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- plain JS module, typed loosely on purpose
@@ -20,6 +20,9 @@ import { classifyOldStorage, migrationMarker } from '../utils/storageSalvage.js'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- plain JS module, typed loosely on purpose
 import { applyUpdate, definitionsDiffer, offerable } from '../utils/planDivergence.js';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore -- plain JS module, typed loosely on purpose
+import { adoptable, chosenRows } from '../utils/typeAdoption.js';
 
 type Envelope<T> =
   | { ok: true; value: T }
@@ -346,6 +349,43 @@ export function initPlans(): void {
         : { name: entry.name, ok: false, reason: written.message });
     }
     return ok({ results });
+  });
+
+  // What of this plan's equipment your catalogue does not have (FR-025). The
+  // offer follows opening and never gates it: the plan already renders.
+  ipcMain.handle('plans:adoptable', (_event, document: unknown) => {
+    if (typeof document !== 'object' || document === null) {
+      return fail('VALIDATION_FAILED', 'A plan is needed.');
+    }
+    const recorded = (document as { recordedDefinitions?: unknown }).recordedDefinitions ?? {};
+    return ok(adoptable(recorded, catalogueById()));
+  });
+
+  ipcMain.handle('plans:adopt', (_event, payload: unknown) => {
+    const { document, typeIds } = (payload ?? {}) as { document?: unknown; typeIds?: unknown };
+    if (typeof document !== 'object' || document === null || !Array.isArray(typeIds)) {
+      return fail('VALIDATION_FAILED', 'A plan and the types to adopt are needed.');
+    }
+    const store = catalogueStore();
+    if (!store) return fail('STORAGE_FAILED', 'The catalogue is not open.');
+
+    const recorded = (document as { recordedDefinitions?: unknown }).recordedDefinitions ?? {};
+    const offer = adoptable(recorded, catalogueById());
+    const rows = chosenRows(offer, typeIds, openPlan ? openPlan.name : null, new Date().toISOString());
+
+    const adopted: string[] = [];
+    const failed: { typeId: string; reason: string }[] = [];
+    for (const row of rows) {
+      try {
+        store.createType(row);
+        adopted.push(row.id);
+      } catch (err) {
+        failed.push({ typeId: row.id, reason: String(err) });
+      }
+    }
+    // The plan itself is untouched: adoption adds catalogue rows and nothing
+    // else, so the document that came in is the document still open.
+    return ok({ adopted, skipped: offer.skipped, failed });
   });
 
   ipcMain.handle('plans:listRecents', async () => {
