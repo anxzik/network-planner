@@ -152,7 +152,7 @@ are binding layout constraints on every renderer task.
 - [x] T047 [P] Two-instance behaviour: wire the lock sidecar from `src/plans/planStore.ts` into `open` so a second opener gets `LOCKED` → read-only with notice; stale locks (dead pid or aged) are ignored; verify quickstart 13 by hand (R6)
 - [x] T048 [P] Edge-case sweep with tests where pure: save onto a path holding a different plan (ordinary overwrite after the dialog's own confirm), open-plan file renamed/moved/deleted externally (surfaced on next save as `SAVE_FAILED`-style report, not a crash), and a recorded definition failing today's validation rules (rendered anyway per FR-015, flagged in the divergence panel) in `src/utils/planFile.test.js` / `src/utils/planDivergence.test.js`
 - [x] T049 Keep files under 500 lines: check `src/plans/ipc.ts` and `src/context/PlanContext.jsx` sizes; split if breached
-- [ ] T050 Run the full quickstart (all 13 scenarios), confirm `npm run lint && npm test && npm run typecheck` green by exit code, and mark completed tasks here
+- [x] T050 Run the full quickstart (all 13 scenarios), confirm `npm run lint && npm test && npm run typecheck` green by exit code, and mark completed tasks here
 
 ---
 
