@@ -7,19 +7,19 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { PlanState, type RecentEntry, type RecoverySlot } from './recents';
 import { catalogueById } from './catalogueLookup';
-import { readPlan, releaseLock, savePlan, takeLock } from './planStore';
+import { preserveCopy, readPlan, releaseLock, savePlan, takeLock } from './planStore';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- plain JS module, typed loosely on purpose
 import { readPlanFile, serialisePlan } from '../utils/planFile.js';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- plain JS module, typed loosely on purpose
-import { findByPath, forDisplay, recordOpen, removeEntry } from '../utils/recentsPrune.js';
+import { findByPath, forDisplay, recentId, recordOpen, removeEntry } from '../utils/recentsPrune.js';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- plain JS module, typed loosely on purpose
 import { classifyOldStorage, migrationMarker } from '../utils/storageSalvage.js';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- plain JS module, typed loosely on purpose
-import { applyUpdate, offerable } from '../utils/planDivergence.js';
+import { applyUpdate, definitionsDiffer, offerable } from '../utils/planDivergence.js';
 
 type Envelope<T> =
   | { ok: true; value: T }
@@ -270,6 +270,82 @@ export function initPlans(): void {
     const current = catalogueById()[typeId];
     if (!current) return fail('VALIDATION_FAILED', 'That type is no longer in the catalogue.');
     return ok({ document: applyUpdate(document, typeId, current) });
+  });
+
+  // A correction can be carried to the plans the application knows about, and
+  // that reach is the recent list and nothing else (R7). The application never
+  // scans a disk looking for plans: what a person has opened is what it knows.
+  ipcMain.handle('plans:broadApplyPreview', async (_event, typeId: unknown) => {
+    if (!state) return fail('STORAGE_FAILED', 'Plan state is not open.');
+    if (typeof typeId !== 'string') return fail('VALIDATION_FAILED', 'A type is needed.');
+    const current = catalogueById()[typeId];
+    if (!current) return fail('VALIDATION_FAILED', 'That type is no longer in the catalogue.');
+
+    const reachable: { id: string; name: string; changed: string[] }[] = [];
+    const unreachable: { name: string; reason: string }[] = [];
+
+    for (const entry of await state.readRecents()) {
+      const read = await readPlan(entry.path);
+      if (!read.ok) {
+        unreachable.push({ name: entry.name, reason: 'The file could not be read.' });
+        continue;
+      }
+      const classified = readPlanFile(read.text);
+      if (classified.kind === 'unreadable' || classified.kind === 'newer') {
+        unreachable.push({
+          name: entry.name,
+          reason: classified.kind === 'newer'
+            ? 'Written in a newer format, and never written back to.'
+            : 'The file could not be read as a plan.',
+        });
+        continue;
+      }
+      const planCopy = classified.document?.recordedDefinitions?.[typeId];
+      // A plan that does not place this type is not unreachable; it simply has
+      // nothing to change, and listing it would be noise.
+      if (!planCopy || !definitionsDiffer(planCopy, current)) continue;
+      reachable.push({ id: recentId(entry.path), name: entry.name, changed: [] });
+    }
+    return ok({ reachable, unreachable });
+  });
+
+  ipcMain.handle('plans:broadApply', async (_event, payload: unknown) => {
+    if (!state) return fail('STORAGE_FAILED', 'Plan state is not open.');
+    const { typeId, ids } = (payload ?? {}) as { typeId?: unknown; ids?: unknown };
+    if (typeof typeId !== 'string' || !Array.isArray(ids)) {
+      return fail('VALIDATION_FAILED', 'A type and the plans to change are needed.');
+    }
+    const current = catalogueById()[typeId];
+    if (!current) return fail('VALIDATION_FAILED', 'That type is no longer in the catalogue.');
+
+    const results: { name: string; ok: boolean; reason?: string }[] = [];
+    for (const entry of await state.readRecents()) {
+      if (!ids.includes(recentId(entry.path))) continue;
+      const read = await readPlan(entry.path);
+      if (!read.ok) {
+        results.push({ name: entry.name, ok: false, reason: 'The file could not be read.' });
+        continue;
+      }
+      const classified = readPlanFile(read.text);
+      if (classified.kind !== 'current' && classified.kind !== 'older') {
+        results.push({ name: entry.name, ok: false, reason: 'The file is not one this version writes to.' });
+        continue;
+      }
+      // The same original-kept discipline an upgrade uses (FR-020, FR-024):
+      // a copy goes aside before the plan is changed.
+      try {
+        await preserveCopy(entry.path, 'preapplyOriginal');
+      } catch {
+        results.push({ name: entry.name, ok: false, reason: 'A copy could not be kept, so nothing was changed.' });
+        continue;
+      }
+      const updated = applyUpdate(classified.document, typeId, current);
+      const written = await savePlan(entry.path, serialisePlan(updated) as string);
+      results.push(written.ok
+        ? { name: entry.name, ok: true }
+        : { name: entry.name, ok: false, reason: written.message });
+    }
+    return ok({ results });
   });
 
   ipcMain.handle('plans:listRecents', async () => {

@@ -6,6 +6,7 @@
 import {useState} from 'react';
 import {usePlan} from '../../context/PlanContext';
 import {useSettings} from '../../context/SettingsContext';
+import BroadApplyPanel from './BroadApplyPanel';
 
 const FIELD_NAMES = {
   name: 'name', manufacturer: 'manufacturer', model: 'model',
@@ -17,7 +18,15 @@ function DivergencePanel() {
   const { divergences, acceptUpdate, declineOffer } = usePlan();
   const { currentTheme } = useSettings();
   const [index, setIndex] = useState(0);
+  // Set when the person wants this correction carried further than this plan.
+  const [broadFor, setBroadFor] = useState(null);
 
+  if (broadFor) {
+    return (
+      <BroadApplyPanel typeId={broadFor.typeId} typeName={broadFor.name}
+        onClose={() => setBroadFor(null)} />
+    );
+  }
   if (divergences.length === 0) return null;
   const item = divergences[Math.min(index, divergences.length - 1)];
   if (!item) return null;
@@ -25,6 +34,14 @@ function DivergencePanel() {
   const answer = (action) => {
     action(item.typeId, item.current);
     setIndex(0);
+  };
+
+  // Offered after accepting, not before: a correction reaches other plans only
+  // once this person has agreed it is one (FR-018).
+  const acceptEverywhere = () => {
+    const { typeId, current } = item;
+    acceptUpdate(typeId, current);
+    setBroadFor({ typeId, name: current.name });
   };
 
   return (
@@ -64,6 +81,12 @@ function DivergencePanel() {
           style={{ borderColor: currentTheme.border, color: currentTheme.text }}
           onClick={() => answer(declineOffer)}>
           Keep the plan&apos;s copy
+        </button>
+        <button type="button"
+          className="px-3 py-1.5 rounded text-sm border"
+          style={{ borderColor: currentTheme.border, color: currentTheme.text }}
+          onClick={acceptEverywhere}>
+          Update this and others…
         </button>
         {divergences.length > 1 && (
           <span className="ml-auto text-xs" style={{ color: currentTheme.textSecondary }}>

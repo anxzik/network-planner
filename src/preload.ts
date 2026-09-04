@@ -36,6 +36,9 @@ const plans = {
   divergences: (document: unknown) => ipcRenderer.invoke('plans:divergences', document),
   applyUpdate: (payload: { document: unknown; typeId: string }) =>
     ipcRenderer.invoke('plans:applyUpdate', payload),
+  broadApplyPreview: (typeId: string) => ipcRenderer.invoke('plans:broadApplyPreview', typeId),
+  broadApply: (payload: { typeId: string; ids: string[] }) =>
+    ipcRenderer.invoke('plans:broadApply', payload),
   listRecents: () => ipcRenderer.invoke('plans:listRecents'),
   removeRecent: (id: string) => ipcRenderer.invoke('plans:removeRecent', id),
   openRecent: (id: string) => ipcRenderer.invoke('plans:openRecent', id),

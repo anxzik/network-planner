@@ -196,6 +196,18 @@ export function PlanProvider({ children }) {
     setDivergences((rest) => rest.filter((d) => d.typeId !== typeId));
   }, [planDocument]);
 
+  const broadApplyPreview = useCallback(async (typeId) => {
+    const bridge = plans();
+    if (!bridge) return { ok: false, error: { code: 'UNAVAILABLE', message: 'No bridge.' } };
+    return bridge.broadApplyPreview(typeId);
+  }, []);
+
+  const broadApply = useCallback(async (typeId, ids) => {
+    const bridge = plans();
+    if (!bridge) return { ok: false, error: { code: 'UNAVAILABLE', message: 'No bridge.' } };
+    return bridge.broadApply({ typeId, ids });
+  }, []);
+
   // Anything that would replace the canvas asks first when there is unsaved
   // work (FR-006). Clean canvases go straight through: a prompt that appears
   // when there is nothing to lose teaches people to dismiss prompts.
@@ -346,6 +358,7 @@ export function PlanProvider({ children }) {
     name, dirty, readOnly, source, notice, recents, recovery, available, pending,
     migration, migrate, dismissMigration,
     divergences, checkDivergences, acceptUpdate, declineOffer,
+    broadApplyPreview, broadApply,
     document: planDocument,
     save, saveAs, openDialog, newPlan,
     openRecent, removeRecent, refreshRecents,
@@ -357,6 +370,7 @@ export function PlanProvider({ children }) {
     name, dirty, readOnly, source, notice, recents, recovery, available, pending,
     migration, migrate, dismissMigration,
     divergences, checkDivergences, acceptUpdate, declineOffer,
+    broadApplyPreview, broadApply,
     planDocument, save, saveAs, openDialog, newPlan,
     openRecent, removeRecent, refreshRecents, guard, resolvePending,
     restoreRecovery, declineRecovery, markClean, applyOpened,
