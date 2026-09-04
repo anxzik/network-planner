@@ -21,7 +21,11 @@ const createWindow = () => {
 
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-    mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
+    // Forge hardcodes `localhost` in this URL whatever address the dev server
+    // bound to. The dev server is pinned to 127.0.0.1 (see
+    // vite.renderer.config.mts), so address it directly rather than depending
+    // on how this machine happens to resolve localhost.
+    mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL.replace('localhost', '127.0.0.1'));
   } else {
     mainWindow.loadFile(
       path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`),

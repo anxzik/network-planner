@@ -43,7 +43,7 @@ are binding layout constraints on every renderer task.
 
 **Purpose**: Confirm the branch starts green; this feature adds no runtime dependency (plan.md Technical Context).
 
-- [ ] T001 Confirm `npm install` is current and `npm start` launches the app on branch `003-project-files`
+- [x] T001 Confirm `npm install` is current and `npm start` launches the app on branch `003-project-files`
 - [x] T002 Verify baseline is green: `npm run lint && npm test && npm run typecheck` (check exit codes, not output)
 
 ---
