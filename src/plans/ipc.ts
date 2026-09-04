@@ -2,14 +2,14 @@
 // side of the boundary; the renderer sees only the envelope defined in
 // specs/003-project-files/contracts/plans-bridge.md, and never a reusable path
 // — recents cross as opaque ids.
-import { app, ipcMain } from 'electron';
+import { app, dialog, ipcMain } from 'electron';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { PlanState, type RecentEntry, type RecoverySlot } from './recents';
-import { readPlan, releaseLock, takeLock } from './planStore';
+import { readPlan, releaseLock, savePlan, takeLock } from './planStore';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- plain JS module, typed loosely on purpose
-import { readPlanFile } from '../utils/planFile.js';
+import { readPlanFile, serialisePlan } from '../utils/planFile.js';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- plain JS module, typed loosely on purpose
 import { findByPath, forDisplay, recordOpen, removeEntry } from '../utils/recentsPrune.js';
@@ -94,9 +94,91 @@ async function openAtPath(target: string): Promise<Envelope<unknown>> {
   });
 }
 
+const PLAN_FILTERS = [{ name: 'Network plans', extensions: ['netplan'] }];
+
+// Write a document to a path through the atomic path, then make it the open
+// plan. Everything that can fail here is reported in an envelope; nothing
+// throws across the bridge.
+async function writeTo(target: string, document: Record<string, unknown>) {
+  const text = serialisePlan({ ...document, name: path.basename(target, '.netplan') });
+  const written = await savePlan(target, text as string);
+  if (!written.ok) {
+    // The plan's previous content is untouched and the interrupted write was
+    // kept; the envelope names it so the person can be told (FR-008).
+    return fail('SAVE_FAILED', written.message);
+  }
+  if (openPlan && openPlan.path !== target) await releaseLock(openPlan.path);
+  const name = path.basename(target);
+  const lock = await takeLock(target);
+  openPlan = { path: target, name, readOnly: !lock.held };
+  if (state) {
+    const entries = await state.readRecents();
+    await state.writeRecents(
+      recordOpen(entries, { path: target, name, at: new Date().toISOString() }) as RecentEntry[],
+    );
+  }
+  return ok({ name });
+}
+
 export function initPlans(): void {
   // Beside the catalogue database, not inside it (R3).
   state = new PlanState(app.getPath('userData'));
+
+  // What main knows about the open plan. `dirty` is not here: it is derived in
+  // the renderer by comparing the canvas against the document last written
+  // (planSnapshot), and main has no view of unsaved edits. Recorded as a
+  // deviation from contracts/plans-bridge.md.
+  ipcMain.handle('plans:state', () => ok({
+    name: openPlan ? openPlan.name : null,
+    readOnly: openPlan ? openPlan.readOnly : false,
+    source: openPlan ? 'file' : 'untitled',
+  }));
+
+  // Starting a new plan is main letting go of the old one. Whether there were
+  // unsaved changes to prompt about is the renderer's question, asked before
+  // this is called (FR-006).
+  ipcMain.handle('plans:newPlan', async () => {
+    if (openPlan) await releaseLock(openPlan.path);
+    openPlan = null;
+    return ok({ name: null, source: 'untitled' });
+  });
+
+  ipcMain.handle('plans:open', async () => {
+    const picked = await dialog.showOpenDialog({
+      title: 'Open a plan',
+      filters: PLAN_FILTERS,
+      properties: ['openFile'],
+    });
+    // Cancelling is an ordinary outcome, not a failure to report as one.
+    if (picked.canceled || picked.filePaths.length === 0) {
+      return fail('CANCELLED', 'No plan was opened.');
+    }
+    return openAtPath(picked.filePaths[0]);
+  });
+
+  ipcMain.handle('plans:save', async (_event, document: unknown) => {
+    if (typeof document !== 'object' || document === null) {
+      return fail('VALIDATION_FAILED', 'A save needs a plan to write.');
+    }
+    // Never write back to a plan opened read-only. Enforced here rather than
+    // only in the UI, so a renderer bug cannot violate it (R5, FR-021).
+    if (openPlan?.readOnly) {
+      return fail(
+        'LOCKED',
+        'This plan is open read-only and is never written to. Use Save As to keep an editable copy.',
+      );
+    }
+    // A plan that has never had a file needs somewhere to go.
+    if (!openPlan) return saveAsFlow(document as Record<string, unknown>);
+    return writeTo(openPlan.path, document as Record<string, unknown>);
+  });
+
+  ipcMain.handle('plans:saveAs', async (_event, document: unknown) => {
+    if (typeof document !== 'object' || document === null) {
+      return fail('VALIDATION_FAILED', 'A save needs a plan to write.');
+    }
+    return saveAsFlow(document as Record<string, unknown>);
+  });
 
   ipcMain.handle('plans:listRecents', async () => {
     if (!state) return fail('STORAGE_FAILED', 'Plan state is not open.');
@@ -165,6 +247,19 @@ export function initPlans(): void {
     await state.clearRecoverySlot();
     return ok({ cleared: true });
   });
+}
+
+// Save As is its own flow because it is also the only exit from a read-only
+// plan (FR-021): the result is always a new file, and it becomes the open one.
+async function saveAsFlow(document: Record<string, unknown>) {
+  const picked = await dialog.showSaveDialog({
+    title: 'Save the plan',
+    defaultPath: openPlan ? openPlan.name : 'untitled.netplan',
+    filters: PLAN_FILTERS,
+  });
+  if (picked.canceled || !picked.filePath) return fail('CANCELLED', 'The plan was not saved.');
+  const target = picked.filePath.endsWith('.netplan') ? picked.filePath : `${picked.filePath}.netplan`;
+  return writeTo(target, document);
 }
 
 export async function closePlans(): Promise<void> {

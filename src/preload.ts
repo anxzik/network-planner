@@ -24,6 +24,11 @@ const library = {
 // to nothing is worse than an absent one, because the renderer cannot tell the
 // difference between "not built yet" and "returned nothing".
 const plans = {
+  state: () => ipcRenderer.invoke('plans:state'),
+  newPlan: () => ipcRenderer.invoke('plans:newPlan'),
+  open: () => ipcRenderer.invoke('plans:open'),
+  save: (document: unknown) => ipcRenderer.invoke('plans:save', document),
+  saveAs: (document: unknown) => ipcRenderer.invoke('plans:saveAs', document),
   listRecents: () => ipcRenderer.invoke('plans:listRecents'),
   removeRecent: (id: string) => ipcRenderer.invoke('plans:removeRecent', id),
   openRecent: (id: string) => ipcRenderer.invoke('plans:openRecent', id),

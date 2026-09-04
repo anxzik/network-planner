@@ -9,7 +9,7 @@ call async, failure is a returned envelope.
 
 | Method | Takes | Returns | Reqs |
 |---|---|---|---|
-| `state()` | — | `{ name, dirty, readOnly, source }` | FR-005 |
+| `state()` | — | `{ name, readOnly, source }` | FR-005 |
 | `newPlan()` | — | `{ ok }` after unsaved-prompt flow | FR-003, FR-006 |
 | `open()` | dialog | plan document + `{ readOnly, notice? }` | FR-002, FR-021 |
 | `openRecent(id)` | recent-id | as `open()` | FR-007 |
@@ -28,6 +28,13 @@ call async, failure is a returned envelope.
 | `adopt(document, typeIds)` | chosen types | `{ adopted:[typeId], skipped:[{typeId,reason}] }` | FR-025 |
 | `listPreserved(planId)` | — | `[ { kind, name, redundant } ]` | FR-024 |
 | `clearPreserved(planId, kind)` | — | `{ cleared }` | FR-024 |
+
+## Deviations, as built
+
+- `state()` does not return `dirty`. Main has no view of unsaved edits: the
+  renderer derives dirty by comparing the canvas against the document last
+  written (`planSnapshot` in `planFile.js`). Asking main would mean main
+  tracking every keystroke, which the boundary exists to avoid.
 
 ## Error codes
 
