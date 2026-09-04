@@ -60,7 +60,7 @@ are binding layout constraints on every renderer task.
 - [x] T006 Create `src/plans/ipc.ts`: register the `plans:*` handler surface from contracts/plans-bridge.md with the existing `{ok:true,value}|{ok:false,error:{code,message}}` envelope; wire registration into `src/main.ts` beside `src/library/ipc.ts`; paths never cross to the renderer — recents cross as opaque ids
 - [x] T007 Extend `src/preload.ts`: add the `plans` namespace to `window.networkPlanner` beside `library`, one method per contract row, all async, no path exposure
 - [x] T008 Add document seams to `src/context/NetworkContext.jsx` and `src/context/ScratchpadContext.jsx`: `serialiseToDocument()` / `loadFromDocument(document)` so a plan can be captured from and restored to the canvas without touching persistence
-- [ ] T009 Create `src/context/PlanContext.jsx`: open-plan state (`name`, `dirty`, `readOnly`, `source`), dirty tracking from Network/Scratchpad changes, bridge calls through `window.networkPlanner.plans`; mount `PlanProvider` in `src/main.jsx` alongside the existing providers (FR-005)
+- [x] T009 Create `src/context/PlanContext.jsx`: open-plan state (`name`, `dirty`, `readOnly`, `source`), dirty tracking from Network/Scratchpad changes, bridge calls through `window.networkPlanner.plans`; mount `PlanProvider` in `src/main.jsx` alongside the existing providers (FR-005)
 
 **Checkpoint**: Bridge callable end-to-end; a document round-trips serialise → classify → load in tests.
 

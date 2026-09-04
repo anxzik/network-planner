@@ -50,6 +50,30 @@ export function serialisePlan({
   );
 }
 
+// An empty plan: what File > New produces, and what "unchanged" is measured
+// against before anything has been opened or saved.
+export function emptyPlanDocument() {
+  return {
+    appliances: [], connections: [], vlans: [], networkObjects: [],
+    scratchpad: {}, recordedDefinitions: {}, declinedOffers: {},
+  };
+}
+
+// A stable string for deciding whether a plan differs from the one on disk.
+// Only the parts that belong to the plan are compared: a window's own state —
+// which node is selected, how tall a panel is — is not a change to the plan and
+// must never make it look unsaved.
+export function planSnapshot(document = {}) {
+  const empty = emptyPlanDocument();
+  return JSON.stringify({
+    appliances: document.appliances ?? empty.appliances,
+    connections: document.connections ?? empty.connections,
+    vlans: document.vlans ?? empty.vlans,
+    networkObjects: document.networkObjects ?? empty.networkObjects,
+    scratchpad: document.scratchpad ?? empty.scratchpad,
+  });
+}
+
 // "1.0" -> { major: 1, minor: 0 }. Anything that is not two integers is not a
 // version this application can order itself against, and a file it cannot place
 // is unreadable rather than guessed at.

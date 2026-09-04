@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {CURRENT_PLAN_FORMAT_VERSION, readPlanFile, serialisePlan} from './planFile';
+import {CURRENT_PLAN_FORMAT_VERSION, emptyPlanDocument, planSnapshot, readPlanFile, serialisePlan} from './planFile';
 
 const plan = (extra = {}) => ({
   name: 'warehouse-b',
@@ -177,5 +177,45 @@ describe('readPlanFile defaults', () => {
   it('classifies identically however many times it reads the same text (FR-023)', () => {
     const text = JSON.stringify({ formatVersion: '0.9', name: 'x' });
     expect(readPlanFile(text)).toEqual(readPlanFile(text));
+  });
+});
+
+describe('planSnapshot', () => {
+  it('is equal for documents that differ only in window state', () => {
+    const a = { appliances: [{ id: 'n1' }], selectedNode: 'n1', panelHeight: 300 };
+    const b = { appliances: [{ id: 'n1' }], selectedNode: null, panelHeight: 120 };
+    expect(planSnapshot(a)).toBe(planSnapshot(b));
+  });
+
+  it('differs when the plan itself changes', () => {
+    expect(planSnapshot({ appliances: [{ id: 'n1' }] }))
+      .not.toBe(planSnapshot({ appliances: [{ id: 'n2' }] }));
+  });
+
+  it('notices a change in any part that belongs to the plan', () => {
+    const base = planSnapshot({});
+    for (const change of [
+      { appliances: [{ id: 'x' }] }, { connections: [{ id: 'e' }] },
+      { vlans: [{ id: 1 }] }, { networkObjects: [{ id: 'o' }] },
+      { scratchpad: { notes: 'hello' } },
+    ]) {
+      expect(planSnapshot(change)).not.toBe(base);
+    }
+  });
+
+  it('treats an empty document and no document alike, so a new plan starts clean', () => {
+    expect(planSnapshot()).toBe(planSnapshot(emptyPlanDocument()));
+  });
+});
+
+describe('emptyPlanDocument', () => {
+  it('serialises to a readable current-format plan', () => {
+    expect(readPlanFile(serialisePlan(emptyPlanDocument())).kind).toBe('current');
+  });
+
+  it('is a fresh object each time, so callers cannot share and mutate one', () => {
+    const first = emptyPlanDocument();
+    first.appliances.push({ id: 'leak' });
+    expect(emptyPlanDocument().appliances).toEqual([]);
   });
 });
