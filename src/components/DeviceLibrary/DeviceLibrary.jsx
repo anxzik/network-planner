@@ -13,8 +13,11 @@ function DeviceLibrary() {
   // The palette draws from the live catalogue: types a person adds appear
   // here immediately, and plane membership replaces the old viewType split.
   const { types, categories: categoryRows } = useLibrary();
+  // DeviceCategory renders `name`, and the catalogue's human label is `label`.
+  // Falling back to the id keeps a category with no label visible rather than
+  // nameless.
   const deviceCategories = Object.fromEntries(
-    categoryRows.map((c) => [c.id, { ...c, name: c.id }]));
+    categoryRows.map((c) => [c.id, { ...c, name: c.label || c.id }]));
   const byCategoryAndPlane = (categoryKey, plane) =>
     types.filter((t) => t.category === categoryKey && t.planes.includes(plane));
   const categories = Object.keys(deviceCategories).filter(

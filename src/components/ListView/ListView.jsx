@@ -352,6 +352,10 @@ function ListView() {
       {/* Form Modal */}
       {showForm && (
         <NetworkObjectForm
+          // Keyed so choosing a different object while the modal is open
+          // remounts the form with that object's values. The repo's answer to
+          // prop synchronisation is a remount, not an effect (9966aef).
+          key={editingObject ? editingObject.id : 'new'}
           networkObject={editingObject}
           onSave={handleSave}
           onCancel={handleCancel}

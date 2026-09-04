@@ -1,5 +1,6 @@
 import {Handle, Position} from 'reactflow';
 import {getDeviceIcon} from '../../utils/deviceHelpers';
+import {svgToDataUri} from '../../utils/svgDataUri';
 import {useNetwork} from '../../context/NetworkContext';
 import {useLibrary} from '../../context/LibraryContext';
 
@@ -10,7 +11,10 @@ function DeviceNode({ data, selected }) {
   // FR-015 resolution order: an imported symbol assigned to this type draws
   // as an inert image; otherwise the built-in mapping, whose own fallback is
   // the recognisable default box.
-  const imported = symbolById(device.icon);
+  const importedSymbol = symbolById(device.icon);
+  // An imported symbol that cannot be encoded draws as the built-in icon rather
+  // than taking the canvas down with it.
+  const importedUri = importedSymbol ? svgToDataUri(importedSymbol.content) : null;
   const IconComponent = getDeviceIcon(device.icon);
 
   return (
@@ -57,10 +61,10 @@ function DeviceNode({ data, selected }) {
             backgroundColor: `${device.color}20`,
           }}
         >
-          {imported ? (
+          {importedUri ? (
           <img
             alt=""
-            src={`data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(imported.content)))}`}
+            src={importedUri}
             style={{ width: 24, height: 24 }}
           />
         ) : (

@@ -5,9 +5,9 @@ import {getHostnameValidationError, getIPValidationError, getSubnetValidationErr
 
 function NetworkObjectForm({networkObject, onSave, onCancel}) {
   const {currentTheme} = useSettings();
-  // The parent renders this form only while it is open, and sets the object
-  // being edited in the same update, so the initial state is always correct
-  // and there is nothing to synchronise afterwards.
+  // The parent keys this component by the object being edited, so choosing a
+  // different one remounts the form and the initial state is always correct.
+  // There is nothing to synchronise afterwards, and no effect that could drift.
   const [formData, setFormData] = useState(() => ({
     displayName: networkObject?.displayName || '',
     ip: networkObject?.ip || '',
