@@ -90,3 +90,17 @@ typings/
 
 # Electron-Forge
 out/
+
+# Vite web build output (pre-Electron)
+dist/
+
+# JetBrains IDE
+.idea/
+*.iml
+
+# Stray nvm install root
+versions/
+alias/
+
+# Abandoned electron-forge scaffold
+/networkplanner/

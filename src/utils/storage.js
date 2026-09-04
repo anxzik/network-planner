@@ -39,14 +39,6 @@ export function loadData(key, fallback = null) {
   return Object.prototype.hasOwnProperty.call(root, key) ? root[key] : fallback;
 }
 
-export function clearData(key) {
-  const root = getRoot();
-  if (Object.prototype.hasOwnProperty.call(root, key)) {
-    delete root[key];
-    setRoot(root);
-  }
-}
-
 export function exportAll() {
   return getRoot();
 }
@@ -54,13 +46,4 @@ export function exportAll() {
 export function importAll(obj) {
   if (typeof obj !== 'object' || obj === null) return;
   setRoot(obj);
-}
-
-// Debounce helper to avoid frequent writes
-export function debounce(fn, delay = 300) {
-  let t;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), delay);
-  };
 }

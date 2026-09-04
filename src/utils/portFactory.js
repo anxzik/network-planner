@@ -6,7 +6,7 @@
  * @param {number} portIndex - Port index
  * @returns {string} Unique port ID
  */
-export function generatePortId(nodeId, portIndex) {
+function generatePortId(nodeId, portIndex) {
   return `port-${nodeId}-${portIndex}`;
 }
 
@@ -17,7 +17,7 @@ export function generatePortId(nodeId, portIndex) {
  * @param {number} portNumber - Port number (0-indexed)
  * @returns {string} Formatted port label
  */
-export function generatePortLabel(device, portType, portNumber) {
+function generatePortLabel(device, portType, portNumber) {
   const manufacturer = device.manufacturer?.toLowerCase() || 'generic';
 
   // Cisco-style labeling
@@ -96,7 +96,7 @@ export function generatePortLabel(device, portType, portNumber) {
  * @param {object} options - Additional port options (poe, etc.)
  * @returns {object} Port object
  */
-export function createPort(nodeId, portIndex, portType, speed, device, options = {}) {
+function createPort(nodeId, portIndex, portType, speed, device, options = {}) {
   return {
     id: generatePortId(nodeId, portIndex),
     nodeId,
@@ -173,21 +173,6 @@ export function generatePortsForDevice(device, nodeId) {
 }
 
 /**
- * Get available (unconnected) ports from a node
- * @param {object} node - Node object
- * @returns {Array} Array of available port objects
- */
-export function getAvailablePorts(node) {
-  if (!node.data?.ports) {
-    return [];
-  }
-
-  return node.data.ports.filter(port =>
-    port.enabled && port.connectedTo === null
-  );
-}
-
-/**
  * Get port by ID from a node
  * @param {object} node - Node object
  * @param {string} portId - Port ID to find
@@ -199,76 +184,6 @@ export function getPortById(node, portId) {
   }
 
   return node.data.ports.find(port => port.id === portId) || null;
-}
-
-/**
- * Get port by index from a node
- * @param {object} node - Node object
- * @param {number} portIndex - Port index to find
- * @returns {object|null} Port object or null if not found
- */
-export function getPortByIndex(node, portIndex) {
-  if (!node.data?.ports) {
-    return null;
-  }
-
-  return node.data.ports.find(port => port.portIndex === portIndex) || null;
-}
-
-/**
- * Update port configuration
- * @param {object} port - Port object to update
- * @param {object} updates - Properties to update
- * @returns {object} Updated port object
- */
-export function updatePortConfig(port, updates) {
-  return {
-    ...port,
-    ...updates
-  };
-}
-
-/**
- * Get all ports of a specific type from a node
- * @param {object} node - Node object
- * @param {string} portType - Port type to filter
- * @returns {Array} Array of ports matching the type
- */
-export function getPortsByType(node, portType) {
-  if (!node.data?.ports) {
-    return [];
-  }
-
-  return node.data.ports.filter(port => port.portType === portType);
-}
-
-/**
- * Get connected ports from a node
- * @param {object} node - Node object
- * @returns {Array} Array of connected port objects
- */
-export function getConnectedPorts(node) {
-  if (!node.data?.ports) {
-    return [];
-  }
-
-  return node.data.ports.filter(port => port.connectedTo !== null);
-}
-
-/**
- * Get ports assigned to a specific VLAN
- * @param {object} node - Node object
- * @param {number} vlanId - VLAN ID
- * @returns {Array} Array of ports in the VLAN
- */
-export function getPortsInVlan(node, vlanId) {
-  if (!node.data?.ports) {
-    return [];
-  }
-
-  return node.data.ports.filter(port =>
-    port.assignedVlans.includes(vlanId)
-  );
 }
 
 /**
@@ -287,15 +202,6 @@ export function getNodeVlans(node) {
   });
 
   return Array.from(vlans).sort((a, b) => a - b);
-}
-
-/**
- * Check if a port can be connected (available and enabled)
- * @param {object} port - Port object
- * @returns {boolean} True if port can be connected
- */
-export function canConnectPort(port) {
-  return port.enabled && port.connectedTo === null;
 }
 
 /**

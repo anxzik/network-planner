@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <defs><linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#c7ddf5"/><stop offset="100%" stop-color="#b8d4f0"/></linearGradient></defs>
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <text x="960" y="28" text-anchor="middle" font-family="system-ui, sans-serif"
+        font-size="18" font-weight="700" fill="#4b5563" letter-spacing="1">HARDWARE LIBRARY - IMPORT, COLLISIONS AND EXPORT</text>
+  <text x="40" y="52" fill="#8b5cf6" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">DESKTOP (16:9)</text>
+  <text x="1500" y="52" fill="#d946ef" font-family="system-ui, sans-serif" font-size="15" font-weight="bold">MOBILE</text>
+  <g id="desktop" transform="translate(40, 60)" font-family="system-ui, sans-serif">
+    <rect width="1280" height="720" rx="8" fill="#e8d4b8" stroke="#b8a080"/>
+    <rect x="0" y="0" width="1280" height="48" rx="8" fill="#dcc8a8" stroke="#b8a080"/>
+    <rect x="0" y="24" width="1280" height="24" fill="#dcc8a8"/>
+    <text x="20" y="31" font-size="15" font-weight="bold" fill="#1f2937">Network Planner</text>
+    <rect x="488" y="10" width="96" height="28" rx="6" fill="#8b5cf6"/>
+    <text x="536" y="29" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">Hardware</text>
+    <text x="700" y="31" font-size="14" fill="#4b5563">Import a library</text>
+
+    <rect x="20" y="72" width="608" height="300" rx="6" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="34" y="98" font-size="14" font-weight="bold" fill="#1f2937">Before importing</text>
+    <text x="34" y="124" font-size="14" fill="#4b5563">acme-standard-kit  -  47 appliance types, 2 symbol sets</text>
+    <rect x="34" y="140" width="580" height="52" rx="6" fill="#f7ecd9" stroke="#8a5a0c"/>
+    <text x="48" y="162" font-size="14" font-weight="bold" fill="#8a5a0c">Written by a newer version</text>
+    <text x="48" y="182" font-size="14" fill="#8a5a0c">Format 2.1 is not understood. Readable entries still import. Older files are brought forward.</text>
+    <text x="34" y="220" font-size="14" font-weight="bold" fill="#1f2937">3 collisions need a decision</text>
+    <g font-size="14" fill="#1f2937">
+      <text x="34" y="248">Catalyst 9300-48P</text><text x="34" y="278">EdgeRouter 4</text><text x="34" y="308">PA-3220</text>
+    </g>
+    <g font-size="14" fill="#4b5563">
+      <text x="240" y="248">yours: 48 ports</text><text x="240" y="278">yours: 4 ports</text><text x="240" y="308">yours: 8 ports</text>
+      <text x="380" y="248">theirs: 52 ports</text><text x="380" y="278">theirs: 4 ports</text><text x="380" y="308">theirs: 12 ports</text>
+    </g>
+    <g font-size="14">
+      <rect x="510" y="234" width="104" height="24" rx="12" fill="#8b5cf6"/><text x="562" y="251" fill="#ffffff" text-anchor="middle">Keep both</text>
+      <rect x="510" y="264" width="104" height="24" rx="12" fill="#f5f0e6" stroke="#b8a080"/><text x="562" y="281" fill="#1f2937" text-anchor="middle">Replace</text>
+      <rect x="510" y="294" width="104" height="24" rx="12" fill="#f5f0e6" stroke="#b8a080"/><text x="562" y="311" fill="#1f2937" text-anchor="middle">Skip</text>
+    </g>
+    <rect x="34" y="326" width="180" height="34" rx="6" fill="#8b5cf6"/>
+    <text x="124" y="348" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">Apply import</text>
+
+    <rect x="652" y="72" width="608" height="300" rx="6" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="666" y="98" font-size="14" font-weight="bold" fill="#1f2937">Export</text>
+    <text x="666" y="124" font-size="14" fill="#4b5563">Choose what leaves this machine.</text>
+    <g font-size="14" fill="#1f2937">
+      <rect x="666" y="140" width="18" height="18" rx="3" fill="#8b5cf6"/><text x="696" y="155">Whole catalogue (147 types)</text>
+      <rect x="666" y="170" width="18" height="18" rx="3" fill="#f5f0e6" stroke="#b8a080"/><text x="696" y="185">My hardware only (16 types)</text>
+      <rect x="666" y="200" width="18" height="18" rx="3" fill="#f5f0e6" stroke="#b8a080"/><text x="696" y="215">Current selection (3 types)</text>
+    </g>
+    <text x="666" y="256" font-size="14" fill="#4b5563">Every export carries its symbols and a format version.</text>
+    <rect x="666" y="274" width="580" height="52" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
+    <text x="680" y="296" font-size="14" fill="#1f2937">formatVersion 1.0</text>
+    <text x="680" y="316" font-size="14" fill="#4b5563">147 types, 2 symbol sets, 214 symbols</text>
+    <rect x="666" y="338" width="180" height="34" rx="6" fill="#8b5cf6"/>
+    <text x="756" y="360" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">Export to file</text>
+
+    <rect x="20" y="392" width="1240" height="308" rx="6" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="34" y="418" font-size="14" font-weight="bold" fill="#1f2937">Import finished</text>
+    <g font-size="14" fill="#1f2937">
+      <text x="34" y="450">Added</text><text x="34" y="478">Replaced</text><text x="34" y="506">Kept both</text><text x="34" y="534">Skipped</text>
+      <text x="150" y="450">41</text><text x="150" y="478">1</text><text x="150" y="506">2</text><text x="150" y="534">3</text>
+    </g>
+    <text x="34" y="574" font-size="14" font-weight="bold" fill="#1f2937">Why each entry was skipped</text>
+    <g font-size="14" fill="#4b5563">
+      <text x="34" y="602">SG-350-28    symbol markup could not be read</text>
+      <text x="34" y="630">MX960        port layout exceeds the 512 port limit</text>
+      <text x="34" y="658">unnamed-04   no manufacturer or model given</text>
+    </g>
+    <text x="700" y="450" font-size="14" fill="#4b5563">Nothing else in your catalogue changed.</text>
+    <text x="700" y="478" font-size="14" fill="#4b5563">A plan built elsewhere still opens here, because</text>
+    <text x="700" y="500" font-size="14" fill="#4b5563">it carries its own copy of every type it places.</text>
+    <rect x="1080" y="640" width="164" height="34" rx="6" fill="#f5f0e6" stroke="#b8a080"/>
+    <text x="1162" y="662" font-size="14" fill="#1f2937" text-anchor="middle">Save this report</text>
+    <g class="callout" transform="translate(124, 348)"><circle r="14" fill="#dc2626"/><text y="5" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">1</text></g>
+    <g class="callout" transform="translate(562, 251)"><circle r="14" fill="#dc2626"/><text y="5" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">2</text></g>
+    <g class="callout" transform="translate(48, 166)"><circle r="14" fill="#dc2626"/><text y="5" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">3</text></g>
+    <g class="callout" transform="translate(756, 360)"><circle r="14" fill="#dc2626"/><text y="5" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">4</text></g>
+    <g class="callout" transform="translate(34, 574)"><circle r="14" fill="#dc2626"/><text y="5" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">5</text></g>
+    <g class="callout" transform="translate(700, 478)"><circle r="14" fill="#dc2626"/><text y="5" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">6</text></g>
+  </g>
+  <g id="mobile" transform="translate(1360, 60)" font-family="system-ui, sans-serif">
+    <rect width="360" height="720" rx="12" fill="#e8d4b8" stroke="#b8a080"/>
+    <rect x="0" y="0" width="360" height="48" rx="12" fill="#dcc8a8" stroke="#b8a080"/>
+    <rect x="0" y="26" width="360" height="22" fill="#dcc8a8"/>
+    <text x="16" y="31" font-size="15" font-weight="bold" fill="#1f2937">Import</text>
+    <rect x="16" y="62" width="328" height="112" rx="8" fill="#f7ecd9" stroke="#8a5a0c"/>
+    <text x="30" y="88" font-size="14" font-weight="bold" fill="#8a5a0c">Newer format</text>
+    <g font-size="14" fill="#8a5a0c"><text x="30" y="112">Version 2.1 is not fully</text><text x="30" y="134">understood. Readable</text><text x="30" y="156">entries still import.</text></g>
+    <rect x="16" y="188" width="328" height="152" rx="8" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="30" y="214" font-size="14" font-weight="bold" fill="#1f2937">Catalyst 9300-48P</text>
+    <g font-size="14" fill="#4b5563"><text x="30" y="238">yours 48 ports</text><text x="30" y="260">theirs 52 ports</text></g>
+    <rect x="30" y="276" width="90" height="44" rx="6" fill="#8b5cf6"/><text x="75" y="303" font-size="14" fill="#ffffff" text-anchor="middle">Keep both</text>
+    <rect x="128" y="276" width="90" height="44" rx="6" fill="#f5f0e6" stroke="#b8a080"/><text x="173" y="303" font-size="14" fill="#1f2937" text-anchor="middle">Replace</text>
+    <rect x="226" y="276" width="90" height="44" rx="6" fill="#f5f0e6" stroke="#b8a080"/><text x="271" y="303" font-size="14" fill="#1f2937" text-anchor="middle">Skip</text>
+    <rect x="16" y="354" width="328" height="250" rx="8" fill="#dcc8a8" stroke="#b8a080"/>
+    <text x="30" y="380" font-size="14" font-weight="bold" fill="#1f2937">Import finished</text>
+    <g font-size="14" fill="#4b5563">
+      <text x="30" y="406">Added        41</text><text x="30" y="430">Replaced      1</text>
+      <text x="30" y="454">Kept both     2</text><text x="30" y="478">Skipped       3</text>
+      <text x="30" y="512">1 symbol unreadable</text><text x="30" y="536">1 over the port limit</text><text x="30" y="560">1 missing a model</text>
+    </g>
+    <rect x="30" y="576" width="300" height="44" rx="6" fill="#8b5cf6"/>
+    <text x="180" y="603" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">View full report</text>
+    <g class="callout" transform="translate(330, 88)"><circle r="14" fill="#dc2626"/><text y="5" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">3</text></g>
+    <g class="callout" transform="translate(75, 303)"><circle r="14" fill="#dc2626"/><text y="5" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">2</text></g>
+    <g class="callout" transform="translate(330, 380)"><circle r="14" fill="#dc2626"/><text y="5" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">5</text></g>
+  </g>
+  <g id="annotations" transform="translate(40, 800)" font-family="system-ui, sans-serif">
+    <rect width="1840" height="220" rx="8" fill="#e8d4b8" stroke="#b8a080"/>
+    <text x="24" y="30" font-size="14" font-weight="bold" fill="#1f2937">1. US-002 Exchanging hardware definitions</text>
+    <text x="24" y="51" font-size="14" fill="#374151">Export a set, hand over the file, import it elsewhere complete.</text>
+    <g transform="translate(24, 61)">
+      <rect x="0" width="62" height="20" rx="10" fill="#0891b2"/><text x="31" y="14" font-size="14" fill="#fff" text-anchor="middle">US-002</text>
+      <rect x="69" width="62" height="20" rx="10" fill="#2563eb"/><text x="100" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-006</text>
+      <rect x="138" width="62" height="20" rx="10" fill="#2563eb"/><text x="169" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-008</text>
+      <rect x="207" width="62" height="20" rx="10" fill="#ea580c"/><text x="238" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-002</text>
+    </g>
+    <text x="490" y="30" font-size="14" font-weight="bold" fill="#1f2937">2. Collisions are decided before anything changes</text>
+    <text x="490" y="51" font-size="14" fill="#374151">Replace, keep both, or skip, chosen per colliding entry.</text>
+    <g transform="translate(490, 61)">
+      <rect x="0" width="62" height="20" rx="10" fill="#2563eb"/><text x="31" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-009</text>
+    </g>
+    <text x="956" y="30" font-size="14" font-weight="bold" fill="#1f2937">3. An unrecognised format version</text>
+    <text x="956" y="51" font-size="14" fill="#374151">An older format is brought forward. An unknown one imports what it can, and warns.</text>
+    <g transform="translate(956, 61)">
+      <rect x="0" width="62" height="20" rx="10" fill="#2563eb"/><text x="31" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-012</text>
+      <rect x="69" width="62" height="20" rx="10" fill="#2563eb"/><text x="100" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-013</text>
+      <rect x="138" width="70" height="20" rx="10" fill="#2563eb"/><text x="173" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-013a</text>
+    </g>
+    <text x="1422" y="30" font-size="14" font-weight="bold" fill="#1f2937">4. An export is self-contained</text>
+    <text x="1422" y="51" font-size="14" fill="#374151">Carries every symbol and the format version it was written in.</text>
+    <g transform="translate(1422, 61)">
+      <rect x="0" width="62" height="20" rx="10" fill="#2563eb"/><text x="31" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-007</text>
+      <rect x="69" width="62" height="20" rx="10" fill="#2563eb"/><text x="100" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-012</text>
+    </g>
+    <text x="24" y="126" font-size="14" font-weight="bold" fill="#1f2937">5. Nothing is half-applied silently</text>
+    <text x="24" y="147" font-size="14" fill="#374151">Readable entries apply, the rest are skipped with a stated reason.</text>
+    <g transform="translate(24, 157)">
+      <rect x="0" width="62" height="20" rx="10" fill="#2563eb"/><text x="31" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-010</text>
+      <rect x="69" width="62" height="20" rx="10" fill="#2563eb"/><text x="100" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-011</text>
+      <rect x="138" width="62" height="20" rx="10" fill="#ea580c"/><text x="169" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-003</text>
+    </g>
+    <text x="490" y="126" font-size="14" font-weight="bold" fill="#1f2937">6. Plans travel without the catalogue</text>
+    <text x="490" y="147" font-size="14" fill="#374151">A plan carries its own copy. A correction can reach one plan, or all of them.</text>
+    <g transform="translate(490, 157)">
+      <rect x="0" width="70" height="20" rx="10" fill="#2563eb"/><text x="35" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-005b</text>
+      <rect x="77" width="70" height="20" rx="10" fill="#2563eb"/><text x="112" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-005c</text>
+      <rect x="154" width="70" height="20" rx="10" fill="#2563eb"/><text x="189" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-005d</text>
+      <rect x="231" width="70" height="20" rx="10" fill="#2563eb"/><text x="266" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-005e</text>
+      <rect x="308" width="62" height="20" rx="10" fill="#ea580c"/><text x="339" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-009</text>
+      <rect x="377" width="62" height="20" rx="10" fill="#ea580c"/><text x="408" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-010</text>
+      <rect x="446" width="62" height="20" rx="10" fill="#ea580c"/><text x="477" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-012</text>
+    </g>
+    <text x="956" y="126" font-size="14" font-weight="bold" fill="#1f2937">7. Deferred to the project file work</text>
+    <text x="956" y="147" font-size="14" fill="#374151">The copies above need a plan format that does not exist yet.</text>
+    <g transform="translate(956, 157)">
+      <rect x="0" width="70" height="20" rx="10" fill="#2563eb"/><text x="35" y="14" font-size="14" fill="#fff" text-anchor="middle">FR-005b</text>
+      <rect x="77" width="62" height="20" rx="10" fill="#ea580c"/><text x="108" y="14" font-size="14" fill="#fff" text-anchor="middle">SC-010</text>
+    </g>
+  </g>
+  <text x="960" y="1060" text-anchor="middle" font-family="system-ui, sans-serif"
+        font-size="18" font-weight="bold" fill="#4b5563">002:02 | Hardware Library | SpecKit</text>
+</svg>

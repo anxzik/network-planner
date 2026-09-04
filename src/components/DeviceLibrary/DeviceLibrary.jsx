@@ -1,4 +1,4 @@
-import {deviceCategories, devices, getDevicesByCategoryAndViewType} from '../../data/devices';
+import {useLibrary} from '../../context/LibraryContext';
 import {useSettings} from '../../context/SettingsContext';
 import {useNetwork} from '../../context/NetworkContext';
 import DeviceCategory from './DeviceCategory';
@@ -10,13 +10,23 @@ function DeviceLibrary() {
   const { visibleCategories } = settings.deviceLibrary;
 
   // Filter categories based on settings
+  // The palette draws from the live catalogue: types a person adds appear
+  // here immediately, and plane membership replaces the old viewType split.
+  const { types, categories: categoryRows } = useLibrary();
+  // DeviceCategory renders `name`, and the catalogue's human label is `label`.
+  // Falling back to the id keeps a category with no label visible rather than
+  // nameless.
+  const deviceCategories = Object.fromEntries(
+    categoryRows.map((c) => [c.id, { ...c, name: c.label || c.id }]));
+  const byCategoryAndPlane = (categoryKey, plane) =>
+    types.filter((t) => t.category === categoryKey && t.planes.includes(plane));
   const categories = Object.keys(deviceCategories).filter(
     (categoryKey) => visibleCategories[categoryKey]
   );
 
   // Count visible devices based on current view mode
   const visibleDeviceCount = categories.reduce((count, categoryKey) => {
-    return count + getDevicesByCategoryAndViewType(categoryKey, viewMode).length;
+    return count + byCategoryAndPlane(categoryKey, viewMode).length;
   }, 0);
 
   return (
@@ -51,7 +61,7 @@ function DeviceLibrary() {
         {categories.length > 0 ? (
           categories.map((categoryKey) => {
             // Filter devices by current view mode (physical/logical)
-            const categoryDevices = getDevicesByCategoryAndViewType(categoryKey, viewMode);
+            const categoryDevices = byCategoryAndPlane(categoryKey, viewMode);
             const categoryInfo = deviceCategories[categoryKey];
 
             // Skip empty categories
@@ -89,7 +99,7 @@ function DeviceLibrary() {
           style={{ color: currentTheme.textSecondary }}
         >
           <span className="font-semibold">{visibleDeviceCount}</span> of{' '}
-          <span className="font-semibold">{devices.length}</span> visible
+          <span className="font-semibold">{types.length}</span> visible
         </div>
       </div>
     </div>

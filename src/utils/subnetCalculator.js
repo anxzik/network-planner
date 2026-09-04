@@ -134,7 +134,7 @@ export function decrementIP(ip) {
  * @param {string} mask - Subnet mask
  * @returns {string} Wildcard mask
  */
-export function calculateWildcardMask(mask) {
+function calculateWildcardMask(mask) {
   const octets = mask.split('.').map(o => 255 - parseInt(o, 10));
   return octets.join('.');
 }

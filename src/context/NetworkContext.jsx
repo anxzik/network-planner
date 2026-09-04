@@ -1,9 +1,34 @@
-import {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
+import {createContext, useCallback, useContext, useMemo, useState} from 'react';
 import {useEdgesState, useNodesState} from 'reactflow';
 import {createDeviceNode, createEdge, createPortEdge} from '../utils/nodeFactory';
 import {getDefaultVlan} from '../utils/vlanFactory';
-import {determineVlanTransport, getNodeVlans, getPortById} from '../utils/portFactory';
-import {debounce, exportAll, importAll, loadData, saveData} from '../utils/storage';
+import {determineVlanTransport, getPortById} from '../utils/portFactory';
+import {exportAll, importAll, loadData, saveData} from '../utils/storage';
+import {collectRecordedDefinitions} from '../utils/planDivergence';
+import {hasMigrated, MARKER_STORAGE_KEY} from '../utils/storageSalvage';
+
+// Before the crossing, the canvas still loads what the old storage holds — a
+// person who declines the migration must see their work, not an empty canvas
+// that looks like it ate it. After the crossing, that storage is preserved
+// history: loading from it would reopen the pre-migration topology over
+// whatever plan the person actually has open (US2, FR-011).
+function legacyTopology(key, fallback) {
+  let marker = null;
+  try { marker = window.localStorage.getItem(MARKER_STORAGE_KEY); } catch { /* no storage */ }
+  return hasMigrated(marker) ? fallback : loadData(key, fallback);
+}
+import {usePersist} from '../hooks/usePersist';
+import {
+  applySelection,
+  connectPorts,
+  disconnectPorts,
+  removeNode,
+  toTopologyDevices,
+  updateNodeData,
+  updatePortConfig as applyPortConfig,
+} from '../utils/nodeOperations';
+import {findEdge, removeEdge, removeEdgesForNode} from '../utils/edgeOperations';
+import {addItem, findById, removeItem, updateItem} from '../utils/collection';
 
 // Create the context
 const NetworkContext = createContext(null);
@@ -12,8 +37,8 @@ const NetworkContext = createContext(null);
 export function NetworkProvider({ children }) {
   // ReactFlow state management
   // Initialize from storage
-  const initialNodes = loadData('nodes', []);
-  const initialEdges = loadData('edges', []);
+  const initialNodes = legacyTopology('nodes', []);
+  const initialEdges = legacyTopology('edges', []);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
@@ -22,7 +47,7 @@ export function NetworkProvider({ children }) {
   const [selectedDeviceType, setSelectedDeviceType] = useState(null);
 
   // Network objects state (for list view)
-  const [networkObjects, setNetworkObjects] = useState(() => loadData('networkObjects', []));
+  const [networkObjects, setNetworkObjects] = useState(() => legacyTopology('networkObjects', []));
 
   // Connection validation state
   const [connectionError, setConnectionError] = useState(null);
@@ -32,24 +57,20 @@ export function NetworkProvider({ children }) {
   const [viewMode, setViewMode] = useState(() => loadData('viewMode', 'physical'));
 
   // VLAN state management
-  const [vlans, setVlans] = useState(() => loadData('vlans', [getDefaultVlan()]));
+  const [vlans, setVlans] = useState(() => legacyTopology('vlans', [getDefaultVlan()]));
 
   // Port selector modal state
   const [portSelectorOpen, setPortSelectorOpen] = useState(false);
   const [pendingConnection, setPendingConnection] = useState(null);
 
-  // Persistors (debounced)
-  const persistNodes = useMemo(() => debounce((value) => saveData('nodes', value), 300), []);
-  const persistEdges = useMemo(() => debounce((value) => saveData('edges', value), 300), []);
-  const persistObjects = useMemo(() => debounce((value) => saveData('networkObjects', value), 300), []);
-  const persistVlans = useMemo(() => debounce((value) => saveData('vlans', value), 300), []);
-  const persistViewMode = useMemo(() => debounce((value) => saveData('viewMode', value), 300), []);
-
-  useEffect(() => { persistNodes(nodes); }, [nodes, persistNodes]);
-  useEffect(() => { persistEdges(edges); }, [edges, persistEdges]);
-  useEffect(() => { persistObjects(networkObjects); }, [networkObjects, persistObjects]);
-  useEffect(() => { persistVlans(vlans); }, [vlans, persistVlans]);
-  useEffect(() => { persistViewMode(viewMode); }, [viewMode, persistViewMode]);
+  // Persist state changes, debounced
+  // The topology no longer streams to browser storage. A plan is a file now:
+  // deliberate saves write it, and the recovery slot catches what is unsaved
+  // (FR-009). Continuing to mirror the canvas here would keep rewriting the
+  // very storage US2 preserves, and make "unsaved changes" meaningless.
+  // viewMode stays: which plane is displayed is a window preference, not part
+  // of any plan.
+  usePersist('viewMode', viewMode);
 
   // Add a new device node to the canvas
   const addNode = useCallback((deviceData, position, label = null) => {
@@ -60,28 +81,14 @@ export function NetworkProvider({ children }) {
 
   // Update an existing node
   const updateNode = useCallback((nodeId, updates) => {
-    setNodes((nds) =>
-      nds.map((node) =>
-        node.id === nodeId
-          ? {
-              ...node,
-              data: {
-                ...node.data,
-                ...updates
-              }
-            }
-          : node
-      )
-    );
+    setNodes((nds) => updateNodeData(nds, nodeId, updates));
   }, [setNodes]);
 
   // Delete a node
   const deleteNode = useCallback((nodeId) => {
-    setNodes((nds) => nds.filter((node) => node.id !== nodeId));
+    setNodes((nds) => removeNode(nds, nodeId));
     // Also remove edges connected to this node
-    setEdges((eds) =>
-      eds.filter((edge) => edge.source !== nodeId && edge.target !== nodeId)
-    );
+    setEdges((eds) => removeEdgesForNode(eds, nodeId));
     if (selectedNode === nodeId) {
       setSelectedNode(null);
     }
@@ -117,84 +124,32 @@ export function NetworkProvider({ children }) {
 
   // Port configuration operations (defined early for use in deleteEdge)
   const updatePortConfig = useCallback((nodeId, portId, updates) => {
-    setNodes((nds) =>
-      nds.map((node) => {
-        if (node.id !== nodeId) return node;
-
-        const updatedPorts = node.data.ports.map((port) =>
-          port.id === portId ? { ...port, ...updates } : port
-        );
-
-        // Recalculate participating VLANs
-        const tempNode = { ...node, data: { ...node.data, ports: updatedPorts } };
-        const participatingVlans = getNodeVlans(tempNode);
-
-        return {
-          ...node,
-          data: {
-            ...node.data,
-            ports: updatedPorts,
-            participatingVlans
-          }
-        };
-      })
-    );
+    setNodes((nds) => applyPortConfig(nds, nodeId, portId, updates));
   }, [setNodes]);
 
   // Delete an edge
   const deleteEdge = useCallback((edgeId) => {
-    // Find the edge to get port information
-    const edge = edges.find((e) => e.id === edgeId);
+    const edge = findEdge(edges, edgeId);
 
-    if (edge && edge.sourcePort && edge.targetPort) {
-      // Update port connection status to null on both nodes
-      const sourceNode = nodes.find((n) => n.id === edge.source);
-      const targetNode = nodes.find((n) => n.id === edge.target);
-
-      if (sourceNode) {
-        updatePortConfig(sourceNode.id, edge.sourcePort.portId, {
-          connectedTo: null
-        });
-      }
-
-      if (targetNode) {
-        updatePortConfig(targetNode.id, edge.targetPort.portId, {
-          connectedTo: null
-        });
-      }
+    // Clear the connection recorded on the ports at both ends
+    if (edge) {
+      setNodes((nds) => disconnectPorts(nds, edge));
     }
 
-    // Remove the edge
-    setEdges((eds) => eds.filter((edge) => edge.id !== edgeId));
-  }, [edges, nodes, setEdges, updatePortConfig]);
+    setEdges((eds) => removeEdge(eds, edgeId));
+  }, [edges, setNodes, setEdges]);
 
   // Select a node
   const selectNode = useCallback((nodeId) => {
     setSelectedNode(nodeId);
     // Update node data to reflect selection
-    setNodes((nds) =>
-      nds.map((node) => ({
-        ...node,
-        data: {
-          ...node.data,
-          isSelected: node.id === nodeId
-        }
-      }))
-    );
+    setNodes((nds) => applySelection(nds, nodeId));
   }, [setNodes]);
 
   // Clear selection
   const clearSelection = useCallback(() => {
     setSelectedNode(null);
-    setNodes((nds) =>
-      nds.map((node) => ({
-        ...node,
-        data: {
-          ...node.data,
-          isSelected: false
-        }
-      }))
-    );
+    setNodes((nds) => applySelection(nds, null));
   }, [setNodes]);
 
   // Clear entire canvas
@@ -218,30 +173,22 @@ export function NetworkProvider({ children }) {
   // Network Objects Management
   // Add a new network object
   const addNetworkObject = useCallback((networkObject) => {
-    setNetworkObjects((objs) => [...objs, networkObject]);
+    setNetworkObjects((objs) => addItem(objs, networkObject));
   }, []);
 
   // Update an existing network object
   const updateNetworkObject = useCallback((objectId, updates) => {
-    setNetworkObjects((objs) =>
-      objs.map((obj) =>
-        obj.id === objectId
-          ? { ...obj, ...updates, updatedAt: new Date().toISOString() }
-          : obj
-      )
-    );
+    setNetworkObjects((objs) => updateItem(objs, objectId, updates));
   }, []);
 
   // Delete a network object
   const deleteNetworkObject = useCallback((objectId) => {
-    setNetworkObjects((objs) => objs.filter((obj) => obj.id !== objectId));
+    setNetworkObjects((objs) => removeItem(objs, objectId));
   }, []);
 
   // Get network object by ID
   const getNetworkObjectById = useCallback(
-    (objectId) => {
-      return networkObjects.find((obj) => obj.id === objectId);
-    },
+    (objectId) => findById(networkObjects, objectId),
     [networkObjects]
   );
 
@@ -253,27 +200,19 @@ export function NetworkProvider({ children }) {
 
   // NEW: VLAN CRUD operations
   const addVlan = useCallback((vlanConfig) => {
-    setVlans((prevVlans) => [...prevVlans, vlanConfig]);
+    setVlans((prevVlans) => addItem(prevVlans, vlanConfig));
     return vlanConfig;
   }, []);
 
   const updateVlan = useCallback((vlanId, updates) => {
-    setVlans((prevVlans) =>
-      prevVlans.map((vlan) =>
-        vlan.id === vlanId
-          ? { ...vlan, ...updates, updatedAt: new Date().toISOString() }
-          : vlan
-      )
-    );
+    setVlans((prevVlans) => updateItem(prevVlans, vlanId, updates));
   }, []);
 
   const deleteVlan = useCallback((vlanId) => {
-    setVlans((prevVlans) => prevVlans.filter((vlan) => vlan.id !== vlanId));
+    setVlans((prevVlans) => removeItem(prevVlans, vlanId));
   }, []);
 
-  const getVlanById = useCallback((vlanId) => {
-    return vlans.find((vlan) => vlan.id === vlanId);
-  }, [vlans]);
+  const getVlanById = useCallback((vlanId) => findById(vlans, vlanId), [vlans]);
 
   const getVlanByVlanId = useCallback((vlanId) => {
     return vlans.find((vlan) => vlan.vlanId === vlanId);
@@ -322,12 +261,9 @@ export function NetworkProvider({ children }) {
     );
 
     // Update port connection status on both nodes
-    updatePortConfig(sourceNode.id, sourcePort.id, {
-      connectedTo: targetPort.id
-    });
-    updatePortConfig(targetNode.id, targetPort.id, {
-      connectedTo: sourcePort.id
-    });
+    setNodes((nds) =>
+      connectPorts(nds, sourceNode.id, sourcePort.id, targetNode.id, targetPort.id)
+    );
 
     // Add the edge
     setEdges((eds) => [...eds, newEdge]);
@@ -339,7 +275,7 @@ export function NetworkProvider({ children }) {
     // Show success message (optional)
     setConnectionWarning(`Connected ${sourcePort.label} to ${targetPort.label}`);
     setTimeout(() => setConnectionWarning(null), 3000);
-  }, [pendingConnection, updatePortConfig, setEdges]);
+  }, [pendingConnection, setNodes, setEdges]);
 
   // NEW: Handle port selector modal close
   const handlePortSelectorClose = useCallback(() => {
@@ -348,38 +284,39 @@ export function NetworkProvider({ children }) {
   }, []);
 
   // Derived state: auto-populated topology devices list
-  const topologyDevices = useMemo(() => {
-    return nodes.map(node => ({
-      id: node.id,
-      name: node.data.label || node.data.device?.name,
-      type: node.data.device?.type,
-      category: node.data.device?.category,
-      viewType: node.data.device?.viewType || 'physical',
-      manufacturer: node.data.device?.manufacturer,
-      model: node.data.device?.model,
-      // IP Configuration
-      ipv4: node.data.ipv4,
-      subnet: node.data.subnet,
-      ipv6: node.data.ipv6,
-      gateway: node.data.gateway,
-      dns1: node.data.dns1,
-      dns2: node.data.dns2,
-      fqdn: node.data.fqdn,
-      // Cloud/Logical fields
-      provider: node.data.provider,
-      region: node.data.region,
-      instanceType: node.data.instanceType,
-      cloudAssetLink: node.data.cloudAssetLink,
-      connectionPathway: node.data.connectionPathway,
-      vmHost: node.data.vmHost,
-      // Port info
-      portCount: node.data.ports?.length || 0,
-      connectedPorts: node.data.ports?.filter(p => p.connectedTo)?.length || 0,
-      // Metadata
-      notes: node.data.notes,
-      position: node.position,
-    }));
-  }, [nodes]);
+  const topologyDevices = useMemo(() => toTopologyDevices(nodes), [nodes]);
+
+  // Document seams (FR-001, FR-002). Capture and restore the canvas without
+  // touching persistence: the caller decides where a document goes, and the
+  // context knows nothing about files, localStorage or either one's lifecycle.
+  const serialiseToDocument = useCallback(
+    () => ({
+      appliances: nodes,
+      connections: edges,
+      vlans,
+      networkObjects,
+      // One full definition per placed type (FR-014, ADR 0011), so the plan
+      // opens complete on a machine whose catalogue never had them.
+      recordedDefinitions: collectRecordedDefinitions(nodes),
+    }),
+    [nodes, edges, vlans, networkObjects],
+  );
+
+  const loadFromDocument = useCallback(
+    (document) => {
+      const source = document ?? {};
+      setNodes(Array.isArray(source.appliances) ? source.appliances : []);
+      setEdges(Array.isArray(source.connections) ? source.connections : []);
+      setVlans(Array.isArray(source.vlans) && source.vlans.length
+        ? source.vlans : [getDefaultVlan()]);
+      setNetworkObjects(Array.isArray(source.networkObjects) ? source.networkObjects : []);
+      // Selection belongs to the window, not the plan; a restored document must
+      // not leave a selection pointing at a node that is no longer there.
+      setSelectedNode(null);
+      setSelectedDeviceType(null);
+    },
+    [setNodes, setEdges],
+  );
 
   // Project export/import helpers
   const exportProject = useCallback(() => {
@@ -466,6 +403,8 @@ export function NetworkProvider({ children }) {
 
     // Persistence helpers
     exportProject,
+    serialiseToDocument,
+    loadFromDocument,
     importProject,
 
     // Utility getters

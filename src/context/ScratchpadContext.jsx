@@ -1,5 +1,14 @@
-import {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
-import {debounce, loadData, saveData} from '../utils/storage';
+import {createContext, useCallback, useContext, useState} from 'react';
+import {loadData} from '../utils/storage';
+import {hasMigrated, MARKER_STORAGE_KEY} from '../utils/storageSalvage';
+
+// Same rule as the canvas: shown before the crossing, not after (US2).
+function legacyScratchpad(key, fallback) {
+  let marker = null;
+  try { marker = window.localStorage.getItem(MARKER_STORAGE_KEY); } catch { /* no storage */ }
+  return hasMigrated(marker) ? fallback : loadData(key, fallback);
+}
+import {usePersist} from '../hooks/usePersist';
 
 // Create the context
 const ScratchpadContext = createContext(null);
@@ -11,22 +20,18 @@ export function ScratchpadProvider({ children }) {
   const [panelHeight, setPanelHeight] = useState(() => loadData('scratchpad_height', 300));
 
   // Notes content
-  const [notes, setNotes] = useState(() => loadData('scratchpad_notes', ''));
+  const [notes, setNotes] = useState(() => legacyScratchpad('scratchpad_notes', ''));
 
   // Saved calculations
-  const [calculations, setCalculations] = useState(() => loadData('scratchpad_calculations', []));
+  const [calculations, setCalculations] = useState(() => legacyScratchpad('scratchpad_calculations', []));
 
-  // Persistors (debounced)
-  const persistIsOpen = useMemo(() => debounce((value) => saveData('scratchpad_isOpen', value), 300), []);
-  const persistHeight = useMemo(() => debounce((value) => saveData('scratchpad_height', value), 300), []);
-  const persistNotes = useMemo(() => debounce((value) => saveData('scratchpad_notes', value), 500), []);
-  const persistCalculations = useMemo(() => debounce((value) => saveData('scratchpad_calculations', value), 300), []);
-
-  // Persist state changes
-  useEffect(() => { persistIsOpen(isOpen); }, [isOpen, persistIsOpen]);
-  useEffect(() => { persistHeight(panelHeight); }, [panelHeight, persistHeight]);
-  useEffect(() => { persistNotes(notes); }, [notes, persistNotes]);
-  useEffect(() => { persistCalculations(calculations); }, [calculations, persistCalculations]);
+  // Persist state changes, debounced. Notes get a longer delay because they
+  // change on every keystroke.
+  // Panel geometry is about this window and stays here. Notes and calculations
+  // are plan content and travel in the plan file instead (T008's seams), so
+  // they no longer stream to browser storage.
+  usePersist('scratchpad_isOpen', isOpen);
+  usePersist('scratchpad_height', panelHeight);
 
   // Toggle scratchpad visibility
   const toggleScratchpad = useCallback(() => {
@@ -107,7 +112,23 @@ export function ScratchpadProvider({ children }) {
   }, []);
 
   // Context value
+  // Document seams (FR-001, FR-002). The scratchpad's content travels with the
+  // plan; its panel geometry does not — how tall someone left a panel is about
+  // this window, not about the plan, and would be noise in a diffed file.
+  const serialiseToDocument = useCallback(
+    () => ({ notes, calculations }),
+    [notes, calculations],
+  );
+
+  const loadFromDocument = useCallback((scratchpad) => {
+    const source = scratchpad ?? {};
+    setNotes(typeof source.notes === 'string' ? source.notes : '');
+    setCalculations(Array.isArray(source.calculations) ? source.calculations : []);
+  }, []);
+
   const value = {
+    serialiseToDocument,
+    loadFromDocument,
     // State
     isOpen,
     panelHeight,

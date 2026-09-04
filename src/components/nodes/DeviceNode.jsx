@@ -1,10 +1,20 @@
 import {Handle, Position} from 'reactflow';
 import {getDeviceIcon} from '../../utils/deviceHelpers';
+import {svgToDataUri} from '../../utils/svgDataUri';
 import {useNetwork} from '../../context/NetworkContext';
+import {useLibrary} from '../../context/LibraryContext';
 
 function DeviceNode({ data, selected }) {
   const { device, label, isSelected, ipv4, subnet } = data;
   const { viewMode } = useNetwork();
+  const { symbolById } = useLibrary();
+  // FR-015 resolution order: an imported symbol assigned to this type draws
+  // as an inert image; otherwise the built-in mapping, whose own fallback is
+  // the recognisable default box.
+  const importedSymbol = symbolById(device.icon);
+  // An imported symbol that cannot be encoded draws as the built-in icon rather
+  // than taking the canvas down with it.
+  const importedUri = importedSymbol ? svgToDataUri(importedSymbol.content) : null;
   const IconComponent = getDeviceIcon(device.icon);
 
   return (
@@ -51,12 +61,23 @@ function DeviceNode({ data, selected }) {
             backgroundColor: `${device.color}20`,
           }}
         >
-          {/* eslint-disable-next-line react-hooks/static-components */}
+          {importedUri ? (
+          <img
+            alt=""
+            src={importedUri}
+            style={{ width: 24, height: 24 }}
+          />
+        ) : (
+          /* eslint-disable-next-line react-hooks/static-components -- the
+             icon component is a lookup from a fixed map, the file's
+             long-standing pattern; my branch insertion had orphaned the
+             original directive two elements up */
           <IconComponent
             size={32}
             style={{ color: device.color }}
             strokeWidth={1.5}
           />
+        )}
         </div>
 
         {/* Device Label */}

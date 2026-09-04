@@ -1,0 +1,36 @@
+{
+  "checks": {
+    "S1_load": true,
+    "S2_imageRenders": true,
+    "S3_scaleContinuous": true,
+    "S3_zoom22": true,
+    "S4_anchored": true,
+    "S5_drag": true
+  },
+  "metrics": {
+    "msToLoad": 30,
+    "floorSample": [
+      130,
+      114,
+      82
+    ],
+    "bgSample": [
+      0,
+      0,
+      0
+    ],
+    "markerErrZ18": 0.48,
+    "span18": 130.7,
+    "span21": 1045.3,
+    "scaleRatio": 8,
+    "zoomReached": 22,
+    "markerErrZ21": 0.5,
+    "dragCoordErrDeg": 0,
+    "devicePixelRatio": 1,
+    "dragPx": 69.69,
+    "expectedPx": 69.69,
+    "msTotal": 568
+  },
+  "library": "6.7.0",
+  "allPassed": true
+}
