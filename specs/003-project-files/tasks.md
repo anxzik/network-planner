@@ -95,11 +95,11 @@ are binding layout constraints on every renderer task.
 
 - [x] T020 [P] [US2] Create `src/utils/storageSalvage.js` + `src/utils/storageSalvage.test.js`: pure classification of a raw storage root into `none | intact | salvageable(preview) | unreadable`, best-effort recovery of readable devices/connections/VLANs/notes from damaged content, and the already-migrated marker check. The original is never rewritten — salvage reads and reports, and the clear-offer is a separate later decision (FR-010, FR-012, FR-013, FR-024)
 - [x] T021 [US2] Implement `checkOldStorage` and `migrate` handlers in `src/plans/ipc.ts`: classify via `src/utils/storageSalvage.js`, write the plan file through the atomic path, return the document plus the marker instruction — main never touches localStorage, the renderer never writes files (R4, FR-010, FR-011, FR-012)
-- [ ] T022 [US2] Wire the renderer side of the crossing in `src/context/PlanContext.jsx`: on startup read the storage root via `src/utils/storage.js`, call `checkOldStorage`, and on successful migration write the `{ migratedTo, migratedAt }` marker into localStorage at main's instruction; marker presence suppresses re-offers and a re-trigger shows "already migrated" with a re-export offer (FR-011, FR-013, edge case)
-- [ ] T023 [P] [US2] Create `src/components/Plans/MigrationPanel.jsx`: the migration offer per wireframe 01 — never a silent conversion, decline leaves everything as it was (FR-010)
-- [ ] T024 [P] [US2] Create `src/components/Plans/SalvagePanel.jsx`: salvage preview showing what was recovered, accept or decline, with the told-a-copy-was-kept notice per wireframe 01 (FR-012)
-- [ ] T025 [US2] Retire the continuous localStorage topology write: after migration, `usePersist`'s topology persistence stops (recovery slot replaces it); old storage becomes read-only preserved history in `src/hooks/usePersist.js` / `src/context/NetworkContext.jsx`
-- [ ] T026 [US2] Verify quickstart 3 and 4 by hand, confirm a fresh profile shows no prompt or warning (SC-007), and gates green
+- [x] T022 [US2] Wire the renderer side of the crossing in `src/context/PlanContext.jsx`: on startup read the storage root via `src/utils/storage.js`, call `checkOldStorage`, and on successful migration write the `{ migratedTo, migratedAt }` marker into localStorage at main's instruction; marker presence suppresses re-offers and a re-trigger shows "already migrated" with a re-export offer (FR-011, FR-013, edge case)
+- [x] T023 [P] [US2] Create `src/components/Plans/MigrationPanel.jsx`: the migration offer per wireframe 01 — never a silent conversion, decline leaves everything as it was (FR-010)
+- [x] T024 [P] [US2] Create `src/components/Plans/SalvagePanel.jsx`: salvage preview showing what was recovered, accept or decline, with the told-a-copy-was-kept notice per wireframe 01 (FR-012)
+- [x] T025 [US2] Retire the continuous localStorage topology write: after migration, `usePersist`'s topology persistence stops (recovery slot replaces it); old storage becomes read-only preserved history in `src/hooks/usePersist.js` / `src/context/NetworkContext.jsx`
+- [x] T026 [US2] Verify quickstart 3 and 4 by hand, confirm a fresh profile shows no prompt or warning (SC-007), and gates green
 
 **Checkpoint**: Every existing user crosses once, loses nothing, and can prove it — old storage is still there, marked.
 

@@ -4,6 +4,7 @@
 // defined in specs/003-project-files/contracts/plans-bridge.md.
 import {createContext, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {emptyPlanDocument, planSnapshot} from '../utils/planFile';
+import {MARKER_STORAGE_KEY, STORAGE_KEY} from '../utils/storageSalvage';
 import {useNetwork} from './NetworkContext';
 import {useScratchpad} from './ScratchpadContext';
 
@@ -30,6 +31,8 @@ export function PlanProvider({ children }) {
   const [recents, setRecents] = useState([]);
   const [recovery, setRecovery] = useState(null);
   const [available] = useState(bridgeAvailable);
+  // What the old browser storage turned out to hold, once asked (US2).
+  const [migration, setMigration] = useState(null);
 
   const plans = () => window.networkPlanner?.plans;
 
@@ -201,6 +204,55 @@ export function PlanProvider({ children }) {
     setRecovery(null);
   }, []);
 
+  // Reading the old storage is the renderer's job: localStorage is only
+  // reachable from here (R4). The raw string is what crosses — not the parsed
+  // root — so main can tell damaged storage from empty storage, which the
+  // ordinary read path cannot.
+  const readOldStorage = useCallback(() => {
+    try {
+      return {
+        raw: window.localStorage.getItem(STORAGE_KEY),
+        marker: window.localStorage.getItem(MARKER_STORAGE_KEY),
+      };
+    } catch {
+      // Storage can be unavailable entirely (private mode, blocked cookies).
+      // That is not a migration to offer; it is nothing to say.
+      return { raw: null, marker: null };
+    }
+  }, []);
+
+  const migrate = useCallback(async () => {
+    const bridge = plans();
+    if (!bridge) return { ok: false, error: { code: 'UNAVAILABLE', message: 'No bridge.' } };
+    const result = await bridge.migrate(readOldStorage());
+    if (!result.ok) return result;
+
+    network.loadFromDocument(result.value.document);
+    scratchpad.loadFromDocument(result.value.document.scratchpad);
+    setName(result.value.name);
+    setSource('file');
+    setReadOnly(false);
+    markClean(planSnapshot(result.value.document));
+
+    // Main's instruction, carried out here because only the renderer can. It
+    // writes a sibling key and never rewrites the old root, so what was
+    // migrated from stays exactly as it was (FR-011, FR-012).
+    try {
+      window.localStorage.setItem(
+        result.value.marker.key,
+        JSON.stringify(result.value.marker.value),
+      );
+    } catch { /* an unwritable marker costs a repeat offer, not any data */ }
+
+    setMigration(null);
+    await refreshRecents();
+    return result;
+  }, [readOldStorage, network, scratchpad, markClean, refreshRecents]);
+
+  // Declining changes nothing at all, so the offer returns next start. A person
+  // who is not ready has not said no forever.
+  const dismissMigration = useCallback(() => setMigration(null), []);
+
   // One fetch on mount: what was left behind last time, and where plans are.
   useEffect(() => {
     const bridge = window.networkPlanner?.plans;
@@ -211,6 +263,20 @@ export function PlanProvider({ children }) {
     });
     bridge.listRecents().then((result) => {
       if (!cancelled && result.ok) setRecents(result.value.recents);
+    });
+    let stored = { raw: null, marker: null };
+    try {
+      stored = {
+        raw: window.localStorage.getItem(STORAGE_KEY),
+        marker: window.localStorage.getItem(MARKER_STORAGE_KEY),
+      };
+    } catch { /* no storage to ask about */ }
+    bridge.checkOldStorage(stored).then((result) => {
+      if (cancelled || !result.ok) return;
+      // 'none' and 'migrated' are silence: a person with nothing to move must
+      // never learn that migration exists (FR-013, SC-007).
+      if (result.value.offer === 'none' || result.value.offer === 'migrated') return;
+      setMigration(result.value);
     });
     return () => { cancelled = true; };
   }, []);
@@ -236,6 +302,7 @@ export function PlanProvider({ children }) {
 
   const value = useMemo(() => ({
     name, dirty, readOnly, source, notice, recents, recovery, available, pending,
+    migration, migrate, dismissMigration,
     document: planDocument,
     save, saveAs, openDialog, newPlan,
     openRecent, removeRecent, refreshRecents,
@@ -245,6 +312,7 @@ export function PlanProvider({ children }) {
     clearNotice: () => setNotice(null),
   }), [
     name, dirty, readOnly, source, notice, recents, recovery, available, pending,
+    migration, migrate, dismissMigration,
     planDocument, save, saveAs, openDialog, newPlan,
     openRecent, removeRecent, refreshRecents, guard, resolvePending,
     restoreRecovery, declineRecovery, markClean, applyOpened,

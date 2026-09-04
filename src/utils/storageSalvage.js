@@ -32,10 +32,20 @@ function emptyDocument() {
   };
 }
 
+// Whether the storage holds anything worth offering to move. A lone VLAN does
+// not count: the application creates a default one on first start and used to
+// persist it, so a profile that has only ever been opened looks non-empty while
+// containing no work at all — and would greet a first-time user with a
+// migration prompt, which SC-007 forbids. Two or more VLANs is deliberate
+// configuration and does count, as does anything else.
 function isEmptyDocument(document) {
-  return FIELDS.every(([, to]) => document[to].length === 0)
-    && document.scratchpad.notes === ''
-    && document.scratchpad.calculations.length === 0;
+  const hasContent = document.appliances.length > 0
+    || document.connections.length > 0
+    || document.networkObjects.length > 0
+    || document.scratchpad.notes !== ''
+    || document.scratchpad.calculations.length > 0
+    || document.vlans.length > 1;
+  return !hasContent;
 }
 
 function toDocument(root) {
@@ -206,6 +216,24 @@ export function classifyOldStorage(raw, markerRaw = null) {
 
 // The marker the renderer writes back once a migration has been accepted. Main
 // asks for it; main never touches localStorage itself (R4).
+/**
+ * Whether the crossing has already happened. Once it has, the old storage is
+ * preserved history rather than live state, and the canvas must stop loading
+ * from it — otherwise every start would reopen the pre-migration topology over
+ * whatever the person actually has open.
+ * @param {string|null|undefined} markerRaw
+ * @returns {boolean}
+ */
+export function hasMigrated(markerRaw) {
+  if (typeof markerRaw !== 'string' || markerRaw === '') return false;
+  try {
+    const parsed = JSON.parse(markerRaw);
+    return Boolean(parsed && typeof parsed === 'object' && typeof parsed.migratedTo === 'string');
+  } catch {
+    return false;
+  }
+}
+
 /**
  * @param {string} fileName
  * @param {string} at

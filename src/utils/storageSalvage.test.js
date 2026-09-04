@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {classifyOldStorage, MARKER_STORAGE_KEY, migrationMarker} from './storageSalvage';
+import {classifyOldStorage, hasMigrated, MARKER_STORAGE_KEY, migrationMarker} from './storageSalvage';
 
 const root = (extra = {}) => JSON.stringify({
   __version: 1,
@@ -29,6 +29,28 @@ describe('an ordinary empty start (FR-013, SC-007)', () => {
 
   it('does not treat a view preference alone as work worth migrating', () => {
     expect(classifyOldStorage(JSON.stringify({ __version: 1, viewMode: 'logical' })).kind).toBe('none');
+  });
+
+  it('does not treat the auto-created default VLAN as work (SC-007)', () => {
+    // A profile that has only ever been opened holds exactly this, and greeting
+    // its owner with a migration prompt is the failure SC-007 names.
+    const justTheDefault = JSON.stringify({
+      __version: 1, nodes: [], edges: [], networkObjects: [],
+      vlans: [{ id: 'vlan-1', vlanId: 1, name: 'Default' }],
+    });
+    expect(classifyOldStorage(justTheDefault).kind).toBe('none');
+  });
+
+  it('does treat several VLANs as work, since that is deliberate configuration', () => {
+    const configured = JSON.stringify({
+      __version: 1, vlans: [{ id: 'a', vlanId: 1 }, { id: 'b', vlanId: 20 }],
+    });
+    expect(classifyOldStorage(configured).kind).toBe('intact');
+  });
+
+  it('treats one VLAN alongside real work as work', () => {
+    const withDevice = JSON.stringify({ __version: 1, nodes: [{ id: 'n1' }], vlans: [{ id: 'a' }] });
+    expect(classifyOldStorage(withDevice).kind).toBe('intact');
   });
 });
 
@@ -61,8 +83,13 @@ describe('intact storage (FR-010)', () => {
   });
 
   it('ignores a key of the wrong type instead of carrying it across', () => {
-    const odd = JSON.stringify({ __version: 1, nodes: 'not a list', vlans: [{ id: 1 }] });
-    expect(classifyOldStorage(odd).document.appliances).toEqual([]);
+    const odd = JSON.stringify({
+      __version: 1, nodes: 'not a list', networkObjects: [{ id: 'o1' }], vlans: [{ id: 1 }],
+    });
+    const result = classifyOldStorage(odd);
+    expect(result.kind).toBe('intact');
+    expect(result.document.appliances).toEqual([]);
+    expect(result.document.networkObjects).toHaveLength(1);
   });
 });
 
@@ -162,5 +189,24 @@ describe('migrationMarker', () => {
   it('produces a marker the classifier recognises', () => {
     const { value } = migrationMarker('a.netplan', 'now');
     expect(classifyOldStorage(root(), JSON.stringify(value)).kind).toBe('migrated');
+  });
+});
+
+describe('hasMigrated', () => {
+  it('is true once a marker records where the work went', () => {
+    const { value } = migrationMarker('denver.netplan', '2026-09-03T12:00:00Z');
+    expect(hasMigrated(JSON.stringify(value))).toBe(true);
+  });
+
+  it('is false when nothing was ever marked', () => {
+    expect(hasMigrated(null)).toBe(false);
+    expect(hasMigrated('')).toBe(false);
+    expect(hasMigrated(undefined)).toBe(false);
+  });
+
+  it('is false for a marker it cannot read, so the canvas keeps showing the work', () => {
+    expect(hasMigrated('not json')).toBe(false);
+    expect(hasMigrated('{}')).toBe(false);
+    expect(hasMigrated(JSON.stringify({ migratedAt: 'then' }))).toBe(false);
   });
 });
