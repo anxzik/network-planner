@@ -80,8 +80,8 @@ are binding layout constraints on every renderer task.
 - [x] T015 [P] [US1] Create `src/components/Plans/UnsavedPrompt.jsx`: the save-first prompt intercepting New, Open, open-recent and window close, with exactly three outcomes — Save (write then proceed), Discard (proceed, changes set aside), Cancel (abandon the pending action, canvas untouched). **Escape maps to Discard**; closing the dialog's window and clicking outside it map to Cancel (FR-006)
 - [x] T016 [P] [US1] Create `src/components/Plans/RecentsPanel.jsx`: recent plans with vanished entries marked and removable, never auto-dropped, per wireframe 01 (FR-007)
 - [x] T017 [P] [US1] Create `src/components/Plans/RecoveryPrompt.jsx`: on-start offer to restore the recovery slot, whether the work was lost to a crash or set aside by a Discard — restore or decline, nothing silent; declining is what clears the slot (FR-009, FR-006a)
-- [ ] T018 [US1] Surface open-plan identity in the app chrome: plan name + dirty marker wired from `src/context/PlanContext.jsx` into `src/App.jsx` (and window title via the bridge), per wireframe 01 (FR-005, SC-004)
-- [ ] T019 [US1] Create `src/components/Plans/index.js` barrel and mount the Plans surfaces in `src/App.jsx`; verify quickstart scenarios 1 and 2 by hand and `npm run lint && npm test && npm run typecheck` green
+- [x] T018 [US1] Surface open-plan identity in the app chrome: plan name + dirty marker wired from `src/context/PlanContext.jsx` into `src/App.jsx` (and window title via the bridge), per wireframe 01 (FR-005, SC-004)
+- [x] T019 [US1] Create `src/components/Plans/index.js` barrel and mount the Plans surfaces in `src/App.jsx`; verify quickstart scenarios 1 and 2 by hand and `npm run lint && npm test && npm run typecheck` green
 
 **Checkpoint**: US1 delivers the MVP — plans are named, portable, guarded files with recents and crash recovery.
 

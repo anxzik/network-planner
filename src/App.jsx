@@ -8,6 +8,7 @@ import ListView from './components/ListView/ListView';
 import SubnetCalculator from './components/SubnetCalculator/SubnetCalculator';
 import VlanConfigPanel from './components/VlanConfig/VlanConfigPanel';
 import {Scratchpad} from './components/Scratchpad';
+import {PlanMenu, PlanTitle, RecoveryPrompt, UnsavedPrompt} from './components/Plans';
 import {useNetwork} from './context/NetworkContext';
 import {useSettings} from './context/SettingsContext';
 import {useScratchpad} from './context/ScratchpadContext';
@@ -50,6 +51,10 @@ function App() {
                 </h1>
               </div>
             </div>
+
+            {/* Which plan is open, and the File menu that changes it */}
+            <PlanMenu />
+            <PlanTitle />
 
             {/* View Toggle Tabs */}
             <div
@@ -304,6 +309,9 @@ function App() {
       </main>
 
       {/* Settings Modal */}
+      <UnsavedPrompt />
+      <RecoveryPrompt />
+
       <SettingsModal />
     </div>
   );
