@@ -180,3 +180,39 @@ describe('versionOf', () => {
     expect(versionOf(undefined)).toBeNull();
   });
 });
+
+describe('edge cases the spec names (T048)', () => {
+  it('a recorded definition that fails today’s rules still renders, and still diverges', () => {
+    // FR-015 is unconditional: the plan shows what it recorded, whether or not
+    // today's validation would accept it. Divergence still reports the
+    // difference so the person can choose the catalogue's version.
+    const invalid = { id: 'a', name: '', planes: [], specifications: null, updatedAt: '2026-01-01T00:00:00Z' };
+    const current = type('a');
+    const document = {
+      recordedDefinitions: { a: invalid }, declinedOffers: {},
+      appliances: [node('n1', invalid)],
+    };
+    const [found] = findDivergences(document, { a: current });
+    expect(found.planCopy).toBe(invalid);
+    expect(found.changed.length).toBeGreaterThan(0);
+  });
+
+  it('a plan placing a type twice records it once and updates both nodes', () => {
+    const document = {
+      recordedDefinitions: { a: type('a') }, declinedOffers: {},
+      appliances: [node('n1', type('a')), node('n2', type('a'))],
+    };
+    const corrected = type('a', { name: 'Corrected' });
+    const updated = applyUpdate(document, 'a', corrected);
+    expect(updated.appliances.every((n) => n.data.device.name === 'Corrected')).toBe(true);
+  });
+
+  it('a node carrying no device survives an update untouched', () => {
+    const document = {
+      recordedDefinitions: { a: type('a') }, declinedOffers: {},
+      appliances: [{ id: 'n1' }, node('n2', type('a'))],
+    };
+    const updated = applyUpdate(document, 'a', type('a', { name: 'X' }));
+    expect(updated.appliances[0]).toEqual({ id: 'n1' });
+  });
+});

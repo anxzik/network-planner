@@ -223,6 +223,18 @@ export function PlanProvider({ children }) {
 
   const dismissAdoptOffer = useCallback(() => setAdoptOffer(null), []);
 
+  const listPreserved = useCallback(async () => {
+    const bridge = plans();
+    if (!bridge) return { ok: true, value: { preserved: [] } };
+    return bridge.listPreserved();
+  }, []);
+
+  const clearPreserved = useCallback(async (kind) => {
+    const bridge = plans();
+    if (!bridge) return { ok: false, error: { code: 'UNAVAILABLE', message: 'No bridge.' } };
+    return bridge.clearPreserved(kind);
+  }, []);
+
   const broadApplyPreview = useCallback(async (typeId) => {
     const bridge = plans();
     if (!bridge) return { ok: false, error: { code: 'UNAVAILABLE', message: 'No bridge.' } };
@@ -387,6 +399,7 @@ export function PlanProvider({ children }) {
     divergences, checkDivergences, acceptUpdate, declineOffer,
     broadApplyPreview, broadApply,
     adoptOffer, adopt, dismissAdoptOffer,
+    listPreserved, clearPreserved,
     document: planDocument,
     save, saveAs, openDialog, newPlan,
     openRecent, removeRecent, refreshRecents,
@@ -400,6 +413,7 @@ export function PlanProvider({ children }) {
     divergences, checkDivergences, acceptUpdate, declineOffer,
     broadApplyPreview, broadApply,
     adoptOffer, adopt, dismissAdoptOffer,
+    listPreserved, clearPreserved,
     planDocument, save, saveAs, openDialog, newPlan,
     openRecent, removeRecent, refreshRecents, guard, resolvePending,
     restoreRecovery, declineRecovery, markClean, applyOpened,

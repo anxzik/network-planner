@@ -139,7 +139,7 @@ are binding layout constraints on every renderer task.
 - [x] T041 [P] [US4] Create `src/components/Plans/ReadOnlyNotice.jsx`: the newer-format notice per wireframe 02 — what this version can read, what it cannot, and the warned Save As on both counts: unread content is not carried into the copy, and the copy is therefore not a substitute for the original, which stays the only complete version (FR-021)
 - [x] T042 [US4] Handle `unreadable` end to end: `FILE_UNREADABLE` envelope from `src/plans/ipc.ts`, the file left untouched, and a clear report in the renderer through `src/context/PlanContext.jsx` (FR-022, SC-003)
 - [x] T043 [US4] Surface failed saves: `SAVE_FAILED` envelope names the preserved `<plan>.partial`; renderer message in `src/components/Plans/SaveFailedNotice.jsx` tells the person the previous file survived, where the partial is, and which content each one holds — the plan file is the last content written whole, the partial is what they were saving (FR-008)
-- [ ] T044 [US4] Verify quickstart 8, 9, 10 and 11 (upgrade, classification and retention decisions automated; dialog flows by hand) and gates green
+- [x] T044 [US4] Verify quickstart 8, 9, 10 and 11 (upgrade, classification and retention decisions automated; dialog flows by hand) and gates green
 
 **Checkpoint**: SC-003 holds — no failure mode destroys a byte the person had not chosen to discard.
 
@@ -148,10 +148,10 @@ are binding layout constraints on every renderer task.
 ## Phase 7: Polish & Cross-Cutting Concerns
 
 - [x] T045 [P] Create `src/utils/preservedArtifacts.js` + `src/utils/preservedArtifacts.test.js`: pure naming and retention decisions for FR-024 — the slot name for each kind, whether an occurrence replaces or leaves an existing slot alone, and whether a given artifact has become redundant (upgraded plan saved whole, salvage accepted and written) and may therefore be *offered* for clearing
-- [ ] T046 List and clear preserved artifacts: `listPreserved(planId)` / `clearPreserved(planId, kind)` handlers in `src/plans/ipc.ts` over `src/utils/preservedArtifacts.js`, and `src/components/Plans/PreservedArtifactsPanel.jsx` per wireframe 03 — each slot named, its own Clear action, the redundant one distinguished; offered when redundant, never performed unasked (FR-024)
-- [ ] T047 [P] Two-instance behaviour: wire the lock sidecar from `src/plans/planStore.ts` into `open` so a second opener gets `LOCKED` → read-only with notice; stale locks (dead pid or aged) are ignored; verify quickstart 13 by hand (R6)
-- [ ] T048 [P] Edge-case sweep with tests where pure: save onto a path holding a different plan (ordinary overwrite after the dialog's own confirm), open-plan file renamed/moved/deleted externally (surfaced on next save as `SAVE_FAILED`-style report, not a crash), and a recorded definition failing today's validation rules (rendered anyway per FR-015, flagged in the divergence panel) in `src/utils/planFile.test.js` / `src/utils/planDivergence.test.js`
-- [ ] T049 Keep files under 500 lines: check `src/plans/ipc.ts` and `src/context/PlanContext.jsx` sizes; split if breached
+- [x] T046 List and clear preserved artifacts: `listPreserved(planId)` / `clearPreserved(planId, kind)` handlers in `src/plans/ipc.ts` over `src/utils/preservedArtifacts.js`, and `src/components/Plans/PreservedArtifactsPanel.jsx` per wireframe 03 — each slot named, its own Clear action, the redundant one distinguished; offered when redundant, never performed unasked (FR-024)
+- [x] T047 [P] Two-instance behaviour: wire the lock sidecar from `src/plans/planStore.ts` into `open` so a second opener gets `LOCKED` → read-only with notice; stale locks (dead pid or aged) are ignored; verify quickstart 13 by hand (R6)
+- [x] T048 [P] Edge-case sweep with tests where pure: save onto a path holding a different plan (ordinary overwrite after the dialog's own confirm), open-plan file renamed/moved/deleted externally (surfaced on next save as `SAVE_FAILED`-style report, not a crash), and a recorded definition failing today's validation rules (rendered anyway per FR-015, flagged in the divergence panel) in `src/utils/planFile.test.js` / `src/utils/planDivergence.test.js`
+- [x] T049 Keep files under 500 lines: check `src/plans/ipc.ts` and `src/context/PlanContext.jsx` sizes; split if breached
 - [ ] T050 Run the full quickstart (all 13 scenarios), confirm `npm run lint && npm test && npm run typecheck` green by exit code, and mark completed tasks here
 
 ---

@@ -1,3 +1,4 @@
+export { default as PreservedArtifactsPanel } from './PreservedArtifactsPanel';
 export { default as PlanNotice } from './PlanNotice';
 export { default as AdoptTypesPanel } from './AdoptTypesPanel';
 export { default as BroadApplyPanel } from './BroadApplyPanel';

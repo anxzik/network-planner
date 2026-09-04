@@ -6,7 +6,8 @@ import { app, dialog, ipcMain } from 'electron';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { PlanState, type RecentEntry, type RecoverySlot } from './recents';
-import { catalogueById, catalogueStore } from './catalogueLookup';
+import { registerDefinitionHandlers } from './definitionHandlers';
+
 import { preserveCopy, readPlan, releaseLock, savePlan, takeLock } from './planStore';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- plain JS module, typed loosely on purpose
@@ -19,10 +20,7 @@ import { findByPath, forDisplay, recentId, recordOpen, removeEntry } from '../ut
 import { classifyOldStorage, migrationMarker } from '../utils/storageSalvage.js';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- plain JS module, typed loosely on purpose
-import { applyUpdate, definitionsDiffer, offerable } from '../utils/planDivergence.js';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore -- plain JS module, typed loosely on purpose
-import { adoptable, chosenRows } from '../utils/typeAdoption.js';
+import { ARTIFACT_KINDS, describePreserved, slotName } from '../utils/preservedArtifacts.js';
 
 type Envelope<T> =
   | { ok: true; value: T }
@@ -44,6 +42,9 @@ interface OpenPlan {
   readOnly: boolean;
 }
 let openPlan: OpenPlan | null = null;
+// Whether the plan currently open has been written whole since it was opened.
+// It is what makes an upgrade original or a partial redundant (FR-024).
+let savedSinceOpen = false;
 
 async function exists(target: string): Promise<boolean> {
   try {
@@ -107,6 +108,7 @@ async function openAtPath(target: string): Promise<Envelope<unknown>> {
   if (openPlan && openPlan.path !== target) await releaseLock(openPlan.path);
   const name = path.basename(target);
   openPlan = { path: target, name, readOnly };
+  savedSinceOpen = false;
 
   if (state) {
     const entries = await state.readRecents();
@@ -143,6 +145,7 @@ async function writeTo(target: string, document: Record<string, unknown>) {
   const name = path.basename(target);
   const lock = await takeLock(target);
   openPlan = { path: target, name, readOnly: !lock.held };
+  savedSinceOpen = true;
   if (state) {
     const entries = await state.readRecents();
     await state.writeRecents(
@@ -172,6 +175,7 @@ export function initPlans(): void {
   ipcMain.handle('plans:newPlan', async () => {
     if (openPlan) await releaseLock(openPlan.path);
     openPlan = null;
+    savedSinceOpen = false;
     return ok({ name: null, source: 'untitled' });
   });
 
@@ -273,141 +277,66 @@ export function initPlans(): void {
     });
   });
 
-  // The same pure divergence maths the renderer runs, run again here against
-  // the catalogue main owns — the renderer never sees the catalogue rows it
-  // would need to decide this alone.
-  ipcMain.handle('plans:divergences', (_event, document: unknown) => {
-    if (typeof document !== 'object' || document === null) {
-      return fail('VALIDATION_FAILED', 'A plan is needed to compare against.');
-    }
+  // The copies kept for the open plan, and clearing one on request (FR-024).
+  // Nothing here removes anything of its own accord: `redundant` says only that
+  // the person can now safely be asked.
+  ipcMain.handle('plans:listPreserved', async () => {
+    if (!openPlan) return ok({ preserved: [] });
+    const directory = path.dirname(openPlan.path);
+    const base = path.basename(openPlan.path);
+    let entries: string[] = [];
     try {
-      return ok({ divergences: offerable(document, catalogueById()) });
-    } catch (err) {
-      return fail('STORAGE_FAILED', `The catalogue could not be read: ${String(err)}`);
+      entries = await fs.readdir(directory);
+    } catch {
+      return ok({ preserved: [] });
     }
+
+    const found: { kind: string; name: string; state: Record<string, boolean> }[] = [];
+    for (const kind of ARTIFACT_KINDS as string[]) {
+      const match = entries.find((entry) => {
+        if (kind === 'upgradeOriginal') {
+          return entry.startsWith(`${base}.`) && entry.endsWith('.original')
+            && !entry.endsWith('.preapply.original');
+        }
+        try {
+          return entry === slotName(base, kind);
+        } catch {
+          return false;
+        }
+      });
+      if (!match) continue;
+      found.push({
+        kind,
+        name: match,
+        // An upgraded plan that has since been saved whole, and a partial whose
+        // content was written afterwards, are both safe to offer for clearing.
+        state: { upgradedPlanSaved: savedSinceOpen, savedSince: savedSinceOpen },
+      });
+    }
+    return ok({ preserved: describePreserved(found) });
   });
 
-  ipcMain.handle('plans:applyUpdate', (_event, payload: unknown) => {
-    const { document, typeId } = (payload ?? {}) as { document?: unknown; typeId?: unknown };
-    if (typeof document !== 'object' || document === null || typeof typeId !== 'string') {
-      return fail('VALIDATION_FAILED', 'An update needs a plan and a type.');
+  ipcMain.handle('plans:clearPreserved', async (_event, kind: unknown) => {
+    if (!openPlan) return fail('VALIDATION_FAILED', 'No plan is open.');
+    if (typeof kind !== 'string' || !(ARTIFACT_KINDS as string[]).includes(kind)) {
+      return fail('VALIDATION_FAILED', 'That is not something kept for this plan.');
     }
-    const current = catalogueById()[typeId];
-    if (!current) return fail('VALIDATION_FAILED', 'That type is no longer in the catalogue.');
-    return ok({ document: applyUpdate(document, typeId, current) });
+    const directory = path.dirname(openPlan.path);
+    const base = path.basename(openPlan.path);
+    let entries: string[] = [];
+    try { entries = await fs.readdir(directory); } catch { /* nothing to clear */ }
+    const match = entries.find((entry) => (kind === 'upgradeOriginal'
+      ? entry.startsWith(`${base}.`) && entry.endsWith('.original') && !entry.endsWith('.preapply.original')
+      : entry === slotName(base, kind)));
+    if (!match) return ok({ cleared: false });
+    await fs.rm(path.join(directory, match), { force: true });
+    return ok({ cleared: true, name: match });
   });
 
-  // A correction can be carried to the plans the application knows about, and
-  // that reach is the recent list and nothing else (R7). The application never
-  // scans a disk looking for plans: what a person has opened is what it knows.
-  ipcMain.handle('plans:broadApplyPreview', async (_event, typeId: unknown) => {
-    if (!state) return fail('STORAGE_FAILED', 'Plan state is not open.');
-    if (typeof typeId !== 'string') return fail('VALIDATION_FAILED', 'A type is needed.');
-    const current = catalogueById()[typeId];
-    if (!current) return fail('VALIDATION_FAILED', 'That type is no longer in the catalogue.');
-
-    const reachable: { id: string; name: string; changed: string[] }[] = [];
-    const unreachable: { name: string; reason: string }[] = [];
-
-    for (const entry of await state.readRecents()) {
-      const read = await readPlan(entry.path);
-      if (!read.ok) {
-        unreachable.push({ name: entry.name, reason: 'The file could not be read.' });
-        continue;
-      }
-      const classified = readPlanFile(read.text);
-      if (classified.kind === 'unreadable' || classified.kind === 'newer') {
-        unreachable.push({
-          name: entry.name,
-          reason: classified.kind === 'newer'
-            ? 'Written in a newer format, and never written back to.'
-            : 'The file could not be read as a plan.',
-        });
-        continue;
-      }
-      const planCopy = classified.document?.recordedDefinitions?.[typeId];
-      // A plan that does not place this type is not unreachable; it simply has
-      // nothing to change, and listing it would be noise.
-      if (!planCopy || !definitionsDiffer(planCopy, current)) continue;
-      reachable.push({ id: recentId(entry.path), name: entry.name, changed: [] });
-    }
-    return ok({ reachable, unreachable });
-  });
-
-  ipcMain.handle('plans:broadApply', async (_event, payload: unknown) => {
-    if (!state) return fail('STORAGE_FAILED', 'Plan state is not open.');
-    const { typeId, ids } = (payload ?? {}) as { typeId?: unknown; ids?: unknown };
-    if (typeof typeId !== 'string' || !Array.isArray(ids)) {
-      return fail('VALIDATION_FAILED', 'A type and the plans to change are needed.');
-    }
-    const current = catalogueById()[typeId];
-    if (!current) return fail('VALIDATION_FAILED', 'That type is no longer in the catalogue.');
-
-    const results: { name: string; ok: boolean; reason?: string }[] = [];
-    for (const entry of await state.readRecents()) {
-      if (!ids.includes(recentId(entry.path))) continue;
-      const read = await readPlan(entry.path);
-      if (!read.ok) {
-        results.push({ name: entry.name, ok: false, reason: 'The file could not be read.' });
-        continue;
-      }
-      const classified = readPlanFile(read.text);
-      if (classified.kind !== 'current' && classified.kind !== 'older') {
-        results.push({ name: entry.name, ok: false, reason: 'The file is not one this version writes to.' });
-        continue;
-      }
-      // The same original-kept discipline an upgrade uses (FR-020, FR-024):
-      // a copy goes aside before the plan is changed.
-      try {
-        await preserveCopy(entry.path, 'preapplyOriginal');
-      } catch {
-        results.push({ name: entry.name, ok: false, reason: 'A copy could not be kept, so nothing was changed.' });
-        continue;
-      }
-      const updated = applyUpdate(classified.document, typeId, current);
-      const written = await savePlan(entry.path, serialisePlan(updated) as string);
-      results.push(written.ok
-        ? { name: entry.name, ok: true }
-        : { name: entry.name, ok: false, reason: written.message });
-    }
-    return ok({ results });
-  });
-
-  // What of this plan's equipment your catalogue does not have (FR-025). The
-  // offer follows opening and never gates it: the plan already renders.
-  ipcMain.handle('plans:adoptable', (_event, document: unknown) => {
-    if (typeof document !== 'object' || document === null) {
-      return fail('VALIDATION_FAILED', 'A plan is needed.');
-    }
-    const recorded = (document as { recordedDefinitions?: unknown }).recordedDefinitions ?? {};
-    return ok(adoptable(recorded, catalogueById()));
-  });
-
-  ipcMain.handle('plans:adopt', (_event, payload: unknown) => {
-    const { document, typeIds } = (payload ?? {}) as { document?: unknown; typeIds?: unknown };
-    if (typeof document !== 'object' || document === null || !Array.isArray(typeIds)) {
-      return fail('VALIDATION_FAILED', 'A plan and the types to adopt are needed.');
-    }
-    const store = catalogueStore();
-    if (!store) return fail('STORAGE_FAILED', 'The catalogue is not open.');
-
-    const recorded = (document as { recordedDefinitions?: unknown }).recordedDefinitions ?? {};
-    const offer = adoptable(recorded, catalogueById());
-    const rows = chosenRows(offer, typeIds, openPlan ? openPlan.name : null, new Date().toISOString());
-
-    const adopted: string[] = [];
-    const failed: { typeId: string; reason: string }[] = [];
-    for (const row of rows) {
-      try {
-        store.createType(row);
-        adopted.push(row.id);
-      } catch (err) {
-        failed.push({ typeId: row.id, reason: String(err) });
-      }
-    }
-    // The plan itself is untouched: adoption adds catalogue rows and nothing
-    // else, so the document that came in is the document still open.
-    return ok({ adopted, skipped: offer.skipped, failed });
+  registerDefinitionHandlers({
+    ok, fail,
+    recents: () => state,
+    openPlanName: () => (openPlan ? openPlan.name : null),
   });
 
   ipcMain.handle('plans:listRecents', async () => {

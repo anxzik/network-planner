@@ -11,7 +11,11 @@ const channels = (source, pattern) => [...source.matchAll(pattern)].map((m) => m
 
 describe('plans bridge and main process agree', () => {
   const preload = read('preload.ts');
-  const main = read('plans/ipc.ts');
+  // Handlers live in more than one file: ipc.ts owns the plan's own lifecycle,
+  // definitionHandlers.ts owns what a plan records about its types. Every file
+  // that registers plans:* channels has to be listed here, which is why this
+  // test failed the moment those handlers were split out.
+  const main = ['plans/ipc.ts', 'plans/definitionHandlers.ts'].map(read).join('\n');
 
   const exposed = channels(preload, /invoke\('plans:(\w+)'/g);
   const handled = channels(main, /handle\('plans:(\w+)'/g);

@@ -42,6 +42,8 @@ const plans = {
   adoptable: (document: unknown) => ipcRenderer.invoke('plans:adoptable', document),
   adopt: (payload: { document: unknown; typeIds: string[] }) =>
     ipcRenderer.invoke('plans:adopt', payload),
+  listPreserved: () => ipcRenderer.invoke('plans:listPreserved'),
+  clearPreserved: (kind: string) => ipcRenderer.invoke('plans:clearPreserved', kind),
   listRecents: () => ipcRenderer.invoke('plans:listRecents'),
   removeRecent: (id: string) => ipcRenderer.invoke('plans:removeRecent', id),
   openRecent: (id: string) => ipcRenderer.invoke('plans:openRecent', id),

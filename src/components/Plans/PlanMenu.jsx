@@ -4,6 +4,7 @@
 import {useState} from 'react';
 import {usePlan} from '../../context/PlanContext';
 import {useSettings} from '../../context/SettingsContext';
+import PreservedArtifactsPanel from './PreservedArtifactsPanel';
 import RecentsPanel from './RecentsPanel';
 
 function PlanMenu() {
@@ -11,6 +12,7 @@ function PlanMenu() {
   const { currentTheme } = useSettings();
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState(null);
+  const [showPreserved, setShowPreserved] = useState(false);
 
   const run = async (action) => {
     setOpen(false);
@@ -47,6 +49,8 @@ function PlanMenu() {
               onClick={() => run(save)}>Save</button>
             <button type="button" className={item} disabled={!available}
               onClick={() => run(saveAs)}>Save As…</button>
+            <button type="button" className={item} disabled={!available}
+              onClick={() => { setOpen(false); setShowPreserved(true); }}>Copies kept…</button>
 
             <div className="mt-1 border-t pt-1" style={{ borderColor: currentTheme.border }}>
               <p className="px-3 py-1 text-xs font-semibold"
@@ -58,6 +62,8 @@ function PlanMenu() {
           </div>
         </>
       )}
+
+      {showPreserved && <PreservedArtifactsPanel onClose={() => setShowPreserved(false)} />}
 
       {message && (
         <div className="absolute left-0 top-full z-50 mt-1 w-80 rounded border px-3 py-2 text-xs"

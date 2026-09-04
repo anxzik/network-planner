@@ -112,3 +112,28 @@ describe('forDisplay', () => {
     expect(forDisplay()).toEqual([]);
   });
 });
+
+describe('edge cases the spec names (T048)', () => {
+  it('a plan opened, moved away, and opened again at a new path is two entries', () => {
+    // Two locations are two plans as far as the list is concerned; only an
+    // explicit rename collapses them, and only the person removes either.
+    let list = recordOpen([], { path: '/old/a.netplan', name: 'a', at: '1' });
+    list = recordOpen(list, { path: '/new/a.netplan', name: 'a', at: '2' });
+    expect(list).toHaveLength(2);
+  });
+
+  it('a vanished entry can still be removed, which is the only way it goes', () => {
+    const list = [{ path: '/gone.netplan', name: 'gone', lastOpened: '1' }];
+    expect(forDisplay(list, { '/gone.netplan': false })[0].exists).toBe(false);
+    expect(removeEntry(list, recentId('/gone.netplan'))).toEqual([]);
+  });
+
+  it('two plans of the same name in different folders stay distinct', () => {
+    const list = recordOpen(
+      [{ path: '/a/plan.netplan', name: 'plan', lastOpened: '1' }],
+      { path: '/b/plan.netplan', name: 'plan', at: '2' },
+    );
+    expect(list).toHaveLength(2);
+    expect(new Set(forDisplay(list).map((e) => e.id)).size).toBe(2);
+  });
+});

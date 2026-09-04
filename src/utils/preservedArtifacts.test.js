@@ -113,3 +113,22 @@ describe('describePreserved', () => {
     expect(describePreserved()).toEqual([]);
   });
 });
+
+describe('edge cases the spec names (T048)', () => {
+  it('a plan saved over a path that already held a different plan keeps one partial slot', () => {
+    // Overwriting is an ordinary save after the dialog's own confirmation; the
+    // preserved-artifact rules do not change because the target was occupied.
+    expect(slotName('other.netplan', 'partial')).toBe('other.netplan.partial');
+    expect(claimOccupiedSlot('partial')).toBe('replace');
+  });
+
+  it('a plan whose file was renamed outside the application names slots from its new name', () => {
+    // Slot names are derived from the plan's name, so a renamed file gets its
+    // own slots rather than orphaning the old ones onto a path nothing uses.
+    expect(slotName('renamed.netplan', 'preapplyOriginal')).toBe('renamed.netplan.preapply.original');
+  });
+
+  it('never claims a slot is redundant on a state it was not told about', () => {
+    expect(isRedundant('upgradeOriginal', { savedSince: true })).toBe(false);
+  });
+});
