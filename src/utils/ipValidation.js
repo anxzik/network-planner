@@ -91,7 +91,7 @@ export function cidrToMask(cidr) {
   const octets = [];
 
   for (let i = 0; i < 4; i++) {
-    const octetBinary = binary.substr(i * 8, 8);
+    const octetBinary = binary.slice(i * 8, i * 8 + 8);
     octets.push(parseInt(octetBinary, 2));
   }
 

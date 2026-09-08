@@ -3,7 +3,7 @@ import {generatePortsForDevice} from './portFactory';
 
 // Generate unique node ID
 function generateNodeId() {
-  return `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  return `node-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 }
 
 // Create a device node for ReactFlow
